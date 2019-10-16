@@ -1,3 +1,4 @@
 .htaccess
 .htrouter.php
 app/config/*
+public/files/Chats/*

@@ -1,7 +1,0 @@
-wapalizer
-
-Analisis de aplicacciones similares
-Nombre
-Descripcion, ventajas, desventajas, principales funciones y tecnologias usadas(Wappalyzer)
-
-Viernes
