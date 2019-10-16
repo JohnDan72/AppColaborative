@@ -1,0 +1,57 @@
+   <?php echo $this->getContent(); ?>
+  <div class="wrapper">
+    <div class="row">
+      <div class=" offset-m2 col m8 s12  card ">
+        <div class="col s12 m12 l6 center">
+          <img id="img_a" src="https://i.ibb.co/NVN2rSG/networking-1.png">
+          <h4 id="Title">Colaborative</h4>
+          <div class="divider" id="divide"></div>
+        </div>
+        <div class="col s12 m12 l6">
+          <div class="col s12 m12 center">
+            <h4>Inicio de sesión</h4>
+          </div>
+          <div class="col s12 m12 center">
+            <img src="https://i.ibb.co/Tgc5szr/user.png">
+          </div>
+          <div class="row">
+            <?php echo $this->tag->form("Session/login"); ?>
+            <div class="input-field offset-m2 offset-s1 col m8 s10 ">
+              <?php echo $this->tag->textField(['Matricula', 'onkeypress' => 'return checar(event)', 'class' => 'validate', 'id' => 'field_1']); ?>
+              <label for="Matricula">Matrícula</label>
+              <?php
+              if (isset($form_error)) {
+                ?>
+                <span class="helper-text center" style="color:#e53935;"> <?php echo $form_error; ?> </span>
+              <?php
+              }
+              ?>
+            </div>
+            <div class=" col s12 m12 center">
+              <?php echo $this->tag->submitButton([
+                "type" =>   "submit",
+                "value" =>  "Entrar",
+                "class" =>  "btn grey-text text-darken-2",
+                "id"    =>  "boton"
+              ]);
+              ?>
+            </div>
+            <?php echo $this->tag->endForm(); ?>
+          </div>
+        </div>
+      </div>
+    </div>
+    <ul class="bg-bubbles">
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+    </ul>
+  </div>
+  <script type="text/javascript" src="js/materialize.min.js"></script>

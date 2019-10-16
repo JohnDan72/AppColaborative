@@ -1,0 +1,6 @@
+
+    
+     Flash::output() 
+    <?= $this->getContent() ?>
+
+

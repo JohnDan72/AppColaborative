@@ -1,0 +1,215 @@
+@font-face {
+    font-family: 'Source Sans Pro';
+    font-style: normal;
+    font-weight: 200;
+    src: local('Source Sans Pro ExtraLight'), local('SourceSansPro-ExtraLight'), url(https://fonts.gstatic.com/s/sourcesanspro/v13/6xKydSBYKcSV-LCoeQqfX1RYOo3i94_wlxdr.ttf) format('truetype');
+}
+
+@font-face {
+    font-family: 'Source Sans Pro';
+    font-style: normal;
+    font-weight: 300;
+    src: local('Source Sans Pro Light'), local('SourceSansPro-Light'), url(https://fonts.gstatic.com/s/sourcesanspro/v13/6xKydSBYKcSV-LCoeQqfX1RYOo3ik4zwlxdr.ttf) format('truetype');
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-weight: 300;
+}
+
+body {
+    font-family: 'Source Sans Pro', sans-serif;
+    color: black;
+    font-weight: 300;
+    background-color: #fafafa;
+}
+
+h4, h2 {
+    margin: 50px 40px;
+    font-size: 3vw;
+    color: #616161;
+}
+
+@media screen and (min-width: 601px) {
+    h4, h2 {
+        font-size: 40px;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    h4, h2 {
+        font-size: 30px;
+    }
+}
+
+h5 {
+    margin-top: 5px;
+    font-size: 3vw;
+    color: #616161;
+}
+
+@media screen and (min-width: 601px) {
+    h5 {
+        font-size: 40px;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    h5 {
+        font-size: 30px;
+    }
+}
+
+#Title {
+    margin-top: 5px !important;
+    margin-bottom: 0px !important;
+    color: #bdbdbd;
+}
+
+.p_sidenav {
+    color: white;
+    font-size: 14px;
+    margin-top: -20px !important;
+    margin-bottom: -10px !important;
+}
+
+#img_avatar {
+    margin-bottom: 20px;
+}
+
+.center {
+    margin: auto;
+}
+
+#img_ini {
+    width: 200px;
+    height: 200px;
+}
+
+#p_1, #p_2, #p_3, #p_4, #p_5, #p_6 {
+    color: #9e9e9e;
+}
+
+.hand {
+    cursor: pointer;
+}
+
+#view_ini {
+    margin-top: 10px;
+}
+
+#divide {
+    margin-top: 50px;
+}
+
+#icon_menu {
+    margin-top: 5%;
+    margin-left: 2%;
+}
+
+.card {
+    border-radius: 15px;
+    background-color: #fafafa;
+    margin-top: 2%;
+    overflow-y: auto;
+    height: 320px;
+}
+
+#card_1 {
+    margin-top: 5px !important;
+    height: 90px !important;
+    padding-top: 10px;
+}
+
+form input {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    outline: 0;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    background-color: rgba(255, 255, 255, 0.2);
+    width: 250px;
+    border-radius: 3px;
+    padding: 10px 15px;
+    margin: 0 auto 10px auto;
+    display: block;
+    text-align: center;
+    font-size: 18px;
+    color: #53e3a6;
+    transition-duration: 0.25s;
+    font-weight: 300;
+}
+
+form input:hover {
+    background-color: rgba(255, 255, 255, 0.4);
+}
+
+form input:focus {
+    background-color: white;
+    width: 300px;
+    color: #53e3a6;
+}
+
+form button {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    outline: 0;
+    border: 0;
+    padding: 10px 15px;
+    color: #616161!important;
+    border-radius: 3px;
+    width: 250px;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+form button:hover {
+    background-color: #f5f7f9;
+}
+
+.view_group {
+    margin-top: -60px;
+}
+
+#id_boton_mensaje {
+    background: #ffee58 !important;
+}
+
+#id_boton_foto {
+    background: #ffee58 !important;
+}
+
+#id_boton_doc {
+    background: #ffee58 !important;
+}
+
+.file-path-wrapper input[readonly="readonly"]{
+    color: #0e0e0e !important;
+     border-bottom: 1px solid #bdbdbd !important;
+     
+}
+
+.derecha {
+    position: absolute;
+    right: 0px;
+    width: auto;
+}
+
+#div_chat div {
+    
+    border-radius: 10px;
+    margin-top: 10px; 
+    margin-bottom: 10px;
+    height:100%;
+
+    overflow:auto;
+}
+.div_back{
+    background-color: #f3e5f5;
+}
+.text_derecha{
+    text-align: right;
+}

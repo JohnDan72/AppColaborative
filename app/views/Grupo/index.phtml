@@ -1,0 +1,818 @@
+  <?php echo $this->getContent(); ?>
+
+ <div class="container">
+   <!-- Menu responsivo -->
+   <ul id="slide-out" class="sidenav">
+     <li>
+       <div class="user-view">
+         <div class="background">
+           <img src="https://i.ibb.co/JFVv2m5/ey29-Qkq-jpg.png" class="">
+         </div>
+         <div>
+           <a href="#user"><img class="circle" id="img_avatar" src="https://i.ibb.co/DMqW5Y1/1485499779158756.jpg"></a>
+         </div>
+         <div>
+           <p class="p_sidenav"><?php echo $this->session->get('user')['Nombre'] ?> - <?php echo $this->session->get('user')['Matricula'] ?></p>
+           <p class="p_sidenav"><?php echo $this->session->get('user')['Correo'] ?></p>
+         </div>
+       </div>
+     </li>
+
+     <li><a class="subheader">Grupos</a></li>
+     <li><a href="#modal1" class="modal-trigger"><i class="material-icons" style="color: #7cb342">add</i>Crear</a></li>
+     <li><a href="#modal2" class="modal-trigger"><i class="material-icons" style="color: #ffa726">device_hub</i>Unirse</a></li>
+     <!--<li><a href="#modal3" class="modal-trigger"><i class="material-icons" style="color: #e65100">delete</i>Eliminar</a></li>-->
+     <li>
+       <div class="divider"></div>
+     </li>
+     <li><a class="subheader">Mis Grupos</a></li>
+     <?php if ($grupos->count() > 0) { ?>
+     <li><a class='dropdown-trigger' href='#' data-target='dropdown1'><i class="material-icons">arrow_drop_down</i> Selecciona tu grupo</a></li>
+       <li>
+         <ul id='dropdown1' class='dropdown-content mainmenu'>
+           <?php foreach ($grupos as $grupo) { ?>
+             <li>
+               <div class="row">
+                 <div class="col s11 m11 l11">
+                   <?php echo $this->tag->linkTo("grupo/desplegarGrupo/$grupo->Id_Grupo","$grupo->Nombre_G")?>
+                 </div>
+               </div>
+               <ul class='submenu'>
+                  <li><?php echo $this->tag->linkTo("grupo/desplegarGrupo/$grupo->Id_Grupo", '<i class="material-icons">donut_large</i> Abrir')?></li>
+                  <li><?php echo $this->tag->linkTo("grupo/desplegarGrupoConf/$grupo->Id_Grupo", '<i class="material-icons">build</i> Administrar')?></li>
+
+                </ul>
+             </li>
+           <?php } ?>
+         </ul>
+       </li>
+     <?php } else { ?>
+       <li align="center">Aquí se mostrarán tus grupos</li>
+     <?php } ?>
+     <li>
+       <div class="divider"></div>
+     </li>
+     <li><a class="subheader">Salir</a></li>
+     <li>
+       <?php
+        echo $this->tag->linkTo("grupo/logout", "<i class=\"material-icons\" style=\"color: #e53935\">clear</i>Cerrar Sesión");
+        ?>
+     </li>
+   </ul>
+   <a href="#" data-target="slide-out" class="sidenav-trigger"><i id="icon_menu" class="small material-icons grey-text text-darken-1">clear_all</i></a>
+
+ </div>
+
+ <div id="modal1" class="modal modal-fixed-footer">
+   <div class="row">
+     <div class="modal-content col s12 m6 ">
+       <h4 class="center espaciado_up_down_m">Crear nuevo grupo</h4>
+       <p class="center color_p espaciado_up_down_m">Hola <?php echo $this->session->get('user')['Nombre'] ?>, por favor completa los campos solicitados para crear un nuevo grupo</p>
+
+       <?= $this->tag->form(['name' => 'add_group', "grupo/crearGrupo"]); ?>
+       <div class="col s12 m4 espaciado_up_down_m center">
+         <i class="material-icons large" style="color: #7cb342">add</i>
+       </div>
+
+       <div class="col s12 m8">
+         <div class="col m12 s12">
+           <div class="input-field">
+             <?= $this->tag->textfield(['name_group', 'name' => 'name_group', 'class' => 'validate']); ?>
+             <label for="name_group">Nombre del grupo</label>
+           </div>
+         </div>
+
+         <div class="col s12 m12">
+
+           <div class="input-field">
+             <?= $this->tag->textfield(['clave_group', 'name' => 'clave_group', 'class' => 'validate']); ?>
+             <label for="clave_group">Clave del grupo</label>
+           </div>
+
+           <!--<div class="chips chips-placeholder chips-initial input-field" id="chipsArrayId">
+             <input class="chips-placeholder" onkeypress="return checar(event)">
+           </div>-->
+         </div>
+
+         <br>
+       </div>
+       <div class="class s12 m12 l12">
+         <p class="color_p center espaciado_up_down_m">Nota: El grupo solo contendrá a un integrante, el cual es usted, para que más personas puedan acceder al grupo,
+         comparta la clave con los usuarios que desee.</p>
+         <p class="color_p center">Ingresando en la seccion "Unirse" usted podrá acceder a nuevos grupos</p>
+       </div>
+       <span class="helper-text" id="span1" style="color:red;"></span>
+     </div>
+
+     <input type="hidden" id="arrayChipPostId" name="arrayChipPost" value="">
+     <div class="modal-footer">
+       <div class="center">
+         <button id="id_boton_chips" class="waves-effect waves-green btn-flat" type="submit" name="action" onclick="return validate('add_group',['name_group'], 'span1')">Crear</button>
+         <a href="#!" class="modal-close waves-effect waves-red btn-flat">Cancelar</a>
+       </div>
+
+     </div>
+     <?= $this->tag->endform(); ?>
+   </div>
+ </div>
+
+ <div id="modal2" class="modal modal-fixed-footer">
+   <div class="row">
+     <div class="modal-content col s12 m6">
+       <h4 class="center espaciado_up_down_m">Unirse al grupo</h4>
+       <p class="color_p center espaciado_up_down_m">Por favor completa los campos solicitados para unirte a algún grupo</p>
+       <div class="col s12 m12 l12 center"><i class="material-icons medium" style="color: #ffa726">device_hub</i></div>
+       <?= $this->tag->form(['name' => 'add_to_group', "grupo/unirseGrupo"]); ?>
+
+       <div class="col s12 m12 l12 center">
+         <div class="col offset-m3 m6 s12">
+              <select id="id_group" name="id_group" >
+                <option value="" disabled selected>Elije un grupo</option>
+                <option value="1">Grupo 1</option>
+                <option value="2">Grupo 2</option>
+                <option value="3">Grupo 3</option>
+              </select>
+              <label>Materialize Select</label>
+         </div>
+         <div class="col offset-m3 m6 s12">
+           <div class="input-field"><?= $this->tag->passwordfield(['cl_group', 'name' => 'cl_group', 'class' => 'validate']); ?>
+             <label for="cl_group">Clave del grupo</label>
+           </div>
+         </div>
+       </div>
+       <span class="helper-text" id="span2" style="color:red;"></span>
+     </div>
+
+     <div class="modal-footer">
+       <div class="center">
+         <button class="waves-effect waves-green btn-flat" type="submit" name="action" onclick="return validate('add_to_group',['id_group','cl_group'], 'span2')">Unirme</button>
+         <a href="#!" class="modal-close waves-effect waves-red btn-flat">Cancelar</a>
+       </div>
+
+     </div>
+     <?= $this->tag->endform(); ?>
+   </div>
+ </div>
+
+ <div id="modal3" class="modal modal-fixed-footer">
+   <div class="row">
+     <div class="modal-content col s12 m6">
+       <center>
+         <h4>Eliminar grupo</h4>
+         <p>
+           <FONT size="2">Introduce el id del grupo</FONT>
+         </p>
+       </center>
+
+
+       <?= $this->tag->form(
+          [
+            'name' => 'del_group',
+            'onsubmit' => 'return delete_group(this.name, ["dele_group"], "span3")',
+            'onkeypress' => "return checar(event)",
+            "grupo/eliminarGrupo"
+          ]
+        );
+        ?>
+
+       <div class="col s12 m4">
+         <center>
+           <br>
+           <br>
+           <br>
+           <i class="material-icons  large" style="color: #e65100">delete</i>
+         </center>
+       </div>
+
+       <div class="col s12 m8">
+         <br><br><br>
+         <div class="col offset-m2 m8 s12">
+           <div class="input-field">
+             <?= $this->tag->textfield(['dele_group', 'name' => 'dele_group', 'class' => 'validate']); ?>
+             <label for="dele_group">ID del grupo</label>
+           </div>
+         </div>
+         <br>
+       </div>
+       <center>
+         <span class="helper-text" id="span3" style="color:red;"></span>
+       </center>
+     </div>
+
+     <div class="modal-footer">
+       <center>
+         <button class="waves-effect waves-green btn-flat" type="submit" name="action">Eliminar</button>
+         <a href="#!" class="modal-close waves-effect waves-green btn-flat">Cancelar</a>
+       </center>
+     </div>
+     <?= $this->tag->endform(); ?>
+   </div>
+ </div>
+
+ <?php if (!isset($miembros)) { ?>
+   <div class="row" id="view_ini">
+     <div class="col s12 m12 l12 center">
+       <img id="img_ini" src="https://i.ibb.co/NVN2rSG/networking-1.png" width="256" height="256">
+       <h4 id="Title">Colaborative</h4>
+     </div>
+     <div class="col s12 m12 l12 center">
+       <h2>¡Bienvenido, <?php echo $this->session->get('user')['Nombre'] ?>!</h2>
+     </div>
+
+     <div class="col s12 m12 l12 center">
+       <div class="container">
+         <ol type="A">
+           <li type="disc" id="p_1">Colaborative es una aplicación que te permite estar conectado con personas como !tu!.</li>
+           <li type="disc" id="p_2">Utíliza Colaborative como más te guste</li>
+           <li type="disc" id="p_3"> Comparte archivos, artículos, fotos, proyectos.</li>
+           <li type="disc" id="p_4">Comienza eligiendo tu grupo de trabajo</li>
+         </ol>
+       </div>
+     </div>
+   </div>
+ <?php } else { ?>
+   <?php if (isset($infoGrupo)) { ?>
+     <div class="row view_group">
+       <div class="col s12 m12 l12 center">
+         <h5><?php echo $infoGrupo->Nombre_G; ?></h5>
+       </div>
+
+       <div class="col offset-l8 m12 s12 l4 center">
+         <ul>
+           <li id="p_5" class="tooltipped hand" data-position="bottom" data-tooltip="<?php echo "Id Grupo: " . $infoGrupo->Id_Grupo . "<br>" . "Clave: " . $infoGrupo->Clave_Grupo; ?> ">Informacion del grupo <i class="material-icons tiny">expand_more</i></li>
+         </ul>
+       </div>
+
+       <div class="col s12 m12 l12 center">
+         <p id="p_6">Integrantes: </p>
+         <?php
+              $avatar = array(
+                "https://i.ibb.co/3WxvDCf/boy.png", "https://i.ibb.co/PFthpPT/boy-1.png", "https://i.ibb.co/KjNNY64/girl.png", "https://i.ibb.co/tsytp0V/girl-1.png",
+                "https://i.ibb.co/p2G5vJ3/man.png", "https://i.ibb.co/T0hn4Qg/man-1.png", "https://i.ibb.co/5sJgMm3/man-2.png", "https://i.ibb.co/r4W8m4Y/man-3.png",
+                "https://i.ibb.co/YT0Y6Ws/man-4.png"
+              );
+              foreach ($miembros as $miembro) {
+                $get_position = random_int(0, 8);
+                ?>
+           <div class="chip" style="margin-top: 10px">
+             <img class="tooltipped hand" data-position="bottom" data-tooltip="<?php echo $miembro['Correo']; ?>" src='<?php echo $avatar[$get_position]; ?>' height="32" width="32">
+             <?php echo $miembro['Nombre']; ?>
+           </div>
+         <?php } ?>
+       </div>
+       <div id="Id_Caja_Grande" class="col s12 m12 offset-l2 l8 card">
+         <ul id="div_chat"></ul>
+       </div>
+       <div class="col s12 m12 offset-l2 l8" id="card_1">
+        <div class="row" id="Id_Mensaje_Field">
+           <div class="input-field col s11 m11 l11 center">
+             <?php echo $this->tag->textArea(['id_mensaje', 'name' => 'mensaje_name', 'required' => 'required','onkeypress'=> "return checarEnterMensaje(event)", 'class' => 'materialize-textarea']); ?>
+             <label for="id_mensaje">Escribe un mensaje</label>
+           </div>
+           <div class="col s1 m1 l1">
+              <div class="row">
+                  <button id="id_boton_mensaje" class="boton col s12 m12 l12 waves-effect  waves-light btn-small prefix" name="action">
+                  <i class="material-icons yellow-text text-lighten-5">send</i>
+                 </button>
+              </div>
+           </div>
+        </div>
+         <!--Adjuntar Foto-->
+
+         <div class="row" id="Id_Foto_Field" style="display: none;">
+          <form enctype="multipart/form-data" id="formuFotoAjax" method="post">
+           <div class="col s10 m10 l10">
+            <div class="file-field input-field">
+              <div class="btn blue">
+                <span>Seleccionar</span>
+                <input id="id_foto" type="file" name="Nombre_Img" value="fichero">
+              </div>
+              <div class="file-path-wrapper">
+                <input id="id_path_foto" class="file-path" placeholder="Selecciona una imagen" readonly="readonly" type="text">
+              </div>
+            </div>
+           </div>
+
+             <a href=# class="col s1 m1 l1" onClick="borrarFotoField()"><i class="tiny material-icons white red-text text-darken-1">cancel</i></a>
+
+             <div class="col s1 m1 l1">
+              <div class="row">
+                  <button id="id_boton_foto" type="submit" class="boton col s12 m12 l12 waves-effect  waves-light btn-small" name="action">
+                  <i class="material-icons yellow-text text-lighten-5">send</i>
+                 </button>
+              </div>
+           </div>
+           <div class="col s12 m12 l12 center" id="id_error_img"></div>
+           </form>
+         </div>
+
+         <!--Adjuntar Documento-->
+
+         <div class="row" id="Id_Doc_Field" style="display: none;">
+           <form enctype="multipart/form-data" id="formuDocAjax" method="post">
+           <div class="col s10 m10 l10">
+
+
+            <div class="file-field input-field">
+              <div class="btn green">
+                <span>Seleccionar</span>
+                <input id="id_doc" type="file" name="Nombre_File" value="fichero">
+              </div>
+              <div class="file-path-wrapper">
+                <input id="id_path_doc" class="file-path" placeholder="Selecciona un documento" readonly="readonly" type="text">
+              </div>
+            </div>
+           </div>
+
+             <a href=# class="col s1 m1 l1 white" style="border: 0px;" onclick="return borrarDocField()"><i class="tiny material-icons white red-text text-darken-1" style="">cancel</i></a>
+             <div class="col s1 m1 l1">
+              <div class="row">
+                  <button id="id_boton_doc" class="boton col s12 m12 l12 waves-effect  waves-light btn-small prefix" name="action">
+                  <i class="material-icons yellow-text text-lighten-5">send</i>
+                 </button>
+                 <!--a class="waves-effect waves-light btn-small prefix" id="boton"><i class="material-icons">send</i></a-->
+              </div>
+           </div>
+           <div class="col s10 m10 l10 center" id="id_error_doc">
+            <!--Aqui van los errores de los doc's-->
+           </div>
+           </form>
+         </div>
+       </div>
+     </div>
+   <?php } ?>
+<!-- Vista para administrar al grupo-->
+<hr>
+   <div class="row">
+     <h4 class="center espaciado_up_down"> Administracion de grupo (Vista del administrador del grupo)</h4>
+     <div class="col s12 m12 l12">
+       <?= $this->tag->form(['name' => 'conf_group', "grupo/Grupo_Conf", 'onsubmit'=>"return confirmacion()"]); ?>
+       <p class="center espaciado_up_down color_p">Hola <?php echo $this->session->get('user')['Nombre'] ?>, aquí podrás administrar todo lo relacionado a tu grupo</p>
+       <div class="row">
+         <div class="col s12 m12 l6 offset-l3 input-field">
+           <br>
+           <?= $this->tag->textfield(['name_group_conf', 'name' => 'name_group_conf', 'class' => 'validate', 'value' => $infoGrupo->Nombre_G]); ?>
+           <label for="name_group_conf">Nombre del grupo</label>
+           </div>
+            <div class="col s12 m12 l12 center espaciado_up_down">
+              <p class="color_p_ti">Integrantes: </p>
+              <?php
+                   foreach ($miembros as $miembro) {
+                     $get_position = random_int(0, 8);
+                     ?>
+                <div class="chip" style="margin-top: 10px">
+                  <img class="tooltipped hand" data-position="bottom" data-tooltip="<?php echo $miembro['Correo']; ?>" src='<?php echo $avatar[$get_position]; ?>' height="32" width="32">
+                  <?php echo $miembro['Nombre']; ?>
+                  <i class="close material-icons">close</i>
+                </div>
+              <?php } ?>
+            </div>
+
+            <div class="col s12 m12 l6 offset-l3 input-field center espaciado_up_down">
+              <br>
+              <?= $this->tag->textfield(['pass_group_conf', 'name' => 'pass_group_conf', 'class' => 'validate', 'value' => $infoGrupo->Clave_Grupo]); ?>
+              <label for="pass_group_conf">Clave del grupo</label>
+            </div>
+
+
+
+
+              <div class="col s12 m12 l12 center espaciado_up_down">
+                <button class="button_admin_save green lighten-1 white-text" type="submit" name="action" onclick="confirmacion()">Guardar</button>
+
+                <div class="col2 s1 m12 l12">
+                  <button class=" button_admin_elim red lighten-1 white-text" type="submit" name="action">Eliminar grupo</button>
+                </div>
+              </div>
+
+
+
+       </div>
+
+
+       <?= $this->tag->endform(); ?>
+
+
+     </div>
+
+   </div>
+<hr>
+<!--Vista del usuario del grupo-->
+  <div class="row">
+    <h4 class="center espaciado_up_down"> Administracion de grupo (Vista de integrate del grupo)</h4>
+    <div class="col s12 m12 l12">
+    <?= $this->tag->form(['name' => 'conf_group', "grupo/Grupo_Conf_User", 'onsubmit'=>"return confirmacion_user()"]); ?>
+    <p class="center espaciado_up_down color_p">Hola <?php echo $this->session->get('user')['Nombre'] ?>, como te habrás dado cuenta las funciones que tienes son limitadas, para más informacion comunicate con el administrador del grupo</p>
+    <div class="row">
+      <div class="col s12 m12 l6 offset-l3 center">
+        <br>
+        <p class="color_p_ti">Nombre del grupo</p>
+        <span class="span_info"><?php echo $infoGrupo->Nombre_G; ?></span>
+      </div>
+
+         <div class="col s12 m12 l12 center">
+           <p class="color_p_ti espaciado_up_down">Integrantes: </p>
+           <?php
+
+                foreach ($miembros as $miembro) {
+                  $get_position = random_int(0, 8);
+                  ?>
+             <div class="chip" style="margin-top: 10px">
+               <img class="tooltipped hand" data-position="bottom" data-tooltip="<?php echo $miembro['Correo']; ?>" src='<?php echo $avatar[$get_position]; ?>' height="32" width="32">
+               <?php echo $miembro['Nombre']; ?>
+             </div>
+           <?php } ?>
+         </div>
+
+         <div class="col s12 m12 l6 offset-l3 center">
+           <p class="color_p_ti center espaciado_up_down">Clave del grupo</p>
+           <span class="span_info"><?php echo $infoGrupo->Clave_Grupo; ?></span>
+         </div>
+
+
+
+         <div class="center">
+             <div class="col s12 m12 l12 espaciado_up_down center">
+               <button class=" button_admin_elim red lighten-1 white-text " type="submit" name="action">Salir del grupo</button>
+             </div>
+         </div>
+
+
+    </div>
+
+
+    <?= $this->tag->endform(); ?>
+
+
+  </div>
+</div>
+
+
+   <div class="fixed-action-btn">
+     <a class="btn-floating btn-large red">
+       <i class="large material-icons">add</i>
+     </a>
+     <ul>
+       <li>
+        <button class="btn-floating blue btn tooltipped" data-position="left" data-tooltip="Comparte una imagen" onclick="return adjuntarFileImg()">
+          <i class="material-icons">image</i>
+        </button>
+       </li>
+       <li>
+        <button class="btn-floating green btn tooltipped" data-position="left" data-tooltip="Comparte un documento" onclick="return adjuntarFileDoc()"><i class="material-icons">attach_file</i>
+        </button>
+       </li>
+     </ul>
+   </div>
+ <?php } ?>
+
+
+ <script type="text/javascript">
+   function adjuntarFileImg(){
+      document.getElementById('id_foto').click();
+      document.getElementById('id_path_foto').value = "";
+      document.getElementById('id_error_img').textContent = "";
+      document.getElementById('id_error_doc').textContent = "";
+      document.getElementById('Id_Foto_Field').style.display = 'block';;
+      document.getElementById('Id_Doc_Field').style.display = 'none';
+      document.getElementById('Id_Mensaje_Field').style.display = 'none';
+   }
+
+   function adjuntarFileDoc(){
+      document.getElementById('id_doc').click();
+      document.getElementById('id_path_doc').value = "";
+      document.getElementById('id_error_img').textContent = "";
+      document.getElementById('id_error_doc').textContent = "";
+      document.getElementById('Id_Doc_Field').style.display = 'block';
+      document.getElementById('Id_Foto_Field').style.display = 'none';
+      document.getElementById('Id_Mensaje_Field').style.display = 'none';
+   }
+
+   function borrarFotoField(){
+      document.getElementById('id_error_img').textContent = "";
+      document.getElementById('Id_Foto_Field').style.display = 'none';
+      document.getElementById('Id_Mensaje_Field').style.display = 'block';
+   }
+   function borrarDocField(){
+      document.getElementById('id_error_doc').textContent = "";
+      document.getElementById('Id_Doc_Field').style.display = 'none';
+      document.getElementById('Id_Mensaje_Field').style.display = 'block';
+   }
+ </script>
+ <script type="text/javascript">
+   M.AutoInit();
+   var first_elem = '<?php echo $this->session->get('user')['Matricula'] ?>';
+   document.addEventListener('DOMContentLoaded', function() {
+     var elems = document.querySelectorAll('.chips');
+     var instances = M.Chips.init(elems, {
+       placeholder: 'Matricula',
+       data: [{
+         tag: first_elem
+       }]
+     });
+   });
+ </script>
+ <script>
+   document.addEventListener('DOMContentLoaded', function() {
+     var elems = document.querySelectorAll('.fixed-action-btn');
+     var instances = M.FloatingActionButton.init(elems);
+   });
+ </script>
+ <script type="text/javascript">
+    var globalScrollTop = 0;
+
+    function ajaxFuncion(){
+
+          $.ajax({
+                url: "<?php echo $this->url->get('Grupo/cargarMensajes');?>",
+                type:'GET',
+                dataType: 'json',
+                data: {id_grupo: <?php echo ($this->session->has('Id_Grupo_Actual'))?$this->session->get('Id_Grupo_Actual'):0?>}
+
+            }).done(function (data) {
+
+                if (data!="Error") {
+                  var chat_Caja = document.getElementById("div_chat");
+                  chat_Caja.textContent = "";
+                  for (var i = 0; i < data.length; i++) {
+                    var newLi = document.createElement("li");
+                    var newDiv1 = document.createElement("div");
+                        newDiv1.className  = "row";
+                    var newDiv1_1 = document.createElement("div");
+                    var newDiv1_2 = document.createElement("div");
+                    var newDiv1_2_1 = document.createElement("div");
+                    var newDiv1_2_2 = document.createElement("div");
+                    var newDiv1_2_3 = document.createElement("div");
+
+                      var imgAux = document.createElement("img");
+                          imgAux.src = '<?php echo $avatar[random_int(0, 8)]; ?>';
+                          imgAux.height = '32';
+                          imgAux.width = '32';
+                          imgAux.alt = 'Contact Person';
+
+                    if (data[i].Matricula == <?php echo $this->session->get('user')['Matricula'];?>) {
+
+                        newDiv1_1.className  = "col s2 m2 l2";
+                        newDiv1_1.appendChild(imgAux);
+
+                        newDiv1_2.className  = 'col s10 m10 l10';
+                          newDiv1_2_1.className = "row right blue-grey-text text-lighten-2";
+                          newDiv1_2_1.textContent = "Yo";
+                          newDiv1_2_2.className = "row grey-text text-darken-2 div_back";
+                          newDiv1_2_2.style.marginBottom = "-10px";
+                          newDiv1_2_2.style.marginTop = "30px";
+
+
+                          switch(data[i].Tipo_M){
+                            case '0':
+                                newDiv1_2_2.textContent = data[i].Mensaje;
+                              break;
+                            case '1':
+                                var auxImgMessage = document.createElement('img');
+                                    auxImgMessage.src = data[i].Mensaje;
+                                    auxImgMessage.height = "200";
+                                    auxImgMessage.width = "200";
+                                newDiv1_2_2.appendChild(auxImgMessage);
+                              break;
+                            case '2':
+                                var aAux = document.createElement('a');
+                                    aAux.href = data[i].Mensaje;
+                                    aAux.target = "_blank";
+                                    aAux.textContent = data[i].Mensaje.replace(/((\/[_a-zA-Z0-9]+){0,}\/)([a-zA-Z0-9\s\.ñ\(\)]+)/, '$3');
+
+                                newDiv1_2_2.appendChild(aAux);
+                              break;
+
+                            default:
+                          }
+
+
+
+
+                        newDiv1_2_3.className = "row right blue-grey-text text-lighten-2";
+                        newDiv1_2_3.textContent = data[i].Hora;
+                        newDiv1_2.appendChild(newDiv1_2_1);
+                        newDiv1_2.appendChild(newDiv1_2_2);
+                        newDiv1_2.appendChild(newDiv1_2_3);
+                    }
+                    else{
+                        newDiv1_2.className  = "col s2 m2 l2";
+                        newDiv1_2.appendChild(imgAux);
+
+                        newDiv1_1.className  = 'col s8 m8 l8';
+                          newDiv1_2_1.className = "row blue-grey-text text-lighten-2";
+                          newDiv1_2_1.textContent = data[i].Nombre;
+                          newDiv1_2_2.className = "row grey-text text-darken-2 div_back";
+                          newDiv1_2_2.style.marginBottom = "-10px";
+                          newDiv1_2_2.style.marginTop = "-6px";
+
+
+                          switch(data[i].Tipo_M){
+                            case '0':
+                                newDiv1_2_2.textContent = data[i].Mensaje;
+                              break;
+                            case '1':
+                                var auxImgMessage = document.createElement('img');
+                                    auxImgMessage.src = data[i].Mensaje;
+                                    auxImgMessage.height = "200";
+                                    auxImgMessage.width = "200";
+                                newDiv1_2_2.appendChild(auxImgMessage);
+                              break;
+                            case '2':
+                                var aAux = document.createElement('a');
+                                    aAux.href = data[i].Mensaje;
+                                    aAux.target = "_blank";
+                                    aAux.textContent = data[i].Mensaje.replace(/((\/[_a-zA-Z0-9]+){0,}\/)([a-zA-Z0-9\s\.ñ\(\)]+)/, '$3');
+                                    newDiv1_2_2.appendChild(aAux);
+                              break;
+
+                            default:
+                          }
+
+
+
+
+
+                          newDiv1_2_3.className = "row right blue-grey-text text-lighten-2";
+                          newDiv1_2_3.textContent = data[i].Hora;
+                          newDiv1_1.appendChild(newDiv1_2_1);
+                          newDiv1_1.appendChild(newDiv1_2_2);
+                          newDiv1_1.appendChild(newDiv1_2_3);
+                    }
+
+
+                    newDiv1.appendChild(newDiv1_1);
+                    newDiv1.appendChild(newDiv1_2);
+
+
+                    if (typeof data[i].DiaNuevo != "undefined" && data[i].DiaNuevo != null) {
+                        var newDivDia = document.createElement("div");
+                            newDivDia.className = "row center";
+                        var spanDivDia = document.createElement("span");
+                            spanDivDia.className = "blue-grey-text text-lighten-1";
+                            spanDivDia.textContent = data[i].DiaNuevo;
+
+                        newDivDia.appendChild(spanDivDia);
+                        newLi.appendChild(newDivDia);
+                    }
+                    newLi.appendChild(newDiv1);
+
+                    chat_Caja.appendChild(newLi);
+                  }
+
+                    if (globalScrollTop != chat_Caja.scrollHeight) {
+                        document.getElementById('Id_Caja_Grande').scrollTop = chat_Caja.scrollHeight;
+                        globalScrollTop = chat_Caja.scrollHeight;
+                    }
+
+                }
+                else{
+                  
+                }
+        });
+
+    }
+
+
+    setInterval(function(){ajaxFuncion(globalScrollTop);}, 2000);
+
+
+
+  </script>
+
+  <script type="text/javascript">
+    $(document).ready(function(){
+            $("#id_boton_mensaje").click(function(){
+              var textMessage = document.getElementById('id_mensaje').value;
+                 $.ajax({
+                    url: "<?php echo $this->url->get('Grupo/enviarMenAjax');?>",
+                    type:'GET',
+                    dataType: 'json',
+                    data: {mensaje_name: textMessage}
+                }).done(function (data) {
+                  document.getElementById('id_mensaje').value = "";
+                    if(data == "Error"){
+
+                    }
+                  });
+            });
+
+
+
+            $("#formuFotoAjax").on("submit", function(e){
+                e.preventDefault();
+                var formData = new FormData(document.getElementById("formuFotoAjax"));
+
+                $.ajax({
+                    url: "<?php echo $this->url->get('Grupo/enviarImgAjax');?>",
+                    type: "post",
+                    dataType: "json",
+                    data: formData,
+                    cache: false,
+                    contentType: false,
+                    processData: false
+                }).done(function(data){
+                        if (!Array.isArray(data)) {
+                            if (data.startsWith('Error')) {
+                              alert(data);
+                            }
+                            else{
+                              document.getElementById('id_path_foto').value = "";
+                              document.getElementById('id_error_img').textContent = "";
+                            }
+                        }
+
+                        else{
+                          var divErrorImg = document.getElementById('id_error_img');
+                              divErrorImg.textContent = "";
+                          for (var i = 0; i < data.length; i++) {
+                              var auxSpan = document.createElement('span');
+                                  auxSpan.style.color = 'red';
+                                  auxSpan.textContent = data[i];
+                              divErrorImg.appendChild(auxSpan);
+                          }
+                        }
+                    });
+            });
+
+
+            $("#formuDocAjax").on("submit", function(e){
+                e.preventDefault();
+                var formData = new FormData(document.getElementById("formuDocAjax"));
+
+                $.ajax({
+                    url: "<?php echo $this->url->get('Grupo/enviarDocAjax');?>",
+                    type: "post",
+                    dataType: "json",
+                    data: formData,
+                    cache: false,
+                    contentType: false,
+                    processData: false
+                }).done(function(data){
+                        if (!Array.isArray(data)) {
+                            if (data.startsWith('Error')) {
+                              alert(data);
+                            }
+                            else{
+                              document.getElementById('id_path_doc').value = "";
+                              document.getElementById('id_error_doc').textContent = "";
+                            }
+                        }
+
+                        else{
+                          var divErrorDoc = document.getElementById('id_error_doc');
+                              divErrorDoc.textContent = "";
+                          for (var i = 0; i < data.length; i++) {
+                              var auxSpan = document.createElement('span');
+                                  auxSpan.style.color = 'red';
+                                  auxSpan.textContent = data[i];
+                              divErrorDoc.appendChild(auxSpan);
+                          }
+                        }
+                    });
+            });
+
+
+
+
+    });
+  </script>
+
+  <script type="text/javascript">
+    function checarEnterMensaje(evt) {
+      if (evt.keyCode == 13 && !evt.shiftKey) {
+            var textMessage = document.getElementById('id_mensaje').value;
+             $.ajax({
+                url: "<?php echo $this->url->get('Grupo/enviarMenAjax');?>",
+                type:'GET',
+                dataType: 'json',
+                data: {mensaje_name: textMessage}
+            }).done(function (data) {
+              document.getElementById('id_mensaje').value = "";
+                if(data == "Error"){
+
+                }
+              });
+      }
+
+      tecla_final = String.fromCharCode(evt.keyCode);
+      return tecla_final;
+  }
+
+  </script>
+  <script type="text/javascript">
+    var body = document.querySelector('body');
+
+    body.onLoad=ajaxFuncion();
+  </script>
+ <script>
+   $('#id_boton_chips').click(function() {
+     document.getElementById("arrayChipPostId").value = JSON.stringify(M.Chips.getInstance($('.chips')).chipsData);
+     //alert(JSON.stringify(M.Chips.getInstance($('.chips')).chipsData[0]));
+   });
+ </script>
+ <script>
+   function setFocus() {
+     document.getElementById('w-input-text').focus();
+   }
+ </script>
