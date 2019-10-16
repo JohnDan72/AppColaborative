@@ -82,6 +82,7 @@ class SessionController extends ControllerBase
     {
         $this->session->remove('user');
         $this->session->remove('Id_Grupo_Actual');
+        $this->session->remove('Tipo_Despli');
         //$this->flash->success('Goodbye!');
 
         return $this->dispatcher->forward(

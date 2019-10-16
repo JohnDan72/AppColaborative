@@ -34,12 +34,12 @@
              <li>
                <div class="row">
                  <div class="col s11 m11 l11">
-                   <?php echo $this->tag->linkTo("grupo/desplegarGrupo/$grupo->Id_Grupo","$grupo->Nombre_G")?>
+                   <?php echo $grupo->Nombre_G;?>
                  </div>
                </div>
                <ul class='submenu'>
-                  <li><?php echo $this->tag->linkTo("grupo/desplegarGrupo/$grupo->Id_Grupo", '<i class="material-icons">donut_large</i> Abrir')?></li>
-                  <li><?php echo $this->tag->linkTo("grupo/desplegarGrupoConf/$grupo->Id_Grupo", '<i class="material-icons">build</i> Administrar')?></li>
+                  <li><?php echo $this->tag->linkTo("grupo/desplegarGrupo/?id_grupo=$grupo->Id_Grupo &tipo=1", '<i class="material-icons">donut_large</i> Abrir')?></li>
+                  <li><?php echo $this->tag->linkTo("grupo/desplegarGrupo/?id_grupo=$grupo->Id_Grupo &tipo=2", '<i class="material-icons">build</i> Administrar')?></li>
 
                 </ul>
              </li>
@@ -208,263 +208,308 @@
      <?= $this->tag->endform(); ?>
    </div>
  </div>
-
- <?php if (!isset($miembros)) { ?>
-   <div class="row" id="view_ini">
-     <div class="col s12 m12 l12 center">
-       <img id="img_ini" src="https://i.ibb.co/NVN2rSG/networking-1.png" width="256" height="256">
-       <h4 id="Title">Colaborative</h4>
-     </div>
-     <div class="col s12 m12 l12 center">
-       <h2>¡Bienvenido, <?php echo $this->session->get('user')['Nombre'] ?>!</h2>
-     </div>
-
-     <div class="col s12 m12 l12 center">
-       <div class="container">
-         <ol type="A">
-           <li type="disc" id="p_1">Colaborative es una aplicación que te permite estar conectado con personas como !tu!.</li>
-           <li type="disc" id="p_2">Utíliza Colaborative como más te guste</li>
-           <li type="disc" id="p_3"> Comparte archivos, artículos, fotos, proyectos.</li>
-           <li type="disc" id="p_4">Comienza eligiendo tu grupo de trabajo</li>
-         </ol>
-       </div>
-     </div>
-   </div>
- <?php } else { ?>
-   <?php if (isset($infoGrupo)) { ?>
-     <div class="row view_group">
-       <div class="col s12 m12 l12 center">
-         <h5><?php echo $infoGrupo->Nombre_G; ?></h5>
-       </div>
-
-       <div class="col offset-l8 m12 s12 l4 center">
-         <ul>
-           <li id="p_5" class="tooltipped hand" data-position="bottom" data-tooltip="<?php echo "Id Grupo: " . $infoGrupo->Id_Grupo . "<br>" . "Clave: " . $infoGrupo->Clave_Grupo; ?> ">Informacion del grupo <i class="material-icons tiny">expand_more</i></li>
-         </ul>
-       </div>
-
-       <div class="col s12 m12 l12 center">
-         <p id="p_6">Integrantes: </p>
-         <?php
-              $avatar = array(
-                "https://i.ibb.co/3WxvDCf/boy.png", "https://i.ibb.co/PFthpPT/boy-1.png", "https://i.ibb.co/KjNNY64/girl.png", "https://i.ibb.co/tsytp0V/girl-1.png",
-                "https://i.ibb.co/p2G5vJ3/man.png", "https://i.ibb.co/T0hn4Qg/man-1.png", "https://i.ibb.co/5sJgMm3/man-2.png", "https://i.ibb.co/r4W8m4Y/man-3.png",
-                "https://i.ibb.co/YT0Y6Ws/man-4.png"
-              );
-              foreach ($miembros as $miembro) {
-                $get_position = random_int(0, 8);
-                ?>
-           <div class="chip" style="margin-top: 10px">
-             <img class="tooltipped hand" data-position="bottom" data-tooltip="<?php echo $miembro['Correo']; ?>" src='<?php echo $avatar[$get_position]; ?>' height="32" width="32">
-             <?php echo $miembro['Nombre']; ?>
-           </div>
-         <?php } ?>
-       </div>
-       <div id="Id_Caja_Grande" class="col s12 m12 offset-l2 l8 card">
-         <ul id="div_chat"></ul>
-       </div>
-       <div class="col s12 m12 offset-l2 l8" id="card_1">
-        <div class="row" id="Id_Mensaje_Field">
-           <div class="input-field col s11 m11 l11 center">
-             <?php echo $this->tag->textArea(['id_mensaje', 'name' => 'mensaje_name', 'required' => 'required','onkeypress'=> "return checarEnterMensaje(event)", 'class' => 'materialize-textarea']); ?>
-             <label for="id_mensaje">Escribe un mensaje</label>
-           </div>
-           <div class="col s1 m1 l1">
-              <div class="row">
-                  <button id="id_boton_mensaje" class="boton col s12 m12 l12 waves-effect  waves-light btn-small prefix" name="action">
-                  <i class="material-icons yellow-text text-lighten-5">send</i>
-                 </button>
-              </div>
-           </div>
-        </div>
-         <!--Adjuntar Foto-->
-
-         <div class="row" id="Id_Foto_Field" style="display: none;">
-          <form enctype="multipart/form-data" id="formuFotoAjax" method="post">
-           <div class="col s10 m10 l10">
-            <div class="file-field input-field">
-              <div class="btn blue">
-                <span>Seleccionar</span>
-                <input id="id_foto" type="file" name="Nombre_Img" value="fichero">
-              </div>
-              <div class="file-path-wrapper">
-                <input id="id_path_foto" class="file-path" placeholder="Selecciona una imagen" readonly="readonly" type="text">
-              </div>
-            </div>
-           </div>
-
-             <a href=# class="col s1 m1 l1" onClick="borrarFotoField()"><i class="tiny material-icons white red-text text-darken-1">cancel</i></a>
-
-             <div class="col s1 m1 l1">
-              <div class="row">
-                  <button id="id_boton_foto" type="submit" class="boton col s12 m12 l12 waves-effect  waves-light btn-small" name="action">
-                  <i class="material-icons yellow-text text-lighten-5">send</i>
-                 </button>
-              </div>
-           </div>
-           <div class="col s12 m12 l12 center" id="id_error_img"></div>
-           </form>
+  <?php 
+    if(!$this->session->has('Tipo_Despli')){
+  ?>
+        <div class="row" id="view_ini">
+         <div class="col s12 m12 l12 center">
+           <img id="img_ini" src="https://i.ibb.co/NVN2rSG/networking-1.png" width="256" height="256">
+           <h4 id="Title">Colaborative</h4>
          </div>
-
-         <!--Adjuntar Documento-->
-
-         <div class="row" id="Id_Doc_Field" style="display: none;">
-           <form enctype="multipart/form-data" id="formuDocAjax" method="post">
-           <div class="col s10 m10 l10">
-
-
-            <div class="file-field input-field">
-              <div class="btn green">
-                <span>Seleccionar</span>
-                <input id="id_doc" type="file" name="Nombre_File" value="fichero">
-              </div>
-              <div class="file-path-wrapper">
-                <input id="id_path_doc" class="file-path" placeholder="Selecciona un documento" readonly="readonly" type="text">
-              </div>
-            </div>
-           </div>
-
-             <a href=# class="col s1 m1 l1 white" style="border: 0px;" onclick="return borrarDocField()"><i class="tiny material-icons white red-text text-darken-1" style="">cancel</i></a>
-             <div class="col s1 m1 l1">
-              <div class="row">
-                  <button id="id_boton_doc" class="boton col s12 m12 l12 waves-effect  waves-light btn-small prefix" name="action">
-                  <i class="material-icons yellow-text text-lighten-5">send</i>
-                 </button>
-                 <!--a class="waves-effect waves-light btn-small prefix" id="boton"><i class="material-icons">send</i></a-->
-              </div>
-           </div>
-           <div class="col s10 m10 l10 center" id="id_error_doc">
-            <!--Aqui van los errores de los doc's-->
-           </div>
-           </form>
+         <div class="col s12 m12 l12 center">
+           <h2>¡Bienvenido, <?php echo $this->session->get('user')['Nombre'] ?>!</h2>
          </div>
-       </div>
-     </div>
-   <?php } ?>
-<!-- Vista para administrar al grupo-->
-<hr>
-   <div class="row">
-     <h4 class="center espaciado_up_down"> Administracion de grupo (Vista del administrador del grupo)</h4>
-     <div class="col s12 m12 l12">
-       <?= $this->tag->form(['name' => 'conf_group', "grupo/Grupo_Conf", 'onsubmit'=>"return confirmacion()"]); ?>
-       <p class="center espaciado_up_down color_p">Hola <?php echo $this->session->get('user')['Nombre'] ?>, aquí podrás administrar todo lo relacionado a tu grupo</p>
-       <div class="row">
-         <div class="col s12 m12 l6 offset-l3 input-field">
-           <br>
-           <?= $this->tag->textfield(['name_group_conf', 'name' => 'name_group_conf', 'class' => 'validate', 'value' => $infoGrupo->Nombre_G]); ?>
-           <label for="name_group_conf">Nombre del grupo</label>
-           </div>
-            <div class="col s12 m12 l12 center espaciado_up_down">
-              <p class="color_p_ti">Integrantes: </p>
-              <?php
-                   foreach ($miembros as $miembro) {
-                     $get_position = random_int(0, 8);
-                     ?>
-                <div class="chip" style="margin-top: 10px">
-                  <img class="tooltipped hand" data-position="bottom" data-tooltip="<?php echo $miembro['Correo']; ?>" src='<?php echo $avatar[$get_position]; ?>' height="32" width="32">
-                  <?php echo $miembro['Nombre']; ?>
-                  <i class="close material-icons">close</i>
-                </div>
-              <?php } ?>
-            </div>
-
-            <div class="col s12 m12 l6 offset-l3 input-field center espaciado_up_down">
-              <br>
-              <?= $this->tag->textfield(['pass_group_conf', 'name' => 'pass_group_conf', 'class' => 'validate', 'value' => $infoGrupo->Clave_Grupo]); ?>
-              <label for="pass_group_conf">Clave del grupo</label>
-            </div>
-
-
-
-
-              <div class="col s12 m12 l12 center espaciado_up_down">
-                <button class="button_admin_save green lighten-1 white-text" type="submit" name="action" onclick="confirmacion()">Guardar</button>
-
-                <div class="col2 s1 m12 l12">
-                  <button class=" button_admin_elim red lighten-1 white-text" type="submit" name="action">Eliminar grupo</button>
-                </div>
-              </div>
-
-
-
-       </div>
-
-
-       <?= $this->tag->endform(); ?>
-
-
-     </div>
-
-   </div>
-<hr>
-<!--Vista del usuario del grupo-->
-  <div class="row">
-    <h4 class="center espaciado_up_down"> Administracion de grupo (Vista de integrate del grupo)</h4>
-    <div class="col s12 m12 l12">
-    <?= $this->tag->form(['name' => 'conf_group', "grupo/Grupo_Conf_User", 'onsubmit'=>"return confirmacion_user()"]); ?>
-    <p class="center espaciado_up_down color_p">Hola <?php echo $this->session->get('user')['Nombre'] ?>, como te habrás dado cuenta las funciones que tienes son limitadas, para más informacion comunicate con el administrador del grupo</p>
-    <div class="row">
-      <div class="col s12 m12 l6 offset-l3 center">
-        <br>
-        <p class="color_p_ti">Nombre del grupo</p>
-        <span class="span_info"><?php echo $infoGrupo->Nombre_G; ?></span>
-      </div>
 
          <div class="col s12 m12 l12 center">
-           <p class="color_p_ti espaciado_up_down">Integrantes: </p>
-           <?php
+           <div class="container">
+             <ol type="A">
+               <li type="disc" id="p_1">Colaborative es una aplicación que te permite estar conectado con personas como !tu!.</li>
+               <li type="disc" id="p_2">Utíliza Colaborative como más te guste</li>
+               <li type="disc" id="p_3"> Comparte archivos, artículos, fotos, proyectos.</li>
+               <li type="disc" id="p_4">Comienza eligiendo tu grupo de trabajo</li>
+             </ol>
+           </div>
+         </div>
+       </div>
+  <?php
+    } 
+    else{
 
-                foreach ($miembros as $miembro) {
-                  $get_position = random_int(0, 8);
-                  ?>
-             <div class="chip" style="margin-top: 10px">
-               <img class="tooltipped hand" data-position="bottom" data-tooltip="<?php echo $miembro['Correo']; ?>" src='<?php echo $avatar[$get_position]; ?>' height="32" width="32">
-               <?php echo $miembro['Nombre']; ?>
+      if (isset($infoGrupo)) {
+        //Se crea un arreglo de avatares para imágenes random en users
+        $avatar = array(
+                    "https://i.ibb.co/3WxvDCf/boy.png", "https://i.ibb.co/PFthpPT/boy-1.png", "https://i.ibb.co/KjNNY64/girl.png", "https://i.ibb.co/tsytp0V/girl-1.png",
+                    "https://i.ibb.co/p2G5vJ3/man.png", "https://i.ibb.co/T0hn4Qg/man-1.png", "https://i.ibb.co/5sJgMm3/man-2.png", "https://i.ibb.co/r4W8m4Y/man-3.png",
+                    "https://i.ibb.co/YT0Y6Ws/man-4.png"
+                  );
+        switch ($this->session->get('Tipo_Despli')) {
+          case '1': //se despliega Abrir grupo (Con chats)
+            ?>
+                <div class="row view_group">
+                   <div class="col s12 m12 l12 center">
+                     <h5><?php echo $infoGrupo->Nombre_G; ?></h5>
+                   </div>
+
+                   <div class="col offset-l8 m12 s12 l4 center">
+                     <ul>
+                       <li id="p_5" class="tooltipped hand" data-position="bottom" data-tooltip="<?php echo "Id Grupo: " . $infoGrupo->Id_Grupo . "<br>" . "Clave: " . $infoGrupo->Clave_Grupo; ?> ">Informacion del grupo <i class="material-icons tiny">expand_more</i></li>
+                     </ul>
+                   </div>
+
+                   <div class="col s12 m12 l12 center">
+                     <p id="p_6">Integrantes: </p>
+                     <?php
+                          foreach ($miembros as $miembro) {
+                            $get_position = random_int(0, 8);
+                            ?>
+                       <div class="chip" style="margin-top: 10px">
+                         <img class="tooltipped hand" data-position="bottom" data-tooltip="<?php echo $miembro['Correo']; ?>" src='<?php echo $avatar[$get_position]; ?>' height="32" width="32">
+                         <?php echo $miembro['Nombre']; ?>
+                       </div>
+                     <?php } ?>
+                   </div>
+                   <div id="Id_Caja_Grande" class="col s12 m12 offset-l2 l8 card">
+                     <ul id="div_chat">
+                       <!--Aqui van los mensajes del Chat-->
+                     </ul>
+                   </div>
+                   <div class="col s12 m12 offset-l2 l8" id="card_1">
+                    <div class="row" id="Id_Mensaje_Field">
+                       <div class="input-field col s11 m11 l11 center">
+                         <?php echo $this->tag->textArea(['id_mensaje', 'name' => 'mensaje_name', 'required' => 'required','onkeypress'=> "return checarEnterMensaje(event)", 'class' => 'materialize-textarea']); ?>
+                         <label for="id_mensaje">Escribe un mensaje</label>
+                       </div>
+                       <div class="col s1 m1 l1">
+                          <div class="row">
+                              <button id="id_boton_mensaje" class="boton col s12 m12 l12 waves-effect  waves-light btn-small prefix" name="action">
+                              <i class="material-icons yellow-text text-lighten-5">send</i>
+                             </button>
+                          </div>
+                       </div>
+                    </div>
+                     <!--Adjuntar Foto-->
+
+                     <div class="row" id="Id_Foto_Field" style="display: none;">
+                      <form enctype="multipart/form-data" id="formuFotoAjax" method="post">
+                       <div class="col s10 m10 l10">
+                        <div class="file-field input-field">
+                          <div class="btn blue">
+                            <span>Seleccionar</span>
+                            <input id="id_foto" type="file" name="Nombre_Img" value="fichero">
+                          </div>
+                          <div class="file-path-wrapper">
+                            <input id="id_path_foto" class="file-path" placeholder="Selecciona una imagen" readonly="readonly" type="text">
+                          </div>
+                        </div>
+                       </div>
+
+                         <a href=# class="col s1 m1 l1" onClick="borrarFotoField()"><i class="tiny material-icons white red-text text-darken-1">cancel</i></a>
+
+                         <div class="col s1 m1 l1">
+                          <div class="row">
+                              <button id="id_boton_foto" type="submit" class="boton col s12 m12 l12 waves-effect  waves-light btn-small" name="action">
+                              <i class="material-icons yellow-text text-lighten-5">send</i>
+                             </button>
+                          </div>
+                       </div>
+                       <div class="col s12 m12 l12 center" id="id_error_img">
+                         <!--Aqui van los errores de las img's-->
+                       </div>
+                       </form>
+                     </div>
+
+                     <!--Adjuntar Documento-->
+
+                     <div class="row" id="Id_Doc_Field" style="display: none;">
+                       <form enctype="multipart/form-data" id="formuDocAjax" method="post">
+                       <div class="col s10 m10 l10">
+
+
+                        <div class="file-field input-field">
+                          <div class="btn green">
+                            <span>Seleccionar</span>
+                            <input id="id_doc" type="file" name="Nombre_File" value="fichero">
+                          </div>
+                          <div class="file-path-wrapper">
+                            <input id="id_path_doc" class="file-path" placeholder="Selecciona un documento" readonly="readonly" type="text">
+                          </div>
+                        </div>
+                       </div>
+
+                         <a href=# class="col s1 m1 l1 white" style="border: 0px;" onclick="return borrarDocField()"><i class="tiny material-icons white red-text text-darken-1" style="">cancel</i></a>
+                         <div class="col s1 m1 l1">
+                          <div class="row">
+                              <button id="id_boton_doc" class="boton col s12 m12 l12 waves-effect  waves-light btn-small prefix" name="action">
+                              <i class="material-icons yellow-text text-lighten-5">send</i>
+                             </button>
+                             <!--a class="waves-effect waves-light btn-small prefix" id="boton"><i class="material-icons">send</i></a-->
+                          </div>
+                       </div>
+                       <div class="col s10 m10 l10 center" id="id_error_doc">
+                        <!--Aqui van los errores de los doc's-->
+                       </div>
+                       </form>
+                     </div>
+                   </div>
+                </div>
+
+                <div class="fixed-action-btn">
+                   <a class="btn-floating btn-large red">
+                     <i class="large material-icons">add</i>
+                   </a>
+                   <ul>
+                     <li>
+                      <button class="btn-floating blue btn tooltipped" data-position="left" data-tooltip="Comparte una imagen" onclick="return adjuntarFileImg()">
+                        <i class="material-icons">image</i>
+                      </button>
+                     </li>
+                     <li>
+                      <button class="btn-floating green btn tooltipped" data-position="left" data-tooltip="Comparte un documento" onclick="return adjuntarFileDoc()"><i class="material-icons">attach_file</i>
+                      </button>
+                     </li>
+                   </ul>
+                </div>
+            <?php
+            break;
+          
+          case '2': //se despliega Administración de grupo
+            ?>
+                <!-- Vista para administrador de grupo (Líder)-->
+                <!--hr-->
+                   <div class="row">
+                     <h4 class="center espaciado_up_down"> Administracion grupo: <?php echo $infoGrupo->Nombre_G;?> (Líder)</h4>
+                     <div class="col s12 m12 l12">
+                       <?= $this->tag->form(['name' => 'conf_group', "grupo/Grupo_Conf", 'onsubmit'=>"return confirmacion()"]); ?>
+                       <p class="center espaciado_up_down color_p">Hola <?php echo $this->session->get('user')['Nombre'] ?>, aquí podrás administrar todo lo relacionado a tu grupo</p>
+                       <div class="row">
+                         <div class="col s12 m12 l6 offset-l3 input-field">
+                           <br>
+                           <?= $this->tag->textfield(['name_group_conf', 'name' => 'name_group_conf', 'class' => 'validate', 'value' => $infoGrupo->Nombre_G]); ?>
+                           <label for="name_group_conf">Nombre del grupo</label>
+                           </div>
+                            <div class="col s12 m12 l12 center espaciado_up_down">
+                              <p class="color_p_ti">Integrantes: </p>
+                              <?php
+                                   foreach ($miembros as $miembro) {
+                                     $get_position = random_int(0, 8);
+                                     ?>
+                                <div class="chip" style="margin-top: 10px">
+                                  <img class="tooltipped hand" data-position="bottom" data-tooltip="<?php echo $miembro['Correo']; ?>" src='<?php echo $avatar[$get_position]; ?>' height="32" width="32">
+                                  <?php echo $miembro['Nombre']; ?>
+                                  <i class="close material-icons">close</i>
+                                </div>
+                              <?php } ?>
+                            </div>
+
+                            <div class="col s12 m12 l6 offset-l3 input-field center espaciado_up_down">
+                              <br>
+                              <?= $this->tag->textfield(['pass_group_conf', 'name' => 'pass_group_conf', 'class' => 'validate', 'value' => $infoGrupo->Clave_Grupo]); ?>
+                              <label for="pass_group_conf">Clave del grupo</label>
+                            </div>
+
+
+
+
+                              <div class="col s12 m12 l12 center espaciado_up_down">
+                                <button class="button_admin_save green lighten-1 white-text" type="submit" name="action" onclick="confirmacion()">Guardar</button>
+                                <?= $this->tag->endform(); ?>
+
+                                <?= $this->tag->form(['name' => 'delete_group', "grupo/eliminarGrupo", 'onsubmit'=>"return confirmacion()"]); ?>
+                                <div class="col2 s1 m12 l12">
+                                  <button class=" button_admin_elim red lighten-1 white-text" type="submit" name="action">Eliminar grupo</button>
+                                </div>
+                                <?= $this->tag->endform(); ?>
+                              </div>
+                       </div>
+
+                     </div>
+                   </div>
+                <!--hr-->
+            <?php
+            break;
+          case '3':
+            ?>
+                <!--Vista del usuario del grupo-->
+                  <div class="row">
+                    <h4 class="center espaciado_up_down"> Administracion grupo: <?php echo $infoGrupo->Nombre_G;?> (Integrante)</h4>
+                    <div class="col s12 m12 l12">
+                    <?= $this->tag->form(['name' => 'conf_group', "grupo/dejarGrupoIntegrante", 'onsubmit'=>"return confirmacion_user()"]); ?>
+                    <p class="center espaciado_up_down color_p">Hola <?php echo $this->session->get('user')['Nombre'] ?>, como te habrás dado cuenta las funciones que tienes son limitadas, para más informacion comunicate con el administrador del grupo</p>
+                    <div class="row">
+                      <div class="col s12 m12 l6 offset-l3 center">
+                        <br>
+                        <p class="color_p_ti">Nombre del grupo</p>
+                        <span class="span_info"><?php echo $infoGrupo->Nombre_G; ?></span>
+                      </div>
+
+                         <div class="col s12 m12 l12 center">
+                           <p class="color_p_ti espaciado_up_down">Integrantes: </p>
+                           <?php
+
+                                foreach ($miembros as $miembro) {
+                                  $get_position = random_int(0, 8);
+                                  ?>
+                             <div class="chip" style="margin-top: 10px">
+                               <img class="tooltipped hand" data-position="bottom" data-tooltip="<?php echo $miembro['Correo']; ?>" src='<?php echo $avatar[$get_position]; ?>' height="32" width="32">
+                               <?php echo $miembro['Nombre']; ?>
+                             </div>
+                           <?php } ?>
+                         </div>
+
+                         <div class="col s12 m12 l6 offset-l3 center">
+                           <p class="color_p_ti center espaciado_up_down">Clave del grupo</p>
+                           <span class="span_info"><?php echo $infoGrupo->Clave_Grupo; ?></span>
+                         </div>
+
+
+
+                         <div class="center">
+                             <div class="col s12 m12 l12 espaciado_up_down center">
+                               <button class=" button_admin_elim red lighten-1 white-text " type="submit" name="action">Salir del grupo</button>
+                             </div>
+                         </div>
+
+
+                    </div>
+
+                    <?= $this->tag->endform(); ?>
+                    </div>
+                  </div>
+            <?php
+            break;
+          default:
+            echo "El tipo no tiene valor válido, Error";
+            break;
+        }
+      }
+
+      else{
+        ?>
+          <div class="row" id="view_ini">
+           <div class="col s12 m12 l12 center">
+             <img id="img_ini" src="https://i.ibb.co/NVN2rSG/networking-1.png" width="256" height="256">
+             <h4 id="Title">Colaborative</h4>
+           </div>
+           <div class="col s12 m12 l12 center">
+             <h2>¡Bienvenido, <?php echo $this->session->get('user')['Nombre'] ?>!</h2>
+           </div>
+
+           <div class="col s12 m12 l12 center">
+             <div class="container">
+               <ol type="A">
+                 <li type="disc" id="p_1">Colaborative es una aplicación que te permite estar conectado con personas como !tu!.</li>
+                 <li type="disc" id="p_2">Utíliza Colaborative como más te guste</li>
+                 <li type="disc" id="p_3"> Comparte archivos, artículos, fotos, proyectos.</li>
+                 <li type="disc" id="p_4">Comienza eligiendo tu grupo de trabajo</li>
+               </ol>
              </div>
-           <?php } ?>
-         </div>
+           </div>
+          </div>
 
-         <div class="col s12 m12 l6 offset-l3 center">
-           <p class="color_p_ti center espaciado_up_down">Clave del grupo</p>
-           <span class="span_info"><?php echo $infoGrupo->Clave_Grupo; ?></span>
-         </div>
-
-
-
-         <div class="center">
-             <div class="col s12 m12 l12 espaciado_up_down center">
-               <button class=" button_admin_elim red lighten-1 white-text " type="submit" name="action">Salir del grupo</button>
-             </div>
-         </div>
-
-
-    </div>
-
-
-    <?= $this->tag->endform(); ?>
-
-
-  </div>
-</div>
-
-
-   <div class="fixed-action-btn">
-     <a class="btn-floating btn-large red">
-       <i class="large material-icons">add</i>
-     </a>
-     <ul>
-       <li>
-        <button class="btn-floating blue btn tooltipped" data-position="left" data-tooltip="Comparte una imagen" onclick="return adjuntarFileImg()">
-          <i class="material-icons">image</i>
-        </button>
-       </li>
-       <li>
-        <button class="btn-floating green btn tooltipped" data-position="left" data-tooltip="Comparte un documento" onclick="return adjuntarFileDoc()"><i class="material-icons">attach_file</i>
-        </button>
-       </li>
-     </ul>
-   </div>
- <?php } ?>
+        <?php
+      }     
+    }
+  ?>
 
 
  <script type="text/javascript">
@@ -531,7 +576,7 @@
 
             }).done(function (data) {
 
-                if (data!="Error") {
+                if (!((typeof data) == "string")) {
                   var chat_Caja = document.getElementById("div_chat");
                   chat_Caja.textContent = "";
                   for (var i = 0; i < data.length; i++) {
@@ -664,7 +709,6 @@
                         document.getElementById('Id_Caja_Grande').scrollTop = chat_Caja.scrollHeight;
                         globalScrollTop = chat_Caja.scrollHeight;
                     }
-
                 }
                 else{
                   
@@ -675,8 +719,6 @@
 
 
     setInterval(function(){ajaxFuncion(globalScrollTop);}, 2000);
-
-
 
   </script>
 
@@ -771,9 +813,6 @@
                         }
                     });
             });
-
-
-
 
     });
   </script>

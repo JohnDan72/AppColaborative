@@ -39,9 +39,10 @@ class GrupoController extends ControllerBase
         $this->view->grupos = $grupo->getGruposOf($this->session->get('user')['Matricula']);
 
         //registro del grupo actualmente elegido desde el panel de control.
-        if ((isset($this->Grupo_Act['id_actual']))&&($this->Grupo_Act['id_actual']> 0)) {
+        if ((isset($this->Grupo_Act['id_actual']))&&($this->Grupo_Act['id_actual']> 0) && (isset($this->Tipo_Despli)) &&($this->Tipo_Despli > 0) ) {
+
+            $this->session->set('Tipo_Despli',$this->Tipo_Despli);
             $this->session->set('Id_Grupo_Actual',$this->Grupo_Act['id_actual']);
-            //echo "var_dump:   ".var_dump($this->session->get('Id_Grupo_Actual'))."<br><br>";
             $this->view->miembros = $grupo->getMiembrosGrupoById($this->Grupo_Act['id_actual']);
             $this->view->infoGrupo = $grupo->getInfoGrupo(
                 $this->Grupo_Act['id_actual'],
@@ -49,11 +50,6 @@ class GrupoController extends ControllerBase
             );
 
             $this->view->infoGrupoConf = $grupo->getMiembrosGrupoById($this->Grupo_Act['id_actual']);
-
-
-
-
-
         }
     }
 
@@ -319,46 +315,168 @@ class GrupoController extends ControllerBase
         }
     }
 
+//Funciones de Administracion de grupos
+    public function dejarGrupoIntegranteAction(){
+        if (!$this->session->get('user')) {
+            $response = new Response();
+            $response->redirect("session/index");
+            $response->send();
+        }
+        if ($this->request->isPost()) {
+            $id_grupo_a_dejar = $this->session->get('Id_Grupo_Actual');
+            $success = Integrantegrupo::findFirst([
+                        'columns'    => '*',
+                        'conditions' => 'Id_Grupo = ?1 AND Id_Integrante = ?2',
+                        'bind'       => [
+                            1 => $id_grupo_a_dejar,
+                            2 => $this->session->get('user')['Matricula'],
+                        ]
+            ]);
 
-
-    public function desplegarGrupoAction($id_grupo = null)
-    {
-        if ($id_grupo != null) {
-
-            $this->Grupo_Act['id_actual'] = $id_grupo;
-
+            if ($success !== false) {
+                if ($success->delete() === false) {
+                    $this->flash->error('Lo sentimos, hubo un error a la hora de dejar el grupo');
+                } else {
+                    $this->flash->success('Haz dejado el grupo!');
+                }
+            }
+            else{
+                $this->flash->error('No existe el grupo con ese ID');
+            }
             return $this->dispatcher->forward([
                 'controller' => 'grupo',
                 'action' => 'index'
             ]);
-        } else {
+        }
+        else{
             $response = new Response();
             $response->redirect("grupo/index");
-            $response->send();
+            $response->send(); 
         }
     }
 
-    public function desplegarGrupoConfAction($id_grupo = null)
-    {
-        if ($id_grupo != null) {
 
-            $this->Grupo_Act['id_actual'] = $id_grupo;
 
-            return $this->dispatcher->forward([
-                'controller' => 'grupo',
-                'action' => 'index'
-            ]);
-        } else {
-            $response = new Response();
-            $response->redirect("grupo/index");
-            $response->send();
+    public function desplegarGrupoAction()
+    {   //tipo_despli=1 ->  'Abrir grupo'  
+        //tipo_despli=2 -> 'Abrir administración'
+        if($this->request->isGet()){
+            $id_grupo = $this->request->getQuery('id_grupo');
+            $tipo_despli = $this->request->getQuery('tipo');
+
+            if (($id_grupo != null) && ($tipo_despli != null)) {
+
+                if($tipo_despli == 2){
+                    $success = Grupo::findFirst([
+                                'columns'    => '*',
+                                'conditions' => 'Id_Grupo = ?1 AND Id_Lider = ?2',
+                                'bind'       => [
+                                    1 => $id_grupo,
+                                    2 => $this->session->get('user')['Matricula'],
+                                ]
+                                                ]);
+                    if (!$success) {
+                        $tipo_despli = 3;
+                    }
+                }
+    
+                $this->Grupo_Act['id_actual'] = $id_grupo;
+                $this->Tipo_Despli = $tipo_despli;
+    
+                return $this->dispatcher->forward([
+                    'controller' => 'grupo',
+                    'action' => 'index'
+                ]);
+            } else {
+                echo "Uno o ambos son null: ". $id_grupo."  ".$tipo_despli;
+                $response = new Response();
+                $response->redirect("grupo/index/#####");
+                $response->send();
+            }
         }
     }
-
 
 
 //CREAR GRUPO
     public function crearGrupoAction()
+    {
+        if ($this->request->isPost()) {
+
+            //inicializando modelos
+            $grupoAux = new Grupo();
+
+
+            $idMax = Grupo::findFirst("Id_Grupo = (Select max(grupo.Id_Grupo) from grupo)")->Id_Grupo;
+            if ($idMax == null) {
+                $idMax = 1;
+            } else {
+                $idMax = $idMax + 1;
+            }
+
+            $post1 = [
+                'Id_Grupo' => $idMax,
+                'Nombre_G' => $this->request->getPost('name_group'),
+                'Id_Lider' => $this->session->get('user')['Matricula'],
+                'Clave_Grupo' => $this->request->getPost('clave_group')
+            ];
+
+            $success = $grupoAux->saveWithEncrypt($post1, $this->Clave_Encriptacion['key']);
+
+            if ($success) {
+
+            //NOTA: Para crear directorios y ficheros es awuevo poner el path fisico pero para auxiliarnos
+            //      se ocupa la constante BASE_PATH
+                if (mkdir(BASE_PATH."/public/files/Chats/chat".$idMax, 0755, true)) {
+                   if (mkdir(BASE_PATH ."/public/files/Chats/chat$idMax/Documentos", 0755, true)) {
+                       if (mkdir(BASE_PATH ."/public/files/Chats/chat".$idMax."/Imagenes", 0755, true)) {
+                           $my_file = BASE_PATH ."/public/files/Chats/chat".$idMax."/Mensajes.txt";
+                           $handle = fopen($my_file, 'w') or die('Cannot open file:  '.$my_file);
+                           fclose($handle);
+                       }
+                   }
+                }
+
+                //se almacena en integrante al lider del grupo
+                $integrantegrupoAux = new Integrantegrupo();                
+                $post3 = [
+                    'Id_Grupo' => $idMax,
+                    'Id_Integrante' => $this->session->get('user')['Matricula']
+                ];
+                $integrantegrupoAux->save(
+                    $post3,
+                    [
+                        "Id_Grupo",
+                        "Id_Integrante"
+                    ]
+                );
+                
+
+                $this->flash->success('Grupo Creado con Éxito');
+
+                return $this->dispatcher->forward(
+                    [
+                        "controller" => "grupo",
+                        "action"     => "index",
+                    ]
+                );
+            } else {
+                echo "Sorry, the following problems were generated: ";
+                $messages = $grupoAux->getMessages();
+                foreach ($messages as $message) {
+                    echo $message->getMessage(), "<br/>";
+                }
+            }
+        }
+        $this->flash->error('Fallo al crear Grupo');
+        return $this->dispatcher->forward(
+            [
+                "controller" => "grupo",
+                "action"     => "index",
+            ]
+        );
+    }
+
+    public function crearGrupoAnterior() //anterior
     {
         if ($this->request->isPost()) {
 
@@ -445,37 +563,6 @@ class GrupoController extends ControllerBase
         );
     }
 
-    public function crearGrupo2Action()
-    {
-        if ($this->request->isPost()) {
-
-
-            echo "EL POST CONTIENE:<br><br>";
-            echo var_dump($this->request->getPost());
-            echo "<br><br>EL ARRAY DE CHIPS CONTIENE:<br><br>";
-            echo var_dump($this->request->getPost('arrayChipPost')) . "<br><br><br>";
-            echo "var_dump: <br>";
-            echo var_dump(json_decode($this->request->getPost('arrayChipPost'), true)) . "<br><br><br>";
-            echo "Desglose del array: <br><br>";
-
-            //BENDICIÓN ENTERA (BENDITOS "JSON" xD)
-            $chips = json_decode($this->request->getPost('arrayChipPost'), true);
-            foreach ($chips as $chip => $campo) {
-                echo "Valor del chip: " . $campo['tag'] . "<br>";
-            }
-        }
-    }
-
-    public function crearGrupo3Action()
-    {
-
-        $idAux = Grupo::findFirst("Id_Grupo = (Select max(grupo.Id_Grupo) from grupo)")->Id_Grupo;
-        echo "El resultado es: " . $idAux . "<br>";
-        //echo "El resultado es: ".$idAux->Id_Grupo."<br>";
-        // echo "El resultado es: ".$idAux->Nombre_G."<br>";
-        //  echo "El resultado es: ".$idAux->Id_Lider."<br>";
-
-    }
 
 //UNIRSE A GRUPO POR ID Y PASSWORD
     public function unirseGrupoAction()
@@ -547,6 +634,60 @@ class GrupoController extends ControllerBase
 
 //ELIMINAR UN GRUPO (CORREGIR PARA BORRADO EXCLUSIVO)
     public function eliminarGrupoAction()
+    {   if (!$this->session->get('user')) {
+            $response = new Response();
+            $response->redirect("session/index");
+            $response->send();
+        }
+        if ($this->request->isPost()) {
+
+            $id_grupo = $this->session->get('Id_Grupo_Actual');
+
+            $grupoAux2 = Integrantegrupo::find("Id_Grupo = $id_grupo");
+
+            if ($grupoAux2 != false) {
+                foreach ($grupoAux2 as $integrante) {
+                    $successAux = $integrante->delete();
+                }
+
+                //-------------------
+                $grupoAux1 = Grupo::findFirst("Id_Grupo = $id_grupo");
+
+                if ($grupoAux1 != false) {
+                    $success1 = $grupoAux1->delete();
+                    if ($success1) {
+                        if($this->removeDir(BASE_PATH."/public/files/Chats/chat".$id_grupo)) {
+
+                            $this->flash->success("Grupo eliminado con Éxito");
+                            return $this->dispatcher->forward(
+                                [
+                                    'controller' => 'grupo',
+                                    'action'     => 'index'
+                                ]
+                            );
+                        }
+                    } else {
+                        echo "Sorry, the following problems were generated with success1: ";
+                        $messages = $grupoAux1->getMessages();
+                        foreach ($messages as $message) {
+                            echo $message->getMessage(), "<br/>";
+                        }
+                    }
+                }
+                //-------------------
+            }
+            
+        }
+        $this->flash->error('Error al borrar Grupo');
+        return $this->dispatcher->forward(
+            [
+                "controller" => "grupo",
+                "action"     => "index"
+            ]
+        );
+    }
+
+    public function eliminarGrupoAnterior() //funcion anterior
     {
         if ($this->request->isPost()) {
 
@@ -822,9 +963,8 @@ class GrupoController extends ControllerBase
             return rmdir($dir);
     }
     //funcion Prueba de Cadena Random para clave grupo
-    public function cadRandomAction()
-    {
-
+    public function cadRandomAction(){
+       
         echo "Cadena random: " . $this->generateRandomString('10');
     }
     //funcion para crear una clave random de 10 elementos
