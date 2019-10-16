@@ -19,6 +19,15 @@ function delete_group(name_f, field_array, span_id) {
     return true;
 }
 
+function del_group_conf(){
+  if (confirmacion()) {
+    return true;
+  }else{
+    return false;
+  }
+
+}
+
 
 function validate(name_form, arreglo, span_id) {
     var array = new Array(arreglo.length);
@@ -43,6 +52,13 @@ function validate(name_form, arreglo, span_id) {
 
 function confirmacion() {
     if (confirm("¿Realmente deseas eliminar este grupo?") == true)
+        return true;
+    else
+        return false;
+}
+
+function confirmacion_user() {
+    if (confirm("¿Realmente deseas salir de este grupo?") == true)
         return true;
     else
         return false;

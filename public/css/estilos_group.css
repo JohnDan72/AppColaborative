@@ -12,7 +12,7 @@
     src: local('Source Sans Pro Light'), local('SourceSansPro-Light'), url(https://fonts.gstatic.com/s/sourcesanspro/v13/6xKydSBYKcSV-LCoeQqfX1RYOo3ik4zwlxdr.ttf) format('truetype');
 }
 
-* {
+*{
     box-sizing: border-box;
     margin: 0;
     padding: 0;
@@ -24,6 +24,10 @@ body {
     color: black;
     font-weight: 300;
     background-color: #fafafa;
+}
+
+#i_img{
+  margin-right: -50%;
 }
 
 h4, h2 {
@@ -114,7 +118,7 @@ h5 {
     background-color: #fafafa;
     margin-top: 2%;
     overflow-y: auto;
-    height: 320px;
+    height: 310px;
 }
 
 #card_1 {
@@ -174,22 +178,23 @@ form button:hover {
     margin-top: -60px;
 }
 
-#id_boton_mensaje {
-    background: #ffee58 !important;
+#id_boton_mensaje{
+    background: #ef9a9a !important;
 }
 
-#id_boton_foto {
-    background: #ffee58 !important;
+#id_boton_foto{
+    background: #2196f3 !important;
 }
 
 #id_boton_doc {
-    background: #ffee58 !important;
+    background: #4caf50 !important;
 }
+
+
 
 .file-path-wrapper input[readonly="readonly"]{
     color: #0e0e0e !important;
      border-bottom: 1px solid #bdbdbd !important;
-     
 }
 
 .derecha {
@@ -198,18 +203,116 @@ form button:hover {
     width: auto;
 }
 
-#div_chat div {
-    
+.icon_rigth {
+    position: absolute;
+    right: 20px;
+    padding-top: 10px;
+    color: #b2dfdb;
+}
+.icon_rigth:hover {
+
+    color: #26a69a;
+}
+
+
+
+#div_chat div{
     border-radius: 10px;
-    margin-top: 10px; 
+    margin-top: 10px;
     margin-bottom: 10px;
     height:100%;
-
-    overflow:auto;
+    overflow:block;
 }
 .div_back{
     background-color: #f3e5f5;
 }
 .text_derecha{
     text-align: right;
+}
+
+/* make ALL links (main and submenu) have padding and background color */
+.mainmenu a {
+  display: block;
+  text-decoration: none;
+}
+
+/* add hover behaviour */
+
+
+
+/* when hovering over a .mainmenu item,
+  display the submenu inside it.
+  we're changing the submenu's max-height from 0 to 200px;
+*/
+
+.mainmenu li:hover .submenu {
+  max-height: 100px
+}
+
+/*
+  we now overwrite the background-color for .submenu links only.
+  CSS reads down the page, so code at the bottom will overwrite the code at the top.
+*/
+
+.submenu a {
+
+}
+
+/* hover behaviour for links inside .submenu */
+.submenu a:hover {
+
+}
+
+/* this is the initial state of all submenus.
+  we set it to max-height: 0, and hide the overflowed content.
+*/
+.submenu {
+  overflow: hidden;
+  max-height: 0;
+  -webkit-transition: all 0.35s ease-out;
+}
+
+.espaciado_up_down{
+  margin-top: 40px;
+  margin-bottom: 5px;
+}
+
+.espaciado_up_down_m{
+  margin-top: 30px;
+  margin-bottom: 5px;
+}
+
+.color_p{
+  color: #9e9e9e;
+  font-size: 15px;
+}
+
+.color_p_ti{
+  color: #9e9e9e;
+  font-size: 20px;
+}
+
+.color_p_war{
+  color: #f4511e;
+  font-size: 15px;
+}
+
+.span_info{
+  color: #616161;
+  font-size: 17px;
+  margin-bottom:100px !important;
+
+}
+
+.button_admin_elim{
+
+  width: 150px !important;
+  margin-top: 10px;
+}
+
+.button_admin_save{
+
+  width: 100px !important;
+  margin-top: 10px
+
 }
