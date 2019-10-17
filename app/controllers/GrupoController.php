@@ -26,7 +26,7 @@ class GrupoController extends ControllerBase
 
 //      $this->registroGrupoActual['Id_Grupo_Actual']
     public function indexAction()
-    {
+    {   
         if (!$this->session->get('user')) {
             $response = new Response();
             $response->redirect("session/index");
@@ -37,6 +37,7 @@ class GrupoController extends ControllerBase
 
 
         $this->view->grupos = $grupo->getGruposOf($this->session->get('user')['Matricula']);
+        $this->view->gruposComp = $grupo->getGruposOfComplemento($this->session->get('user')['Matricula']);
 
         //registro del grupo actualmente elegido desde el panel de control.
         if ((isset($this->Grupo_Act['id_actual']))&&($this->Grupo_Act['id_actual']> 0) && (isset($this->Tipo_Despli)) &&($this->Tipo_Despli > 0) ) {
@@ -426,9 +427,9 @@ class GrupoController extends ControllerBase
 
             //NOTA: Para crear directorios y ficheros es awuevo poner el path fisico pero para auxiliarnos
             //      se ocupa la constante BASE_PATH
-                if (mkdir(BASE_PATH."/public/files/Chats/chat".$idMax, 0755, true)) {
-                   if (mkdir(BASE_PATH ."/public/files/Chats/chat$idMax/Documentos", 0755, true)) {
-                       if (mkdir(BASE_PATH ."/public/files/Chats/chat".$idMax."/Imagenes", 0755, true)) {
+                if (mkdir(BASE_PATH."/public/files/Chats/chat".$idMax, 0777, true)) {
+                   if (mkdir(BASE_PATH ."/public/files/Chats/chat$idMax/Documentos", 0777, true)) {
+                       if (mkdir(BASE_PATH ."/public/files/Chats/chat".$idMax."/Imagenes", 0777, true)) {
                            $my_file = BASE_PATH ."/public/files/Chats/chat".$idMax."/Mensajes.txt";
                            $handle = fopen($my_file, 'w') or die('Cannot open file:  '.$my_file);
                            fclose($handle);
@@ -634,29 +635,30 @@ class GrupoController extends ControllerBase
 
 //ELIMINAR UN GRUPO (CORREGIR PARA BORRADO EXCLUSIVO)
     public function eliminarGrupoAction()
-    {   if (!$this->session->get('user')) {
+    {   
+        if (!$this->session->get('user')) {
             $response = new Response();
             $response->redirect("session/index");
             $response->send();
         }
         if ($this->request->isPost()) {
-
-            $id_grupo = $this->session->get('Id_Grupo_Actual');
-
+            //obtenemos el id del grupo actual para borrar
+            $id_grupo = $this->request->getPost('id_grupo_actual');
             $grupoAux2 = Integrantegrupo::find("Id_Grupo = $id_grupo");
 
             if ($grupoAux2 != false) {
-                foreach ($grupoAux2 as $integrante) {
+                foreach ($grupoAux2 as $integrante) { //se borran todos los integrantes del grupo a eliminar
                     $successAux = $integrante->delete();
                 }
 
                 //-------------------
-                $grupoAux1 = Grupo::findFirst("Id_Grupo = $id_grupo");
+                $grupoAux1 = Grupo::findFirst("Id_Grupo = $id_grupo");//se borra grupo en sí
 
                 if ($grupoAux1 != false) {
                     $success1 = $grupoAux1->delete();
                     if ($success1) {
-                        if($this->removeDir(BASE_PATH."/public/files/Chats/chat".$id_grupo)) {
+                        //Nota: el id_grupo de castea a (int) porque el parametro String es de (3) con un espacio de sobra
+                        if($this->removeDir(BASE_PATH."\\public\\files\\Chats\\chat".((int)$id_grupo))) {
 
                             $this->flash->success("Grupo eliminado con Éxito");
                             return $this->dispatcher->forward(
@@ -687,7 +689,7 @@ class GrupoController extends ControllerBase
         );
     }
 
-    public function eliminarGrupoAnterior() //funcion anterior
+    public function eliminarGrupAnterior() //funcion anterior
     {
         if ($this->request->isPost()) {
 

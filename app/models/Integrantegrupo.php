@@ -26,6 +26,57 @@ class Integrantegrupo extends Model
 		);
     }
 
+    public function getGruposOfComplemento($id_integrante){
+    	$query = $this->modelsManager->createQuery('
+			SELECT 	grupo.Id_Grupo
+			FROM 	grupo, integrantegrupo 
+			WHERE 	grupo.Id_Grupo = integrantegrupo.Id_Grupo AND
+			        integrantegrupo.Id_Integrante = :id:
+			ORDER by grupo.Id_Grupo, grupo.Nombre_G
+		');
+
+		$gruposOfIntegrant = $query->execute(
+		    [
+		        'id' => $id_integrante,
+		    ]
+		);
+
+		if($gruposOfIntegrant){
+			$subcadena = ""; $ind = 1;
+
+			foreach ($gruposOfIntegrant as $grupo) {
+				if ($ind == count($gruposOfIntegrant)) {
+					$subcadena.= "grupo.Id_Grupo <> ".$grupo->Id_Grupo." ";
+				}
+				else{
+					$subcadena.= "grupo.Id_Grupo <> ".$grupo->Id_Grupo." AND ";
+				}
+				$ind++;
+			}
+			$query2 = $this->modelsManager->createQuery('
+				SELECT 	grupo.Id_Grupo, grupo.Nombre_G, grupo.Id_Lider, grupo.Clave_Grupo
+				FROM 	grupo 
+				WHERE '.$subcadena.' 
+				ORDER by grupo.Id_Grupo, grupo.Nombre_G
+			');
+
+			$retorno = $query2->execute();
+			if($retorno) return $retorno;
+			else return false;
+		}
+		else{
+			$query3 = $this->modelsManager->createQuery('
+				SELECT 	grupo.Id_Grupo, grupo.Nombre_G, grupo.Id_Lider, grupo.Clave_Grupo
+				FROM 	grupo 
+				ORDER by grupo.Id_Grupo, grupo.Nombre_G
+			');
+
+			$retorno = $query3->execute();
+			if($retorno) return $retorno;
+			else return false;
+		}
+    }
+
     public function getMiembrosGrupoById($id_grupo){
 
 		$query = $this->modelsManager->createQuery('

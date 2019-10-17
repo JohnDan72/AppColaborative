@@ -128,9 +128,21 @@
          <div class="col offset-m3 m6 s12">
               <select id="id_group" name="id_group" >
                 <option value="" disabled selected>Elije un grupo</option>
-                <option value="1">Grupo 1</option>
-                <option value="2">Grupo 2</option>
-                <option value="3">Grupo 3</option>
+                <?php  
+                  if(isset($gruposComp)){
+                    foreach ($gruposComp as $grupo) {
+                ?>
+                    <option value="<?php echo $grupo->Id_Grupo?>"><?php echo $grupo->Nombre_G;?></option>
+                <?php
+                    }
+                ?>
+                <?php  
+                  } else{
+                ?>
+                    <option value="" disabled selected>No hay grupos que mostrar para unirse</option>
+                <?php 
+                  }
+                ?>
               </select>
               <label>Materialize Select</label>
          </div>
@@ -414,7 +426,11 @@
                                 <button class="button_admin_save green lighten-1 white-text" type="submit" name="action" onclick="confirmacion()">Guardar</button>
                                 <?= $this->tag->endform(); ?>
 
-                                <?= $this->tag->form(['name' => 'delete_group', "grupo/eliminarGrupo", 'onsubmit'=>"return confirmacion()"]); ?>
+                                <?php echo $this->tag->form(['name' => 'delete_group', "grupo/eliminarGrupo", 'onsubmit'=>"return confirmacion()"]); 
+
+                                  echo $this->tag->textfield(['id_grupo_actual', 'name' => 'id_grupo_actual', 'style' => 'display:none', 'value' => $this->session->get('Id_Grupo_Actual')]);
+
+                                ?>
                                 <div class="col2 s1 m12 l12">
                                   <button class=" button_admin_elim red lighten-1 white-text" type="submit" name="action">Eliminar grupo</button>
                                 </div>
