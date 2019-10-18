@@ -27,6 +27,8 @@ class Integrantegrupo extends Model
     }
 
     public function getGruposOfComplemento($id_integrante){
+
+    	//se consultan primero todos los id de grupo al que pertenece
     	$query = $this->modelsManager->createQuery('
 			SELECT 	grupo.Id_Grupo
 			FROM 	grupo, integrantegrupo 
@@ -43,7 +45,7 @@ class Integrantegrupo extends Model
 
 		if($gruposOfIntegrant){
 			$subcadena = ""; $ind = 1;
-
+			//se concatenan las condiciones para poder recuperar los grupos a los que no pertenece
 			foreach ($gruposOfIntegrant as $grupo) {
 				if ($ind == count($gruposOfIntegrant)) {
 					$subcadena.= "grupo.Id_Grupo <> ".$grupo->Id_Grupo." ";
@@ -53,6 +55,7 @@ class Integrantegrupo extends Model
 				}
 				$ind++;
 			}
+			//query para obtener los grupos a los que puede Unirse
 			$query2 = $this->modelsManager->createQuery('
 				SELECT 	grupo.Id_Grupo, grupo.Nombre_G, grupo.Id_Lider, grupo.Clave_Grupo
 				FROM 	grupo 
@@ -133,25 +136,3 @@ class Integrantegrupo extends Model
 
     
 }
-
-/*
-SELECT grupo.Id_Grupo, grupo.Nombre_G, grupo.Id_Lider, grupo.Clave_Grupo, integrantegrupo.Id_Integrante, usuario.Nombre, usuario.Ap_Paterno
-FROM grupo,integrantegrupo,usuario
-WHERE	grupo.Id_Grupo = integrantegrupo.Id_Grupo AND
-		integrantegrupo.Id_Integrante = usuario.Matricula AND
-        integrantegrupo.Id_Integrante = 201504691
-ORDER by grupo.Nombre_G;
-
-
-SELECT 	grupo.Nombre_G, usuario.Matricula, usuario.Nombre as Integrante, usuario.Ap_Paterno, usuario.Correo
-FROM 	integrantegrupo, usuario, grupo
-WHERE	integrantegrupo.Id_Integrante = usuario.Matricula AND
-		integrantegrupo.Id_Grupo = grupo.Id_Grupo AND
-        integrantegrupo.Id_Grupo = '2' 
-ORDER by grupo.Id_Grupo;
-
-getSingleResult();
-
-
-SELECT grupo.*, AES_DECRYPT(Clave_Grupo, 'ardogs123') as Contraseña_Grupo FROM grupo;
-*/

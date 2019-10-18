@@ -1,5 +1,6 @@
   <?php echo $this->getContent(); ?>
 
+
  <div class="container">
    <!-- Menu responsivo -->
    <ul id="slide-out" class="sidenav">
@@ -63,6 +64,7 @@
 
  </div>
 
+ <!--Crear grupo nuevo-->
  <div id="modal1" class="modal modal-fixed-footer">
    <div class="row">
      <div class="modal-content col s12 m6 ">
@@ -104,7 +106,7 @@
        <span class="helper-text" id="span1" style="color:red;"></span>
      </div>
 
-     <input type="hidden" id="arrayChipPostId" name="arrayChipPost" value="">
+     <!--input type="hidden" id="arrayChipPostId" name="arrayChipPost" value=""-->
      <div class="modal-footer">
        <div class="center">
          <button id="id_boton_chips" class="waves-effect waves-green btn-flat" type="submit" name="action" onclick="return validate('add_group',['name_group'], 'span1')">Crear</button>
@@ -116,17 +118,18 @@
    </div>
  </div>
 
+ <!--Unirse a grupo-->
  <div id="modal2" class="modal modal-fixed-footer">
    <div class="row">
      <div class="modal-content col s12 m6">
        <h4 class="center espaciado_up_down_m">Unirse al grupo</h4>
        <p class="color_p center espaciado_up_down_m">Por favor completa los campos solicitados para unirte a algún grupo</p>
        <div class="col s12 m12 l12 center"><i class="material-icons medium" style="color: #ffa726">device_hub</i></div>
-       <?= $this->tag->form(['name' => 'add_to_group', "grupo/unirseGrupo"]); ?>
+       <?= $this->tag->form(['name' => 'join_to_group', "grupo/unirseGrupo"]); ?>
 
        <div class="col s12 m12 l12 center">
          <div class="col offset-m3 m6 s12">
-              <select id="id_group" name="id_group" >
+              <select id="id_group" name="id_group_name" >
                 <option value="" disabled selected>Elije un grupo</option>
                 <?php  
                   if(isset($gruposComp)){
@@ -152,12 +155,15 @@
            </div>
          </div>
        </div>
-       <span class="helper-text" id="span2" style="color:red;"></span>
+       <div class="row center">
+         <span class="helper-text" id="span2" style="color:red;"></span>
+       </div>
+       
      </div>
 
      <div class="modal-footer">
        <div class="center">
-         <button class="waves-effect waves-green btn-flat" type="submit" name="action" onclick="return validate('add_to_group',['id_group','cl_group'], 'span2')">Unirme</button>
+         <button class="waves-effect waves-green btn-flat" type="submit" name="action" onclick="return validate('join_to_group',['id_group','cl_group'], 'span2')">Unirme</button>
          <a href="#!" class="modal-close waves-effect waves-red btn-flat">Cancelar</a>
        </div>
 
@@ -166,60 +172,6 @@
    </div>
  </div>
 
- <div id="modal3" class="modal modal-fixed-footer">
-   <div class="row">
-     <div class="modal-content col s12 m6">
-       <center>
-         <h4>Eliminar grupo</h4>
-         <p>
-           <FONT size="2">Introduce el id del grupo</FONT>
-         </p>
-       </center>
-
-
-       <?= $this->tag->form(
-          [
-            'name' => 'del_group',
-            'onsubmit' => 'return delete_group(this.name, ["dele_group"], "span3")',
-            'onkeypress' => "return checar(event)",
-            "grupo/eliminarGrupo"
-          ]
-        );
-        ?>
-
-       <div class="col s12 m4">
-         <center>
-           <br>
-           <br>
-           <br>
-           <i class="material-icons  large" style="color: #e65100">delete</i>
-         </center>
-       </div>
-
-       <div class="col s12 m8">
-         <br><br><br>
-         <div class="col offset-m2 m8 s12">
-           <div class="input-field">
-             <?= $this->tag->textfield(['dele_group', 'name' => 'dele_group', 'class' => 'validate']); ?>
-             <label for="dele_group">ID del grupo</label>
-           </div>
-         </div>
-         <br>
-       </div>
-       <center>
-         <span class="helper-text" id="span3" style="color:red;"></span>
-       </center>
-     </div>
-
-     <div class="modal-footer">
-       <center>
-         <button class="waves-effect waves-green btn-flat" type="submit" name="action">Eliminar</button>
-         <a href="#!" class="modal-close waves-effect waves-green btn-flat">Cancelar</a>
-       </center>
-     </div>
-     <?= $this->tag->endform(); ?>
-   </div>
- </div>
   <?php 
     if(!$this->session->has('Tipo_Despli')){
   ?>
@@ -242,7 +194,7 @@
              </ol>
            </div>
          </div>
-       </div>
+        </div>
   <?php
     } 
     else{
@@ -384,58 +336,84 @@
             <?php
             break;
           
-          case '2': //se despliega Administración de grupo
+          case '2': //se despliega Administración de grupo (Líder)
             ?>
                 <!-- Vista para administrador de grupo (Líder)-->
-                <!--hr-->
                    <div class="row">
-                     <h4 class="center espaciado_up_down"> Administracion grupo: <?php echo $infoGrupo->Nombre_G;?> (Líder)</h4>
+                     <h4 class="center espaciado_up_down"> Administración grupo: <?php echo $infoGrupo->Nombre_G;?> (Líder)</h4>
                      <div class="col s12 m12 l12">
-                       <?= $this->tag->form(['name' => 'conf_group', "grupo/Grupo_Conf", 'onsubmit'=>"return confirmacion()"]); ?>
+                       <?= $this->tag->form(['name' => 'conf_group', "grupo/Grupo_Conf", 'onsubmit'=>"return confirmacionGuardar()"]); ?>
                        <p class="center espaciado_up_down color_p">Hola <?php echo $this->session->get('user')['Nombre'] ?>, aquí podrás administrar todo lo relacionado a tu grupo</p>
                        <div class="row">
-                         <div class="col s12 m12 l6 offset-l3 input-field">
-                           <br>
-                           <?= $this->tag->textfield(['name_group_conf', 'name' => 'name_group_conf', 'class' => 'validate', 'value' => $infoGrupo->Nombre_G]); ?>
-                           <label for="name_group_conf">Nombre del grupo</label>
-                           </div>
-                            <div class="col s12 m12 l12 center espaciado_up_down">
-                              <p class="color_p_ti">Integrantes: </p>
-                              <?php
-                                   foreach ($miembros as $miembro) {
-                                     $get_position = random_int(0, 8);
-                                     ?>
-                                <div class="chip" style="margin-top: 10px">
-                                  <img class="tooltipped hand" data-position="bottom" data-tooltip="<?php echo $miembro['Correo']; ?>" src='<?php echo $avatar[$get_position]; ?>' height="32" width="32">
-                                  <?php echo $miembro['Nombre']; ?>
+                          <div class="col s12 m12 l6 offset-l3 input-field">
+                             <br>
+                             <!--Campo oculto para guardar el nombre anterior del grupo-->
+                             <?= $this->tag->textfield(['id_name_G_ant', 'name' => 'nombreG_anterior', 'value' => $infoGrupo->Nombre_G, 'style' => 'display:none']);?>
+                             <?= $this->tag->textfield(['id_name_G', 'name' => 'nombreG', 'class' => 'validate', 'value' => $infoGrupo->Nombre_G]); ?>
+                             <label for="id_name_G">Nombre del grupo</label>
+                          </div>
+                          <div class="col s12 m12 l12 center espaciado_up_down">
+                            <p class="color_p_ti">Integrantes: </p>
+                            <div id="ChipsPadre">
+                            <?php
+                                 foreach ($miembros as $miembro) {
+                                   $get_position = random_int(0, 8);
+                                   ?>
+                              <div class="chip" style="margin-top: 10px">
+                                <div class="chipMatricula" style="display: none;"><?php echo $miembro['Matricula']?></div>
+                                <img class="tooltipped hand" data-position="bottom" data-tooltip="<?php echo $miembro['Correo']; ?>" src='<?php echo $avatar[$get_position]; ?>' height="32" width="32">
+                                <?php echo $miembro['Nombre']; ?>
+                                <?php if($miembro['Matricula'] != $this->session->get('user')['Matricula']){?>
                                   <i class="close material-icons">close</i>
-                                </div>
-                              <?php } ?>
-                            </div>
-
-                            <div class="col s12 m12 l6 offset-l3 input-field center espaciado_up_down">
-                              <br>
-                              <?= $this->tag->textfield(['pass_group_conf', 'name' => 'pass_group_conf', 'class' => 'validate', 'value' => $infoGrupo->Clave_Grupo]); ?>
-                              <label for="pass_group_conf">Clave del grupo</label>
-                            </div>
-
-
-
-
-                              <div class="col s12 m12 l12 center espaciado_up_down">
-                                <button class="button_admin_save green lighten-1 white-text" type="submit" name="action" onclick="confirmacion()">Guardar</button>
-                                <?= $this->tag->endform(); ?>
-
-                                <?php echo $this->tag->form(['name' => 'delete_group', "grupo/eliminarGrupo", 'onsubmit'=>"return confirmacion()"]); 
-
-                                  echo $this->tag->textfield(['id_grupo_actual', 'name' => 'id_grupo_actual', 'style' => 'display:none', 'value' => $this->session->get('Id_Grupo_Actual')]);
-
-                                ?>
-                                <div class="col2 s1 m12 l12">
-                                  <button class=" button_admin_elim red lighten-1 white-text" type="submit" name="action">Eliminar grupo</button>
-                                </div>
-                                <?= $this->tag->endform(); ?>
+                                <?php }?>
+                                
                               </div>
+                            <?php } ?>
+                            </div>
+                            <div class="chips" id="id_chipsField" style="display: none;">
+                            </div>
+                            <input type="hidden" id="arrayChipPostId_Ant" name="arrayChipPost_Ant" value="">
+                            <input type="hidden" id="arrayChipPostId" name="arrayChipPost" value="">
+                          </div>
+                          <!------Forma de recuperar los id de los integrantes---->
+                          <script type="text/javascript">
+                              $('.chips').chips();
+
+                              var miembros =  <?php echo json_encode($miembros);?> ;
+                              var instance = M.Chips.getInstance($('#id_chipsField'));
+
+                              for (var i = 0; i < miembros.length; i++) {
+                                instance.addChip({
+                                    tag: miembros[i].Matricula
+                                  });
+                              }
+
+                              document.getElementById("arrayChipPostId_Ant").value = JSON.stringify(instance.chipsData);
+                         </script>
+                          <!------------------------->
+
+                          <div class="col s12 m12 l6 offset-l3 input-field center espaciado_up_down">
+                            <br>
+                            <?= $this->tag->textfield(['id_clave_ant', 'name' => 'claveAnterior', 'value' => $infoGrupo->Clave_Grupo, 'style' => 'display:none']);?>
+                            <?= $this->tag->textfield(['id_clave_G', 'name' => 'claveG', 'class' => 'validate', 'value' => $infoGrupo->Clave_Grupo]); ?>
+                            <label for="id_clave_G">Clave del grupo</label>
+                          </div>
+
+
+                          <div class="col s12 m12 l12 center espaciado_up_down">
+                            <button class="button_admin_save green lighten-1 white-text" type="submit" name="action" onclick="recuperarChipInfo()">Guardar</button>
+                            <?= $this->tag->endform(); ?>
+
+                            <?php echo $this->tag->form(['name' => 'delete_group', "grupo/eliminarGrupo", 'onsubmit'=>"return confirmacion()"]); 
+
+                              echo $this->tag->textfield(['id_grupo_actual', 'name' => 'id_grupo_actual', 'style' => 'display:none', 'value' => $this->session->get('Id_Grupo_Actual')]);
+
+                            ?>
+                            <div class="col2 s1 m12 l12">
+                              <button class=" button_admin_elim red lighten-1 white-text" type="submit" name="action">Eliminar grupo</button>
+                            </div>
+                            <?= $this->tag->endform(); ?>
+                          </div>
                        </div>
 
                      </div>
@@ -443,11 +421,11 @@
                 <!--hr-->
             <?php
             break;
-          case '3':
+          case '3': //se despliega Administración de grupo (Integrante)
             ?>
                 <!--Vista del usuario del grupo-->
                   <div class="row">
-                    <h4 class="center espaciado_up_down"> Administracion grupo: <?php echo $infoGrupo->Nombre_G;?> (Integrante)</h4>
+                    <h4 class="center espaciado_up_down"> Administración grupo: <?php echo $infoGrupo->Nombre_G;?> (Integrante)</h4>
                     <div class="col s12 m12 l12">
                     <?= $this->tag->form(['name' => 'conf_group', "grupo/dejarGrupoIntegrante", 'onsubmit'=>"return confirmacion_user()"]); ?>
                     <p class="center espaciado_up_down color_p">Hola <?php echo $this->session->get('user')['Nombre'] ?>, como te habrás dado cuenta las funciones que tienes son limitadas, para más informacion comunicate con el administrador del grupo</p>
@@ -527,6 +505,11 @@
     }
   ?>
 
+<script type="text/javascript">
+   M.AutoInit();
+  $('.chips').chips();
+   
+ </script>
 
  <script type="text/javascript">
    function adjuntarFileImg(){
@@ -550,29 +533,19 @@
    }
 
    function borrarFotoField(){
+      document.getElementById('id_path_foto').value = "";
       document.getElementById('id_error_img').textContent = "";
       document.getElementById('Id_Foto_Field').style.display = 'none';
       document.getElementById('Id_Mensaje_Field').style.display = 'block';
    }
    function borrarDocField(){
+      document.getElementById('id_path_doc').value = "";
       document.getElementById('id_error_doc').textContent = "";
       document.getElementById('Id_Doc_Field').style.display = 'none';
       document.getElementById('Id_Mensaje_Field').style.display = 'block';
    }
  </script>
- <script type="text/javascript">
-   M.AutoInit();
-   var first_elem = '<?php echo $this->session->get('user')['Matricula'] ?>';
-   document.addEventListener('DOMContentLoaded', function() {
-     var elems = document.querySelectorAll('.chips');
-     var instances = M.Chips.init(elems, {
-       placeholder: 'Matricula',
-       data: [{
-         tag: first_elem
-       }]
-     });
-   });
- </script>
+ 
  <script>
    document.addEventListener('DOMContentLoaded', function() {
      var elems = document.querySelectorAll('.fixed-action-btn');
@@ -727,7 +700,12 @@
                     }
                 }
                 else{
-                  
+                  if(data.startsWith("Error")){
+
+                  }
+                  else if(data == "Fatal Error"){
+                    window.location.replace("<?php echo $this->url->get('Grupo/index/#');?>");
+                  }
                 }
         });
 
@@ -740,6 +718,7 @@
 
   <script type="text/javascript">
     $(document).ready(function(){
+
             $("#id_boton_mensaje").click(function(){
               var textMessage = document.getElementById('id_mensaje').value;
                  $.ajax({
@@ -754,7 +733,6 @@
                     }
                   });
             });
-
 
 
             $("#formuFotoAjax").on("submit", function(e){
@@ -777,6 +755,7 @@
                             else{
                               document.getElementById('id_path_foto').value = "";
                               document.getElementById('id_error_img').textContent = "";
+                              borrarFotoField();
                             }
                         }
 
@@ -814,6 +793,7 @@
                             else{
                               document.getElementById('id_path_doc').value = "";
                               document.getElementById('id_error_doc').textContent = "";
+                              borrarDocField();
                             }
                         }
 
@@ -854,20 +834,26 @@
       return tecla_final;
   }
 
+    function recuperarChipInfo(){
+      var infoChips = document.getElementById('ChipsPadre').getElementsByClassName('chip');
+      var cadena = "[";
+
+      for (var i = 0; i < infoChips.length; i++) {
+        if(i == infoChips.length-1){
+          cadena+= "{\"tag\":\""+infoChips[i].getElementsByClassName('chipMatricula')[0].textContent+"\"}]";
+        }
+        else{
+          cadena+= "{\"tag\":\""+infoChips[i].getElementsByClassName('chipMatricula')[0].textContent+"\"},";
+        }
+      }
+      document.getElementById('arrayChipPostId').value = cadena;
+      
+    }
   </script>
   <script type="text/javascript">
     var body = document.querySelector('body');
 
     body.onLoad=ajaxFuncion();
   </script>
- <script>
-   $('#id_boton_chips').click(function() {
-     document.getElementById("arrayChipPostId").value = JSON.stringify(M.Chips.getInstance($('.chips')).chipsData);
-     //alert(JSON.stringify(M.Chips.getInstance($('.chips')).chipsData[0]));
-   });
- </script>
- <script>
-   function setFocus() {
-     document.getElementById('w-input-text').focus();
-   }
- </script>
+ 
+

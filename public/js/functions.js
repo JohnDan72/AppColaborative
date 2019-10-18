@@ -41,7 +41,7 @@ function validate(name_form, arreglo, span_id) {
     for (var i = 0; i < array.length; i++) {
         if (array[i].value == "") {
             array[i].focus();
-            var texto = "<FONT size='1'>¡Todos los campos deben estar llenos!</FONT>";
+            var texto = "<FONT size='2'>¡Todos los campos deben estar llenos!</FONT>";
             document.getElementById(span_id).innerHTML = texto;
             return false;
         }
@@ -52,6 +52,13 @@ function validate(name_form, arreglo, span_id) {
 
 function confirmacion() {
     if (confirm("¿Realmente deseas eliminar este grupo?") == true)
+        return true;
+    else
+        return false;
+}
+
+function confirmacionGuardar() {
+    if (confirm("¿Realmente deseas guardar los cambios?") == true)
         return true;
     else
         return false;

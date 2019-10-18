@@ -206,7 +206,7 @@ class GrupoController extends ControllerBase
                                     'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
                                     'text/plain'
                                 ],
-                                "messageType"          => "Solo se permiten archivos en formato :types",
+                                "messageType"          => "Solo se permiten archivos en formato (pdf / doc / docx / txt)",
 
                             ]
                         )
@@ -366,30 +366,38 @@ class GrupoController extends ControllerBase
             $tipo_despli = $this->request->getQuery('tipo');
 
             if (($id_grupo != null) && ($tipo_despli != null)) {
-
-                if($tipo_despli == 2){
-                    $success = Grupo::findFirst([
-                                'columns'    => '*',
-                                'conditions' => 'Id_Grupo = ?1 AND Id_Lider = ?2',
-                                'bind'       => [
-                                    1 => $id_grupo,
-                                    2 => $this->session->get('user')['Matricula'],
-                                ]
-                                                ]);
-                    if (!$success) {
-                        $tipo_despli = 3;
+                $successModelG = Grupo::findFirst(["Id_Grupo = ".$id_grupo]);
+                if($successModelG){
+                    if($tipo_despli == 2){
+                        $success = Grupo::findFirst([
+                                    'columns'    => '*',
+                                    'conditions' => 'Id_Grupo = ?1 AND Id_Lider = ?2',
+                                    'bind'       => [
+                                        1 => $id_grupo,
+                                        2 => $this->session->get('user')['Matricula'],
+                                    ]
+                                                    ]);
+                        if (!$success) {
+                            $tipo_despli = 3;
+                        }
                     }
+        
+                    $this->Grupo_Act['id_actual'] = $id_grupo;
+                    $this->Tipo_Despli = $tipo_despli;
+        
+                    return $this->dispatcher->forward([
+                        'controller' => 'grupo',
+                        'action' => 'index'
+                    ]);
                 }
-    
-                $this->Grupo_Act['id_actual'] = $id_grupo;
-                $this->Tipo_Despli = $tipo_despli;
-    
-                return $this->dispatcher->forward([
-                    'controller' => 'grupo',
-                    'action' => 'index'
-                ]);
+                else{
+                    //ocurre cuando se ha eliminado un grupo de repente
+                    $response = new Response();
+                    $response->redirect("grupo/index/#");
+                    $response->send();
+                }  
             } else {
-                echo "Uno o ambos son null: ". $id_grupo."  ".$tipo_despli;
+                //echo "Uno o ambos son null: ". $id_grupo."  ".$tipo_despli;
                 $response = new Response();
                 $response->redirect("grupo/index/#####");
                 $response->send();
@@ -569,6 +577,74 @@ class GrupoController extends ControllerBase
     public function unirseGrupoAction()
     {
         if ($this->request->isPost()) {
+            //echo "Var_dum:  ".var_dump($this->request->getPost());
+            
+            $id_grupo = $this->request->getPost('id_group_name');
+            $clave_grupo = $this->request->getPost('cl_group');
+
+            if (is_numeric($id_grupo)) {
+                //------------------
+                $grupoUnir = Grupo::findFirst("Id_Grupo = $id_grupo");
+
+                if ($grupoUnir != false) {
+                    $grupoAuxUnir = new Grupo();
+                    $claveAuxDecrypt = $grupoAuxUnir->getPassDecryptById($id_grupo, $this->Clave_Encriptacion['key']);
+
+
+                    if ($clave_grupo == $claveAuxDecrypt) {
+
+                        $postAuxUnir = [
+                            'Id_Grupo' => $id_grupo,
+                            'Id_Integrante' => $this->session->get('user')['Matricula']
+
+                        ];
+                        $integranteAux = new Integrantegrupo();
+                        $success = $integranteAux->save(
+                            $postAuxUnir,
+                            [
+                                "Id_Grupo",
+                                "Id_Integrante"
+                            ]
+                        );
+
+                        if ($success) {
+                            $this->flash->success("¡Bienvenido a ".$grupoUnir->Nombre_G."!");
+
+                            return $this->dispatcher->forward(
+                                [
+                                    "controller" => "grupo",
+                                    "action"     => "index"
+                                ]
+                            );
+                        } else {
+                            echo "Sorry, the following problems were generated with success1: ";
+                            $messages = $grupoAux1->getMessages();
+                            foreach ($messages as $message) {
+                                echo $message->getMessage(), "<br/>";
+                            }
+                        }
+                    }
+                }
+                //------------------
+            }    
+        }
+
+        
+        $this->flash->error('Error al unirse a Grupo');
+        return $this->dispatcher->forward(
+            [
+                "controller" => "grupo",
+                "action"     => "index"
+            ]
+        );
+
+        
+    }
+
+
+    public function unirseGrupoAnterior() //anterior
+    {
+        if ($this->request->isPost()) {
 
             $id_grupo = $this->request->getPost('id_group');
             $clave_grupo = $this->request->getPost('cl_group');
@@ -630,7 +706,6 @@ class GrupoController extends ControllerBase
             ]
         );
     }
-
 
 
 //ELIMINAR UN GRUPO (CORREGIR PARA BORRADO EXCLUSIVO)
@@ -838,67 +913,74 @@ class GrupoController extends ControllerBase
             $id_grupo_actual = $this->request->getQuery('id_grupo');
             if ($id_grupo_actual>0) {
 
-
-                $pathAux = BASE_PATH."/public/files/Chats/chat".$id_grupo_actual."/Mensajes.txt";
-                $file = fopen($pathAux, "r");
-                //se lee la informacion del archivo
-                $data;
-                $ind = 0;
-                while (!feof($file)) {
-                    $data[$ind++] = fgets($file);
-                }
-                fclose($file);
-
-                //se quita la ultima posicion por ser ultimo salto de linea
-                unset($data[count($data)-1]);
-
-                //si hay mensajes se cargan en $results
-                if ($data) {
+                $successModelG = Grupo::findFirst(["Id_Grupo = ".$id_grupo_actual]);
+                if($successModelG){
+                    $pathAux = BASE_PATH."/public/files/Chats/chat".$id_grupo_actual."/Mensajes.txt";
+                    $file = fopen($pathAux, "r");
+                    //se lee la informacion del archivo
+                    $data;
                     $ind = 0;
-                    $results;
-                    list($auxArray[0],$auxArray[1],$auxArray[2],$auxArray[3],$auxArray[4]) = explode(' ',$data[0],5);
-
-                    $fechaActual = $auxArray[2];
-
-                    foreach ($data as $row) {
-                        //se almacena cada $row por secciones (Matricula, tipo, fecha, hora, mensaje)
-                        list($results[$ind]['Matricula'], $results[$ind]['Tipo_M'], $results[$ind]['Fecha'], $results[$ind]['Hora'],$results[$ind]['Mensaje']) = explode(' ',$row,5);
-                        $results[$ind]['Hora'] = $this->formatearFecha($results[$ind]['Hora']);
-                        //se asigna un nuevo elemento, obteniendo el nombre de la persona
-                        $results[$ind]['Nombre'] = Usuario::findFirst("Matricula = ".$results[$ind]['Matricula']."")->Nombre;
-                        if ($ind == 0) { //dianuevo para el primer mensaje enviado por ser la primera fecha
-                            setlocale(LC_TIME, 'es_CO.UTF-8');
-                            $results[$ind]['DiaNuevo'] = "Inicio de conversación: ".strftime("%A, %d  de %B del %G", strtotime($results[$ind]['Fecha']));
-                        }
-                        //se calcula la diferencia de fechas para ver si es un dia diferente
-                        $date1 = new DateTime($fechaActual);
-                        $date2 = new DateTime($results[$ind]['Fecha']);
-                        $diff = $date1->diff($date2);
-
-                        if($diff->days > 0){ //si hay diferencia se asigna cadena de nuevo dia
-                            //comprobar si se trata de el dia de hoy
-
-                            $modelForFecha = new Grupo();
-                            $diffAux = (new DateTime($modelForFecha->getFechaNowDateOnly()))->diff((new DateTime($results[$ind]['Fecha'])));
-
-                            if ($diffAux->days > 0) {
-                                setlocale(LC_TIME, 'es_CO.UTF-8');
-                                $results[$ind]['DiaNuevo'] = strftime("%A, %d  de %B del %G", strtotime($results[$ind]['Fecha']));
-                                //$results[$ind]['DiaNuevo'] = "Hoy";
-                            }
-                            else{
-                                $results[$ind]['DiaNuevo'] = "Hoy";
-                            }
-
-                            $fechaActual = $results[$ind]['Fecha'];
-                        }
-
-                        $ind++;
+                    while (!feof($file)) {
+                        $data[$ind++] = fgets($file);
                     }
-                    echo json_encode ($results);
+                    fclose($file);
+
+                    //se quita la ultima posicion por ser ultimo salto de linea
+                    unset($data[count($data)-1]);
+
+                    //si hay mensajes se cargan en $results
+                    if ($data) {
+                        $ind = 0;
+                        $results;
+                        list($auxArray[0],$auxArray[1],$auxArray[2],$auxArray[3],$auxArray[4]) = explode(' ',$data[0],5);
+
+                        $fechaActual = $auxArray[2];
+
+                        foreach ($data as $row) {
+                            //se almacena cada $row por secciones (Matricula, tipo, fecha, hora, mensaje)
+                            list($results[$ind]['Matricula'], $results[$ind]['Tipo_M'], $results[$ind]['Fecha'], $results[$ind]['Hora'],$results[$ind]['Mensaje']) = explode(' ',$row,5);
+                            $results[$ind]['Hora'] = $this->formatearFecha($results[$ind]['Hora']);
+                            //se asigna un nuevo elemento, obteniendo el nombre de la persona
+                            $results[$ind]['Nombre'] = Usuario::findFirst("Matricula = ".$results[$ind]['Matricula']."")->Nombre;
+                            if ($ind == 0) { //dianuevo para el primer mensaje enviado por ser la primera fecha
+                                setlocale(LC_TIME, 'es_CO.UTF-8');
+                                $results[$ind]['DiaNuevo'] = "Inicio de conversación: ".strftime("%A, %d  de %B del %G", strtotime($results[$ind]['Fecha']));
+                            }
+                            //se calcula la diferencia de fechas para ver si es un dia diferente
+                            $date1 = new DateTime($fechaActual);
+                            $date2 = new DateTime($results[$ind]['Fecha']);
+                            $diff = $date1->diff($date2);
+
+                            if($diff->days > 0){ //si hay diferencia se asigna cadena de nuevo dia
+                                //comprobar si se trata de el dia de hoy
+
+                                $modelForFecha = new Grupo();
+                                $diffAux = (new DateTime($modelForFecha->getFechaNowDateOnly()))->diff((new DateTime($results[$ind]['Fecha'])));
+
+                                if ($diffAux->days > 0) {
+                                    setlocale(LC_TIME, 'es_CO.UTF-8');
+                                    $results[$ind]['DiaNuevo'] = strftime("%A, %d  de %B del %G", strtotime($results[$ind]['Fecha']));
+                                    //$results[$ind]['DiaNuevo'] = "Hoy";
+                                }
+                                else{
+                                    $results[$ind]['DiaNuevo'] = "Hoy";
+                                }
+
+                                $fechaActual = $results[$ind]['Fecha'];
+                            }
+
+                            $ind++;
+                        }
+                        echo json_encode ($results);
+                    }
+                    else{
+                        echo json_encode("Error, no hay mensajes que cargar");
+                    }
                 }
                 else{
-                    echo json_encode("Error, no hay mensajes que cargar");
+                    //Ocurre cuando el lider elimina el grupo actual donde se esta trabajando
+                    echo json_encode("Fatal Error");
+                    
                 }
             }
             else{
@@ -912,6 +994,23 @@ class GrupoController extends ControllerBase
 
     public function formatearFecha($fecha){
         return date('g:i a', strtotime($fecha));
+    }
+
+//GESTIONAR GRUPOS COMO LÍDER
+    public function Grupo_ConfAction(){
+        if (!$this->session->get('user')) {
+            $response = new Response();
+            $response->redirect("session/index");
+            $response->send();
+        }
+        if ($this->request->isPost()) {
+            echo "Valores del post:<br>".var_dump($this->request->getPost());
+        }
+        else{
+            $response = new Response();
+            $response->redirect("grupo/index");
+            $response->send();
+        }
     }
 
 //Funcion pruebas con archivos para manejo de mensajes en Chat
