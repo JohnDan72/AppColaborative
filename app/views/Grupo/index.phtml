@@ -344,6 +344,9 @@
                      <div class="col s12 m12 l12">
                        <?= $this->tag->form(['name' => 'conf_group', "grupo/Grupo_Conf", 'onsubmit'=>"return confirmacionGuardar()"]); ?>
                        <p class="center espaciado_up_down color_p">Hola <?php echo $this->session->get('user')['Nombre'] ?>, aquí podrás administrar todo lo relacionado a tu grupo</p>
+
+                       <?php echo (isset($Result_Gestion['Sin_Cambio']))?$Result_Gestion['Sin_Cambio']:"";?>
+                       
                        <div class="row">
                           <div class="col s12 m12 l6 offset-l3 input-field">
                              <br>
@@ -351,7 +354,10 @@
                              <?= $this->tag->textfield(['id_name_G_ant', 'name' => 'nombreG_anterior', 'value' => $infoGrupo->Nombre_G, 'style' => 'display:none']);?>
                              <?= $this->tag->textfield(['id_name_G', 'name' => 'nombreG', 'class' => 'validate', 'value' => $infoGrupo->Nombre_G]); ?>
                              <label for="id_name_G">Nombre del grupo</label>
+
+                             <?php echo (isset($Result_Gestion['Cambio_Nombre']))?$Result_Gestion['Cambio_Nombre']:"";?>
                           </div>
+
                           <div class="col s12 m12 l12 center espaciado_up_down">
                             <p class="color_p_ti">Integrantes: </p>
                             <div id="ChipsPadre">
@@ -363,6 +369,7 @@
                                 <div class="chipMatricula" style="display: none;"><?php echo $miembro['Matricula']?></div>
                                 <img class="tooltipped hand" data-position="bottom" data-tooltip="<?php echo $miembro['Correo']; ?>" src='<?php echo $avatar[$get_position]; ?>' height="32" width="32">
                                 <?php echo $miembro['Nombre']; ?>
+                                <!--Si es la matricula del lider no se pone la "X" para ser borrado-->
                                 <?php if($miembro['Matricula'] != $this->session->get('user')['Matricula']){?>
                                   <i class="close material-icons">close</i>
                                 <?php }?>
@@ -374,6 +381,8 @@
                             </div>
                             <input type="hidden" id="arrayChipPostId_Ant" name="arrayChipPost_Ant" value="">
                             <input type="hidden" id="arrayChipPostId" name="arrayChipPost" value="">
+                            <?php echo $this->tag->textfield(['id_grupo_actual', 'name' => 'id_grupo', 'style' => 'display:none', 'value' => $this->session->get('Id_Grupo_Actual')]);?>
+                            <?php echo (isset($Result_Gestion['Cambio_Chips']))?$Result_Gestion['Cambio_Chips']:"";?>
                           </div>
                           <!------Forma de recuperar los id de los integrantes---->
                           <script type="text/javascript">
@@ -397,6 +406,7 @@
                             <?= $this->tag->textfield(['id_clave_ant', 'name' => 'claveAnterior', 'value' => $infoGrupo->Clave_Grupo, 'style' => 'display:none']);?>
                             <?= $this->tag->textfield(['id_clave_G', 'name' => 'claveG', 'class' => 'validate', 'value' => $infoGrupo->Clave_Grupo]); ?>
                             <label for="id_clave_G">Clave del grupo</label>
+                            <?php echo (isset($Result_Gestion['Cambio_Clave']))?$Result_Gestion['Cambio_Clave']:"";?>
                           </div>
 
 

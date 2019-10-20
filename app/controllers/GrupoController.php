@@ -35,9 +35,12 @@ class GrupoController extends ControllerBase
 
         $grupo = new Integrantegrupo();
 
-
+        //echo "Antes de getGruposOf<br>";
         $this->view->grupos = $grupo->getGruposOf($this->session->get('user')['Matricula']);
+        //echo "Despues de getGruposOf<br>";
         $this->view->gruposComp = $grupo->getGruposOfComplemento($this->session->get('user')['Matricula']);
+        //echo "Despues de getGruposOfComplemento<br>";
+
 
         //registro del grupo actualmente elegido desde el panel de control.
         if ((isset($this->Grupo_Act['id_actual']))&&($this->Grupo_Act['id_actual']> 0) && (isset($this->Tipo_Despli)) &&($this->Tipo_Despli > 0) ) {
@@ -358,7 +361,7 @@ class GrupoController extends ControllerBase
 
 
 
-    public function desplegarGrupoAction()
+    public function desplegarGrupoAction($id_grupo_aux = null,$tipo_aux = null)
     {   //tipo_despli=1 ->  'Abrir grupo'  
         //tipo_despli=2 -> 'Abrir administración'
         if($this->request->isGet()){
@@ -384,6 +387,45 @@ class GrupoController extends ControllerBase
         
                     $this->Grupo_Act['id_actual'] = $id_grupo;
                     $this->Tipo_Despli = $tipo_despli;
+        
+                    return $this->dispatcher->forward([
+                        'controller' => 'grupo',
+                        'action' => 'index'
+                    ]);
+                }
+                else{
+                    //ocurre cuando se ha eliminado un grupo de repente
+                    $response = new Response();
+                    $response->redirect("grupo/index/#");
+                    $response->send();
+                }  
+            } else {
+                //echo "Uno o ambos son null: ". $id_grupo."  ".$tipo_despli;
+                $response = new Response();
+                $response->redirect("grupo/index/#####");
+                $response->send();
+            }
+        }
+        else{
+            if (($id_grupo_aux != null) && ($tipo_aux != null)) {
+                $successModelG = Grupo::findFirst(["Id_Grupo = ".$id_grupo_aux]);
+                if($successModelG){
+                    if($tipo_aux == 2){
+                        $success = Grupo::findFirst([
+                                    'columns'    => '*',
+                                    'conditions' => 'Id_Grupo = ?1 AND Id_Lider = ?2',
+                                    'bind'       => [
+                                        1 => $id_grupo_aux,
+                                        2 => $this->session->get('user')['Matricula'],
+                                    ]
+                                                    ]);
+                        if (!$success) {
+                            $tipo_aux = 3;
+                        }
+                    }
+        
+                    $this->Grupo_Act['id_actual'] = $id_grupo_aux;
+                    $this->Tipo_Despli = $tipo_aux;
         
                     return $this->dispatcher->forward([
                         'controller' => 'grupo',
@@ -1004,7 +1046,141 @@ class GrupoController extends ControllerBase
             $response->send();
         }
         if ($this->request->isPost()) {
-            echo "Valores del post:<br>".var_dump($this->request->getPost());
+            //echo "Valores del post:<br>".var_dump($this->request->getPost()); (var_dum para comprobar info)
+            //se deben comparar los valores anteriores y los enviados para comprobar si hubo cambios
+            $id_grupo       =   $this->request->getPost('id_grupo');
+            $nombreG_ant    =   $this->request->getPost('nombreG_anterior');
+            $nombreG        =   $this->request->getPost('nombreG');
+            $chipsAnterior  =   json_decode($this->request->getPost('arrayChipPost_Ant'), true);
+            $chipsNow       =   json_decode($this->request->getPost('arrayChipPost'), true);
+            $claveAnterior  =   $this->request->getPost('claveAnterior');
+            $claveNow       =   $this->request->getPost('claveG');
+
+            $mensajesRes; $band = 0;
+            if ($nombreG != $nombreG_ant) { //cambio en el nombre
+                $grupoModel = Grupo::findFirst('Id_Grupo = '.$id_grupo);
+                $grupoModel->Nombre_G = $nombreG;
+                if($grupoModel->update())
+                    $mensajesRes['Cambio_Nombre'] = "
+                                    <div class=\"row center\">    
+                                        <span class =\"light-green-text text-accent-3\">
+                                            Nombre Modificado Exitosamente!
+                                        </span>
+                                    </div>
+                                        ";
+                else
+                    $mensajesRes['Cambio_Nombre'] = "
+                                    <div class=\"row center\">
+                                        <span class =\"red-text text-darken-1\">
+                                            Error al cambiar nombre, intente de nuevo
+                                        </span>
+                                    </div>
+                                        ";
+            }
+            else{ //sin cambio en el nombre
+                $band++;
+            }
+
+            if (count($chipsAnterior) > count($chipsNow)) { //cambio en los Integrantes
+                
+                $chipsAux = array(); 
+                foreach ($chipsNow as $chip => $campo) { //guardar chips resultantes en un array
+                    array_push($chipsAux, $campo['tag']);
+                }
+
+                foreach ($chipsAnterior as $chip => $campo) {//checar cuales integrantes ya NO ESTAN
+                    if (!in_array($campo['tag'], $chipsAux)) {// si no esta se borra el integrante
+                        $integranteModel = Integrantegrupo::findFirst(
+                                [
+                                    'columns'    => '*',
+                                    'conditions' => 'Id_Grupo = ?1 AND Id_Integrante = ?2',
+                                    'bind'       => [
+                                        1 => $id_grupo,
+                                        2 => $campo['tag']
+                                    ]
+                                ]
+                            );
+                        if ($integranteModel) {
+                            $integranteModel->delete();
+                        }
+                    }
+                }
+
+                $mensajesRes['Cambio_Chips'] = "
+                            <div class=\"row center\">    
+                                <span class =\"light-green-text text-accent-3\">
+                                    Se han modificado los integrantes del grupo con éxito!
+                                </span>
+                            </div>
+                                ";
+
+            }
+            else{//sin cambios en Integrantes
+                $band++;
+            }
+
+            if ($claveAnterior != $claveNow) { //cambio en la clave
+                $grupoModel2 = new Grupo();
+                $success = $grupoModel2->updatePassword($id_grupo,$claveNow,$this->Clave_Encriptacion['key']);
+                if ($success) 
+                    $mensajesRes['Cambio_Clave'] = "
+                                    <div class=\"row center\">
+                                        <span class =\"light-green-text text-accent-3\">
+                                            Clave Modificada Exitosamente!
+                                        </span>
+                                    </div>";
+                else
+                    $mensajesRes['Cambio_Clave'] = "
+                                    <div class=\"row center\">
+                                        <span class =\"red-text text-darken-1\">
+                                            Error al cambiar la clave del grupo, intente de nuevo
+                                        </span>
+                                    </div>
+                                        ";
+
+            }
+            else{ //sin cambio en la clave de grupo
+                $band++;
+                if($band == 3)
+                $mensajesRes['Sin_Cambio'] =    "<div class=\"row center\">
+                                                    <span class=\"yellow-text\">
+                                                        SIN CAMBIOS
+                                                    </span>
+                                                </div>";   
+            }
+
+
+
+
+
+            $this->view->Result_Gestion = $mensajesRes;
+
+            return $this->dispatcher->forward(
+                [
+                    "controller"    => "grupo",
+                    "action"        => "desplegarGrupo",
+                    'params' => [$id_grupo, 2]
+                ]
+            );
+            /*
+            echo "Nombre anterior ".$nombreG_ant."<br>";
+            echo "Nombre ahora ".$nombreG."<br>";
+
+            foreach ($chipsAnterior as $chip => $campo) {
+                //$successAux = Usuario::findFirst("Matricula = " . $campo['tag'] . "");
+                echo "ChipA: ".$campo['tag']."<br>";
+            }
+            foreach ($chipsNow as $chip => $campo) {
+                //$successAux = Usuario::findFirst("Matricula = " . $campo['tag'] . "");
+                echo "Chip: ".$campo['tag']."<br>";
+            }
+            //echo "Chíps anterior ".$chipsAnterior."<br>";
+            //echo "Chips ahora ".$chipsNow."<br>";
+
+            echo "Clave anterior ".$claveAnterior."<br>";
+            echo "Clave ahora ".$claveNow."<br>";
+            */
+
         }
         else{
             $response = new Response();

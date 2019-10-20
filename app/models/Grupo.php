@@ -69,15 +69,14 @@ class Grupo extends Model
 		return $query->execute()[0]['fecha'];
 	}
 
+	public function updatePassword($id_grupo, $newPass, $claveEncriptacion){
+    	$query = $this->modelsManager->createQuery("
+    		UPDATE grupo 
+    		set grupo.Clave_Grupo = AES_ENCRYPT('".$newPass."','".$claveEncriptacion."') 
+    		WHERE grupo.Id_Grupo = $id_grupo
+		");
+
+		return $query->execute();
+    }
 
 }
-
-/*
-DELETE
-FROM grupo
-WHERE Id_Grupo = 2;
-
-DELETE
-FROM integrantegrupo
-WHERE Id_Grupo = 2;
-*/

@@ -43,7 +43,7 @@ class Integrantegrupo extends Model
 		    ]
 		);
 
-		if($gruposOfIntegrant){
+		if(isset($gruposOfIntegrant[0])){
 			$subcadena = ""; $ind = 1;
 			//se concatenan las condiciones para poder recuperar los grupos a los que no pertenece
 			foreach ($gruposOfIntegrant as $grupo) {
