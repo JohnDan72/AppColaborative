@@ -121,7 +121,7 @@ class GrupoController extends ControllerBase
                         "Nombre_Img",
                         new FileValidator(
                             [
-                                "maxSize"              => "2M",
+                                "maxSize"              => "1000M",
                                 "messageSize"          => "El archivo excede el tamaño máximo (:max)",
                                 "allowedTypes"         => [
                                     "image/jpeg",
@@ -235,7 +235,7 @@ class GrupoController extends ControllerBase
                         foreach ($files as $file) {
                             // Move the file into the application
                             $pathMensaje2 = BASE_PATH."/public/files/Chats/chat".$this->session->get('Id_Grupo_Actual')."/Documentos/".$file->getName();
-                            $pathMensaje1 = $this->url->get("public/files/Chats/chat".$this->session->get('Id_Grupo_Actual')."/Documentos/".$file->getName()."");
+                            $pathMensaje1 = $this->url->get("public/files/Chats/chat".((int)$this->session->get('Id_Grupo_Actual'))."/Documentos/".$file->getName()."");
                             $file->moveTo(
                                 $pathMensaje2
                             );
@@ -957,66 +957,80 @@ class GrupoController extends ControllerBase
 
                 $successModelG = Grupo::findFirst(["Id_Grupo = ".$id_grupo_actual]);
                 if($successModelG){
-                    $pathAux = BASE_PATH."/public/files/Chats/chat".$id_grupo_actual."/Mensajes.txt";
-                    $file = fopen($pathAux, "r");
-                    //se lee la informacion del archivo
-                    $data;
-                    $ind = 0;
-                    while (!feof($file)) {
-                        $data[$ind++] = fgets($file);
-                    }
-                    fclose($file);
-
-                    //se quita la ultima posicion por ser ultimo salto de linea
-                    unset($data[count($data)-1]);
-
-                    //si hay mensajes se cargan en $results
-                    if ($data) {
+                    $successModelG2 = Integrantegrupo::findFirst([
+                                    'columns'    => '*',
+                                    'conditions' => 'Id_Grupo = ?1 AND Id_Integrante = ?2',
+                                    'bind'       => [
+                                        1 => $id_grupo_actual,
+                                        2 => $this->session->get('user')['Matricula']
+                                    ]    
+                                ]);
+                    if ($successModelG2) {
+                        $pathAux = BASE_PATH."/public/files/Chats/chat".$id_grupo_actual."/Mensajes.txt";
+                        $file = fopen($pathAux, "r");
+                        //se lee la informacion del archivo
+                        $data;
                         $ind = 0;
-                        $results;
-                        list($auxArray[0],$auxArray[1],$auxArray[2],$auxArray[3],$auxArray[4]) = explode(' ',$data[0],5);
-
-                        $fechaActual = $auxArray[2];
-
-                        foreach ($data as $row) {
-                            //se almacena cada $row por secciones (Matricula, tipo, fecha, hora, mensaje)
-                            list($results[$ind]['Matricula'], $results[$ind]['Tipo_M'], $results[$ind]['Fecha'], $results[$ind]['Hora'],$results[$ind]['Mensaje']) = explode(' ',$row,5);
-                            $results[$ind]['Hora'] = $this->formatearFecha($results[$ind]['Hora']);
-                            //se asigna un nuevo elemento, obteniendo el nombre de la persona
-                            $results[$ind]['Nombre'] = Usuario::findFirst("Matricula = ".$results[$ind]['Matricula']."")->Nombre;
-                            if ($ind == 0) { //dianuevo para el primer mensaje enviado por ser la primera fecha
-                                setlocale(LC_TIME, 'es_CO.UTF-8');
-                                $results[$ind]['DiaNuevo'] = "Inicio de conversación: ".strftime("%A, %d  de %B del %G", strtotime($results[$ind]['Fecha']));
-                            }
-                            //se calcula la diferencia de fechas para ver si es un dia diferente
-                            $date1 = new DateTime($fechaActual);
-                            $date2 = new DateTime($results[$ind]['Fecha']);
-                            $diff = $date1->diff($date2);
-
-                            if($diff->days > 0){ //si hay diferencia se asigna cadena de nuevo dia
-                                //comprobar si se trata de el dia de hoy
-
-                                $modelForFecha = new Grupo();
-                                $diffAux = (new DateTime($modelForFecha->getFechaNowDateOnly()))->diff((new DateTime($results[$ind]['Fecha'])));
-
-                                if ($diffAux->days > 0) {
-                                    setlocale(LC_TIME, 'es_CO.UTF-8');
-                                    $results[$ind]['DiaNuevo'] = strftime("%A, %d  de %B del %G", strtotime($results[$ind]['Fecha']));
-                                    //$results[$ind]['DiaNuevo'] = "Hoy";
-                                }
-                                else{
-                                    $results[$ind]['DiaNuevo'] = "Hoy";
-                                }
-
-                                $fechaActual = $results[$ind]['Fecha'];
-                            }
-
-                            $ind++;
+                        while (!feof($file)) {
+                            $data[$ind++] = fgets($file);
                         }
-                        echo json_encode ($results);
+                        fclose($file);
+
+                        //se quita la ultima posicion por ser ultimo salto de linea
+                        unset($data[count($data)-1]);
+
+                        //si hay mensajes se cargan en $results
+                        if ($data) {
+                            $ind = 0;
+                            $results;
+                            list($auxArray[0],$auxArray[1],$auxArray[2],$auxArray[3],$auxArray[4]) = explode(' ',$data[0],5);
+
+                            $fechaActual = $auxArray[2];
+
+                            foreach ($data as $row) {
+                                //se almacena cada $row por secciones (Matricula, tipo, fecha, hora, mensaje)
+                                list($results[$ind]['Matricula'], $results[$ind]['Tipo_M'], $results[$ind]['Fecha'], $results[$ind]['Hora'],$results[$ind]['Mensaje']) = explode(' ',$row,5);
+                                $results[$ind]['Hora'] = $this->formatearFecha($results[$ind]['Hora']);
+                                //se asigna un nuevo elemento, obteniendo el nombre de la persona
+                                $results[$ind]['Nombre'] = Usuario::findFirst("Matricula = ".$results[$ind]['Matricula']."")->Nombre;
+                                if ($ind == 0) { //dianuevo para el primer mensaje enviado por ser la primera fecha
+                                    setlocale(LC_TIME, 'es_CO.UTF-8');
+                                    $results[$ind]['DiaNuevo'] = "Inicio de conversación: ".strftime("%A, %d  de %B del %G", strtotime($results[$ind]['Fecha']));
+                                }
+                                //se calcula la diferencia de fechas para ver si es un dia diferente
+                                $date1 = new DateTime($fechaActual);
+                                $date2 = new DateTime($results[$ind]['Fecha']);
+                                $diff = $date1->diff($date2);
+
+                                if($diff->days > 0){ //si hay diferencia se asigna cadena de nuevo dia
+                                    //comprobar si se trata de el dia de hoy
+
+                                    $modelForFecha = new Grupo();
+                                    $diffAux = (new DateTime($modelForFecha->getFechaNowDateOnly()))->diff((new DateTime($results[$ind]['Fecha'])));
+
+                                    if ($diffAux->days > 0) {
+                                        setlocale(LC_TIME, 'es_CO.UTF-8');
+                                        $results[$ind]['DiaNuevo'] = strftime("%A, %d  de %B del %G", strtotime($results[$ind]['Fecha']));
+                                        //$results[$ind]['DiaNuevo'] = "Hoy";
+                                    }
+                                    else{
+                                        $results[$ind]['DiaNuevo'] = "Hoy";
+                                    }
+
+                                    $fechaActual = $results[$ind]['Fecha'];
+                                }
+
+                                $ind++;
+                            }
+                            echo json_encode ($results);
+                        }
+                        else{
+                            echo json_encode("Error, no hay mensajes que cargar");
+                        }
                     }
                     else{
-                        echo json_encode("Error, no hay mensajes que cargar");
+                        //Ocurre cuando el lider elimina al integrante que a la vez es ocupado por un integrante en específico
+                        echo json_encode("Fatal Error");
                     }
                 }
                 else{
@@ -1162,24 +1176,6 @@ class GrupoController extends ControllerBase
                     'params' => [$id_grupo, 2]
                 ]
             );
-            /*
-            echo "Nombre anterior ".$nombreG_ant."<br>";
-            echo "Nombre ahora ".$nombreG."<br>";
-
-            foreach ($chipsAnterior as $chip => $campo) {
-                //$successAux = Usuario::findFirst("Matricula = " . $campo['tag'] . "");
-                echo "ChipA: ".$campo['tag']."<br>";
-            }
-            foreach ($chipsNow as $chip => $campo) {
-                //$successAux = Usuario::findFirst("Matricula = " . $campo['tag'] . "");
-                echo "Chip: ".$campo['tag']."<br>";
-            }
-            //echo "Chíps anterior ".$chipsAnterior."<br>";
-            //echo "Chips ahora ".$chipsNow."<br>";
-
-            echo "Clave anterior ".$claveAnterior."<br>";
-            echo "Clave ahora ".$claveNow."<br>";
-            */
 
         }
         else{

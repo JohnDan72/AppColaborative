@@ -577,141 +577,142 @@
 
                 if (!((typeof data) == "string")) {
                   var chat_Caja = document.getElementById("div_chat");
-                  chat_Caja.textContent = "";
-                  for (var i = 0; i < data.length; i++) {
-                    var newLi = document.createElement("li");
-                    var newDiv1 = document.createElement("div");
-                        newDiv1.className  = "row";
-                    var newDiv1_1 = document.createElement("div");
-                    var newDiv1_2 = document.createElement("div");
-                    var newDiv1_2_1 = document.createElement("div");
-                    var newDiv1_2_2 = document.createElement("div");
-                    var newDiv1_2_3 = document.createElement("div");
+                  if (chat_Caja != null) {
+                      chat_Caja.textContent = "";
+                      for (var i = 0; i < data.length; i++) {
+                        var newLi = document.createElement("li");
+                        var newDiv1 = document.createElement("div");
+                            newDiv1.className  = "row";
+                        var newDiv1_1 = document.createElement("div");
+                        var newDiv1_2 = document.createElement("div");
+                        var newDiv1_2_1 = document.createElement("div");
+                        var newDiv1_2_2 = document.createElement("div");
+                        var newDiv1_2_3 = document.createElement("div");
 
-                      var imgAux = document.createElement("img");
-                          imgAux.src = '<?php echo $avatar[random_int(0, 8)]; ?>';
-                          imgAux.height = '32';
-                          imgAux.width = '32';
-                          imgAux.alt = 'Contact Person';
+                          var imgAux = document.createElement("img");
+                              imgAux.src = '<?php echo $avatar[random_int(0, 8)]; ?>';
+                              imgAux.height = '32';
+                              imgAux.width = '32';
+                              imgAux.alt = 'Contact Person';
 
-                    if (data[i].Matricula == <?php echo $this->session->get('user')['Matricula'];?>) {
+                        if (data[i].Matricula == <?php echo $this->session->get('user')['Matricula'];?>) {
 
-                        newDiv1_1.className  = "col s2 m2 l2";
-                        newDiv1_1.appendChild(imgAux);
+                            newDiv1_1.className  = "col s2 m2 l2";
+                            newDiv1_1.appendChild(imgAux);
 
-                        newDiv1_2.className  = 'col s10 m10 l10';
-                          newDiv1_2_1.className = "row right blue-grey-text text-lighten-2";
-                          newDiv1_2_1.textContent = "Yo";
-                          newDiv1_2_2.className = "row grey-text text-darken-2 div_back";
-                          newDiv1_2_2.style.marginBottom = "-10px";
-                          newDiv1_2_2.style.marginTop = "30px";
-
-
-                          switch(data[i].Tipo_M){
-                            case '0':
-                                newDiv1_2_2.textContent = data[i].Mensaje;
-                              break;
-                            case '1':
-                                var auxImgMessage = document.createElement('img');
-                                    auxImgMessage.src = data[i].Mensaje;
-                                    auxImgMessage.height = "200";
-                                    auxImgMessage.width = "200";
-                                newDiv1_2_2.appendChild(auxImgMessage);
-                              break;
-                            case '2':
-                                var aAux = document.createElement('a');
-                                    aAux.href = data[i].Mensaje;
-                                    aAux.target = "_blank";
-                                    aAux.textContent = data[i].Mensaje.replace(/((\/[_a-zA-Z0-9]+){0,}\/)([a-zA-Z0-9\s\.ñ\(\)]+)/, '$3');
-
-                                newDiv1_2_2.appendChild(aAux);
-                              break;
-
-                            default:
-                          }
+                            newDiv1_2.className  = 'col s10 m10 l10';
+                              newDiv1_2_1.className = "row right blue-grey-text text-lighten-2";
+                              newDiv1_2_1.textContent = "Yo";
+                              newDiv1_2_2.className = "row grey-text text-darken-2 div_back";
+                              newDiv1_2_2.style.marginBottom = "-10px";
+                              newDiv1_2_2.style.marginTop = "30px";
 
 
+                              switch(data[i].Tipo_M){
+                                case '0':
+                                    newDiv1_2_2.textContent = data[i].Mensaje;
+                                  break;
+                                case '1':
+                                    var auxImgMessage = document.createElement('img');
+                                        auxImgMessage.src = data[i].Mensaje;
+                                        auxImgMessage.height = "200";
+                                        auxImgMessage.width = "200";
+                                    newDiv1_2_2.appendChild(auxImgMessage);
+                                  break;
+                                case '2':
+                                    var aAux = document.createElement('a');
+                                        aAux.href = data[i].Mensaje;
+                                        aAux.target = "_blank";
+                                        aAux.textContent = data[i].Mensaje.replace(/((\/[_a-zA-Z0-9]+){0,}\/)([a-zA-Z0-9\s\.ñ\(\)]+)/, '$3');
 
-
-                        newDiv1_2_3.className = "row right blue-grey-text text-lighten-2";
-                        newDiv1_2_3.textContent = data[i].Hora;
-                        newDiv1_2.appendChild(newDiv1_2_1);
-                        newDiv1_2.appendChild(newDiv1_2_2);
-                        newDiv1_2.appendChild(newDiv1_2_3);
-                    }
-                    else{
-                        newDiv1_2.className  = "col s2 m2 l2";
-                        newDiv1_2.appendChild(imgAux);
-
-                        newDiv1_1.className  = 'col s8 m8 l8';
-                          newDiv1_2_1.className = "row blue-grey-text text-lighten-2";
-                          newDiv1_2_1.textContent = data[i].Nombre;
-                          newDiv1_2_2.className = "row grey-text text-darken-2 div_back";
-                          newDiv1_2_2.style.marginBottom = "-10px";
-                          newDiv1_2_2.style.marginTop = "-6px";
-
-
-                          switch(data[i].Tipo_M){
-                            case '0':
-                                newDiv1_2_2.textContent = data[i].Mensaje;
-                              break;
-                            case '1':
-                                var auxImgMessage = document.createElement('img');
-                                    auxImgMessage.src = data[i].Mensaje;
-                                    auxImgMessage.height = "200";
-                                    auxImgMessage.width = "200";
-                                newDiv1_2_2.appendChild(auxImgMessage);
-                              break;
-                            case '2':
-                                var aAux = document.createElement('a');
-                                    aAux.href = data[i].Mensaje;
-                                    aAux.target = "_blank";
-                                    aAux.textContent = data[i].Mensaje.replace(/((\/[_a-zA-Z0-9]+){0,}\/)([a-zA-Z0-9\s\.ñ\(\)]+)/, '$3');
                                     newDiv1_2_2.appendChild(aAux);
-                              break;
+                                  break;
 
-                            default:
-                          }
-
-
+                                default:
+                              }
 
 
 
-                          newDiv1_2_3.className = "row right blue-grey-text text-lighten-2";
-                          newDiv1_2_3.textContent = data[i].Hora;
-                          newDiv1_1.appendChild(newDiv1_2_1);
-                          newDiv1_1.appendChild(newDiv1_2_2);
-                          newDiv1_1.appendChild(newDiv1_2_3);
-                    }
+
+                            newDiv1_2_3.className = "row right blue-grey-text text-lighten-2";
+                            newDiv1_2_3.textContent = data[i].Hora;
+                            newDiv1_2.appendChild(newDiv1_2_1);
+                            newDiv1_2.appendChild(newDiv1_2_2);
+                            newDiv1_2.appendChild(newDiv1_2_3);
+                        }
+                        else{
+                            newDiv1_2.className  = "col s2 m2 l2";
+                            newDiv1_2.appendChild(imgAux);
+
+                            newDiv1_1.className  = 'col s8 m8 l8';
+                              newDiv1_2_1.className = "row blue-grey-text text-lighten-2";
+                              newDiv1_2_1.textContent = data[i].Nombre;
+                              newDiv1_2_2.className = "row grey-text text-darken-2 div_back";
+                              newDiv1_2_2.style.marginBottom = "-10px";
+                              newDiv1_2_2.style.marginTop = "-6px";
 
 
-                    newDiv1.appendChild(newDiv1_1);
-                    newDiv1.appendChild(newDiv1_2);
+                              switch(data[i].Tipo_M){
+                                case '0':
+                                    newDiv1_2_2.textContent = data[i].Mensaje;
+                                  break;
+                                case '1':
+                                    var auxImgMessage = document.createElement('img');
+                                        auxImgMessage.src = data[i].Mensaje;
+                                        auxImgMessage.height = "200";
+                                        auxImgMessage.width = "200";
+                                    newDiv1_2_2.appendChild(auxImgMessage);
+                                  break;
+                                case '2':
+                                    var aAux = document.createElement('a');
+                                        aAux.href = data[i].Mensaje;
+                                        aAux.target = "_blank";
+                                        aAux.textContent = data[i].Mensaje.replace(/((\/[_a-zA-Z0-9]+){0,}\/)([a-zA-Z0-9\s\.ñ\(\)]+)/, '$3');
+                                        newDiv1_2_2.appendChild(aAux);
+                                  break;
+
+                                default:
+                              }
 
 
-                    if (typeof data[i].DiaNuevo != "undefined" && data[i].DiaNuevo != null) {
-                        var newDivDia = document.createElement("div");
-                            newDivDia.className = "row center";
-                        var spanDivDia = document.createElement("span");
-                            spanDivDia.className = "blue-grey-text text-lighten-1";
-                            spanDivDia.textContent = data[i].DiaNuevo;
 
-                        newDivDia.appendChild(spanDivDia);
-                        newLi.appendChild(newDivDia);
-                    }
-                    newLi.appendChild(newDiv1);
 
-                    chat_Caja.appendChild(newLi);
+
+                              newDiv1_2_3.className = "row right blue-grey-text text-lighten-2";
+                              newDiv1_2_3.textContent = data[i].Hora;
+                              newDiv1_1.appendChild(newDiv1_2_1);
+                              newDiv1_1.appendChild(newDiv1_2_2);
+                              newDiv1_1.appendChild(newDiv1_2_3);
+                        }
+
+
+                        newDiv1.appendChild(newDiv1_1);
+                        newDiv1.appendChild(newDiv1_2);
+
+
+                        if (typeof data[i].DiaNuevo != "undefined" && data[i].DiaNuevo != null) {
+                            var newDivDia = document.createElement("div");
+                                newDivDia.className = "row center";
+                            var spanDivDia = document.createElement("span");
+                                spanDivDia.className = "blue-grey-text text-lighten-1";
+                                spanDivDia.textContent = data[i].DiaNuevo;
+
+                            newDivDia.appendChild(spanDivDia);
+                            newLi.appendChild(newDivDia);
+                        }
+                        newLi.appendChild(newDiv1);
+
+                        chat_Caja.appendChild(newLi);
+                      }
+
+                        if (globalScrollTop != chat_Caja.scrollHeight) {
+                            document.getElementById('Id_Caja_Grande').scrollTop = chat_Caja.scrollHeight;
+                            globalScrollTop = chat_Caja.scrollHeight;
+                        }
                   }
-
-                    if (globalScrollTop != chat_Caja.scrollHeight) {
-                        document.getElementById('Id_Caja_Grande').scrollTop = chat_Caja.scrollHeight;
-                        globalScrollTop = chat_Caja.scrollHeight;
-                    }
                 }
                 else{
                   if(data.startsWith("Error")){
-
                   }
                   else if(data == "Fatal Error"){
                     window.location.replace("<?php echo $this->url->get('Grupo/index/#');?>");
