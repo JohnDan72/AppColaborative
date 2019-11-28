@@ -121,10 +121,22 @@ h5 {
     height: 310px;
 }
 
+#card_iframe{
+    overflow: hidden;
+    border-radius: 0px !important;
+    margin-top: 30px;
+}
+
 #card_1 {
     margin-top: 5px !important;
     height: 90px !important;
     padding-top: 10px;
+}
+
+@media screen and (min-width: 601px) {
+    #card_1 {
+        margin-top: -45px !important;
+    }
 }
 
 form input {
@@ -316,3 +328,5 @@ form button:hover {
   margin-top: 10px
 
 }
+
+

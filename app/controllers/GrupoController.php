@@ -34,13 +34,9 @@ class GrupoController extends ControllerBase
         }
 
         $grupo = new Integrantegrupo();
-
-        //echo "Antes de getGruposOf<br>";
+        
         $this->view->grupos = $grupo->getGruposOf($this->session->get('user')['Matricula']);
-        //echo "Despues de getGruposOf<br>";
         $this->view->gruposComp = $grupo->getGruposOfComplemento($this->session->get('user')['Matricula']);
-        //echo "Despues de getGruposOfComplemento<br>";
-
 
         //registro del grupo actualmente elegido desde el panel de control.
         if ((isset($this->Grupo_Act['id_actual']))&&($this->Grupo_Act['id_actual']> 0) && (isset($this->Tipo_Despli)) &&($this->Tipo_Despli > 0) ) {
@@ -174,7 +170,8 @@ class GrupoController extends ControllerBase
                         fwrite($file, $matricula." ".$tipoM." ".$fechaHora." ".$mensaje.PHP_EOL);
                         fclose($file);
                         $this->Grupo_Act['id_actual'] = $this->session->get('Id_Grupo_Actual');
-
+                        //se guarda actividad para HISTORIAL de grupo
+                        $this->saveHistory(2,$this->session->get('user')['Matricula'],$this->session->get('Id_Grupo_Actual'));
                         echo json_encode("Archivos almacenados con Éxito");
                     }
 
@@ -254,7 +251,8 @@ class GrupoController extends ControllerBase
                         fwrite($file, $matricula." ".$tipoM." ".$fechaHora." ".$mensaje.PHP_EOL);
                         fclose($file);
                         $this->Grupo_Act['id_actual'] = $this->session->get('Id_Grupo_Actual');
-
+                        //se guarda actividad para HISTORIAL de grupo
+                        $this->saveHistory(3,$this->session->get('user')['Matricula'],$this->session->get('Id_Grupo_Actual'));
                         echo json_encode("Archivos almacenados con Éxito");
                     }
 
@@ -342,6 +340,8 @@ class GrupoController extends ControllerBase
                     $this->flash->error('Lo sentimos, hubo un error a la hora de dejar el grupo');
                 } else {
                     $this->flash->success('Haz dejado el grupo!');
+                    //se guarda actividad para HISTORIAL de grupo
+                    $this->saveHistory(8,$this->session->get('user')['Matricula'],$id_grupo_a_dejar);
                 }
             }
             else{
@@ -387,6 +387,19 @@ class GrupoController extends ControllerBase
         
                     $this->Grupo_Act['id_actual'] = $id_grupo;
                     $this->Tipo_Despli = $tipo_despli;
+
+                    //condiciones para guardar en el HISTORIAL de grupo
+                    if($this->session->has('Id_Grupo_Actual'))
+                    {
+                        if ($id_grupo != $this->session->get('Id_Grupo_Actual')) 
+                        {
+                            $this->saveHistory(1,$this->session->get('user')['Matricula'],$id_grupo);
+                        }
+                    }
+                    else
+                    {
+                        $this->saveHistory(1,$this->session->get('user')['Matricula'],$id_grupo);
+                    }
         
                     return $this->dispatcher->forward([
                         'controller' => 'grupo',
@@ -474,6 +487,8 @@ class GrupoController extends ControllerBase
             $success = $grupoAux->saveWithEncrypt($post1, $this->Clave_Encriptacion['key']);
 
             if ($success) {
+                //se guarda actividad para HISTORIAL de grupo
+                $this->saveHistory(9,$this->session->get('user')['Matricula'],$idMax);
 
             //NOTA: Para crear directorios y ficheros es awuevo poner el path fisico pero para auxiliarnos
             //      se ocupa la constante BASE_PATH
@@ -650,6 +665,8 @@ class GrupoController extends ControllerBase
                         );
 
                         if ($success) {
+                            //se guarda actividad para HISTORIAL de grupo
+                            $this->saveHistory(7,$this->session->get('user')['Matricula'],$id_grupo);
                             $this->flash->success("¡Bienvenido a ".$grupoUnir->Nombre_G."!");
 
                             return $this->dispatcher->forward(
@@ -778,6 +795,9 @@ class GrupoController extends ControllerBase
                         if($this->removeDir(BASE_PATH."\\public\\files\\Chats\\chat".((int)$id_grupo))) {
 
                             $this->flash->success("Grupo eliminado con Éxito");
+                            //se elimina todo registro de historial de grupo eliminado
+                            $this->deleteHistory($id_grupo);
+
                             return $this->dispatcher->forward(
                                 [
                                     'controller' => 'grupo',
@@ -1074,6 +1094,8 @@ class GrupoController extends ControllerBase
             if ($nombreG != $nombreG_ant) { //cambio en el nombre
                 $grupoModel = Grupo::findFirst('Id_Grupo = '.$id_grupo);
                 $grupoModel->Nombre_G = $nombreG;
+                //se guarda actividad para HISTORIAL de grupo
+                $this->saveHistory(4,$this->session->get('user')['Matricula'],$this->session->get('Id_Grupo_Actual'));
                 if($grupoModel->update())
                     $mensajesRes['Cambio_Nombre'] = "
                                     <div class=\"row center\">    
@@ -1096,7 +1118,8 @@ class GrupoController extends ControllerBase
             }
 
             if (count($chipsAnterior) > count($chipsNow)) { //cambio en los Integrantes
-                
+                //se guarda actividad para HISTORIAL de grupo
+                $this->saveHistory(6,$this->session->get('user')['Matricula'],$this->session->get('Id_Grupo_Actual'));
                 $chipsAux = array(); 
                 foreach ($chipsNow as $chip => $campo) { //guardar chips resultantes en un array
                     array_push($chipsAux, $campo['tag']);
@@ -1134,6 +1157,8 @@ class GrupoController extends ControllerBase
             }
 
             if ($claveAnterior != $claveNow) { //cambio en la clave
+                //se guarda actividad para HISTORIAL de grupo
+                $this->saveHistory(5,$this->session->get('user')['Matricula'],$this->session->get('Id_Grupo_Actual'));
                 $grupoModel2 = new Grupo();
                 $success = $grupoModel2->updatePassword($id_grupo,$claveNow,$this->Clave_Encriptacion['key']);
                 if ($success) 
@@ -1183,6 +1208,73 @@ class GrupoController extends ControllerBase
             $response->redirect("grupo/index");
             $response->send();
         }
+    }
+
+
+//HISTORIAL DE GRUPO (funciones)
+    public function getHistoryAjaxAction(){
+        $this->view->disable();
+        //echo json_encode("Urraaa");
+        if($this->request->isGet()){
+            $id_grupo = $this->session->get('Id_Grupo_Actual');
+            if($id_grupo != null)
+            {
+               $historyModel = new Historialg();
+               $success = $historyModel->getHistoryByGroup((int)$id_grupo);
+
+                if($success) {
+                    $data;
+                    $ind = 0;
+                    foreach ($success as $row) {
+                        $data[$ind]['Tipo_H']       = $success[$ind]['Tipo_H'];
+                        $data[$ind]['Id_User']      = $success[$ind]['Id_User'];
+                        $data[$ind]['Id_Grupo']     = $success[$ind]['Id_Grupo'];
+                        $data[$ind]['Fecha_Hora']   = $success[$ind]['Fecha_Hora'];
+                        $data[$ind]['Nombre']       = $success[$ind]['Nombre'];
+                        $data[$ind]['Hora'] = $this->formatearFecha($success[$ind]['Fecha_Hora']);
+                        $data[$ind]['Fecha'] = date_format(date_create($success[$ind]['Fecha_Hora']), 'd-m-Y');
+
+                        $ind++;
+                    }
+                    echo json_encode($data);
+                }
+                else echo json_encode("Error 1"); 
+            }
+            else echo json_encode("Error 2");
+        }
+        else echo json_encode("Error 3");
+    }
+
+    public function saveHistory($tipo_h, $id_user, $id_grupo){
+            $modelGrupo = new Grupo();
+            $historialModel = new Historialg();
+            $fechaHora = $modelGrupo->getFechaNow();
+
+            $post=[
+                "Tipo_H" => $tipo_h,
+                "Id_User" => $id_user,
+                "Id_Grupo" => $id_grupo,
+                "Fecha_Hora" => $fechaHora
+            ];
+            //echo var_dump($post);
+            $historialModel->save(
+                $post,
+                [
+                    "Tipo_H",
+                    "Id_User",
+                    "Id_Grupo",
+                    "Fecha_Hora"
+                ]
+            );
+    }
+
+    public function deleteHistory($id_grupo){ //se elimina historial cuando un grupo se elimina
+        $history = Historialg::find("Id_Grupo=".$id_grupo."");
+
+        if($history->delete()){
+            return true;
+        }
+        else return false;
     }
 
 //Funcion pruebas con archivos para manejo de mensajes en Chat
@@ -1243,6 +1335,7 @@ class GrupoController extends ControllerBase
     //funcion para crear una clave random de 10 elementos
     public function generateRandomString($length = 10)
     {
+        
         return substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, $length);
     }
 
