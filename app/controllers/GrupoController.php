@@ -75,7 +75,8 @@ class GrupoController extends ControllerBase
                          $mensaje.= " ".$exp[$i];
                      }
                 }
-
+                //se checa si contiene algun enlace el mensaje
+                $mensaje = $this->detectarEnlaces($mensaje);
 
                 $matricula = $this->session->get('user')['Matricula'];
                 $tipoM = 0;
@@ -1277,7 +1278,61 @@ class GrupoController extends ControllerBase
         else return false;
     }
 
+    public function desconectarGrupoAction(){
+        if (!$this->session->get('user')) {
+            $response = new Response();
+            $response->redirect("session/index");
+            $response->send();
+        }
+
+        if ($this->request->isGet()) {
+            if ($this->request->getQuery('id_grupo') != null) {
+                $this->session->remove('Id_Grupo_Actual');
+                $this->saveHistory(0,$this->session->get('user')['Matricula'],$this->request->getQuery('id_grupo'));
+            }
+        }
+        $response = new Response();
+        $response->redirect("grupo/index");
+        $response->send();
+    }
+
+//Detección de Enlaces para mensajes en Chat
+    public function detectarEnlaces($cadena_texto){
+        //echo '<h3>Cadena original sin filtrar:</h3><br><br><br>';
+        //cadena origen con los enlaces sin detectar
+        $cadena_origen= $cadena_texto;
+         
+        //echo $cadena_origen;
+         
+        //filtro los enlaces normales
+        $cadena_resultante= preg_replace("/((http|https|www)[^\s]+)/", '<a target="_blank" href="$1">$0</a>', $cadena_origen);
+        //miro si hay enlaces con solamente www, si es así le añado el http://
+        $cadena_resultante= preg_replace("/href=\"www/", 'href="http://www', $cadena_resultante);
+        //echo '<h3>Cadena filtrada con enlaces normales:</h3>'.$cadena_resultante;
+        return $cadena_resultante;
+    }
+
 //Funcion pruebas con archivos para manejo de mensajes en Chat
+
+    public function detectarEnlacesAction(){
+        echo '<h3>Cadena original sin filtrar:</h3><br><br><br>';
+        //cadena origen con los enlaces sin detectar
+        $cadena_origen= 'que tal chavos les mando los links: https://www.anerbarrena.com https://www.facebook.com www.google.es @anerbarrena #anerbarrena';
+         
+        echo $cadena_origen;
+         
+        //filtro los enlaces normales
+        $cadena_resultante= preg_replace("/((http|https|www)[^\s]+)/", '<a href="$1">$0</a>', $cadena_origen);
+        //miro si hay enlaces con solamente www, si es así le añado el http://
+        $cadena_resultante= preg_replace("/href=\"www/", 'href="http://www', $cadena_resultante);
+        echo '<h3>Cadena filtrada con enlaces normales:</h3>'.$cadena_resultante;
+
+        //saco los enlaces de twitter
+        $cadena_resultante = preg_replace("/(@[^\s]+)/", '<a target=\"_blank\"  href="http://twitter.com/intent/user?screen_name=$1">$0</a>', $cadena_resultante);
+        $cadena_resultante = preg_replace("/(#[^\s]+)/", '<a target=\"_blank\"  href="http://twitter.com/search?q=$1">$0</a>', $cadena_resultante);
+        echo '<h3>Cadena filtrada con enlaces de Twitter:</h3>'.$cadena_resultante;
+    }
+
     public function pruebaApendizarFileAction(){
         echo "<p style='color: #000000'>";
         //para escribir algo en negro porque jesus puso el body en blanco

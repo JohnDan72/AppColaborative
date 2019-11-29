@@ -23,7 +23,14 @@
       <!--li><a class="subheader"></a></li-->
       <li style="margin-top:15px">
         <?php
-        echo $this->tag->linkTo("grupo/index", "<i class=\"material-icons text-grey\">home</i>Inicio");
+        $id_grupo_aux = null;
+        //si esta definido el id de grupo actual se manda para guardar en HISTORIAL (user logout)
+        if ($this->session->has('Id_Grupo_Actual')) $id_grupo_aux = $this->session->get('Id_Grupo_Actual');
+
+
+        
+        echo $this->tag->linkTo("grupo/desconectarGrupo/?id_grupo=$id_grupo_aux", "<i class=\"material-icons text-grey\">home</i>Inicio");
+          //linkTo("grupo/desplegarGrupo/?id_grupo=$grupo->Id_Grupo &tipo=1", '<i class="material-icons">donut_large</i> Abrir')
         ?>
         
       </li>
@@ -244,104 +251,131 @@
               <?php } ?>
 
               <div class="row">
-                <form class="col s12 m12 offset-l4 l4">
-                  <div class="input-field">
-                    <input id="search" type="search" required placeholder="Busca algun articulo">
-                    <label class="label-icon" for="search"><i class="material-icons">search</i></label>
-                  </div>
-                </form>
+                <div class="center col s12 m8 l8 offset-m2 offset-l2 grey-text text-darken-1">
+                  "Coperative" te permite navegar sobre las bibliotecas virtuales más conocidas, para poder recuperar y compartir artículos científicos o cualquier documento que desees sin salir de tu aplicación favorita. La mejor manera de trabajar Colaborativamente!
+                </div>
               </div>
             </div>
 
 
+            <div class="row">
+              <div class="col s12 m5 l5 offset-m1 offset-l1">
+                <div class="row">
+                  <div class="col s12 m6 l6">
+                    <select id="id_filtro_biblio" name="biblioteca_name" onchange="cambiarBiblioteca()">
+                      <option value="" disabled selected>Elije una biclioteca</option>
+                      <option value="1">ACM</option>
+                      <option value="2">IEEE</option>
+                      <option value="3">Emerald Insight</option>
+                      <option value="4">EMIS Intelligence</option>
+                      <option value="5">Nature</option>
+                      <option value="6">ACS</option>
 
-            <div class="col s12 m12 offset-l1 l5" id="card_iframe">
-              <iframe src="https://www.proxydgb.buap.mx/login?qurl=https%3a%2f%2fieeexplore.ieee.org%2fXplore%2fguesthome.jsp" width="500px" height="400px"></iframe>
-            </div>
-
-
-            <div id="Id_Caja_Grande" class="col s12 m12 offset-l1 l4 card">
-              <ul id="div_chat">
-                <!--Aqui van los mensajes del Chat-->
-              </ul>
-            </div>
-            <div class="col s12 m12 offset-l7 l4" id="card_1">
-              <div class="row" id="Id_Mensaje_Field">
-                <div class="input-field col s11 m11 l11 center">
-                  <?php echo $this->tag->textArea(['id_mensaje', 'name' => 'mensaje_name', 'required' => 'required', 'onkeypress' => "return checarEnterMensaje(event)", 'class' => 'materialize-textarea']); ?>
-                  <label for="id_mensaje">Escribe un mensaje</label>
-                </div>
-                <div class="col s1 m1 l1">
-                  <div class="row">
-                    <button id="id_boton_mensaje" class="boton col s12 m12 l12 waves-effect  waves-light btn-small prefix" name="action">
-                      <i class="material-icons yellow-text text-lighten-5">send</i>
-                    </button>
+                      <option value="7">Springer</option>
+                      <option value="8">Tylor & Francis</option>
+                      <option value="9">AMS</option>
+                      <option value="10">Wiley Online Library</option>
+                    </select>
+                    <label>Materialize Select</label>
+                  </div>
+                  <div class="col s12 m12 l12">
+                    <iframe id="id_iFrame" src="" width="500px" height="400px"></iframe>
                   </div>
                 </div>
               </div>
-              <!--Adjuntar Foto-->
-              <div class="row" id="Id_Foto_Field" style="display: none;">
-                <form enctype="multipart/form-data" id="formuFotoAjax" method="post">
-                  <div class="col s10 m10 l10">
-                    <div class="file-field input-field">
-                      <div class="btn blue">
-                        <span>Seleccionar</span>
-                        <input id="id_foto" type="file" name="Nombre_Img" value="fichero">
-                      </div>
-                      <div class="file-path-wrapper">
-                        <input id="id_path_foto" class="file-path" placeholder="Selecciona una imagen" readonly="readonly" type="text">
-                      </div>
-                    </div>
+              <div class="col s12 m5 l5">
+                <div class="row"></div><div class="row"></div><div class="row"></div>
+                <div class="row">
+                  <div id="Id_Caja_Grande" class="col s12 m12 l12 card">
+                    <ul id="div_chat">
+                      <!--Aqui van los mensajes del Chat-->
+                    </ul>
                   </div>
-
-                  <a href=# class="col s1 m1 l1" onClick="borrarFotoField()"><i class="tiny material-icons white red-text text-darken-1">cancel</i></a>
-
-                  <div class="col s1 m1 l1">
-                    <div class="row">
-                      <button id="id_boton_foto" type="submit" class="boton col s12 m12 l12 waves-effect  waves-light btn-small" name="action">
-                        <i class="material-icons yellow-text text-lighten-5">send</i>
-                      </button>
-                    </div>
-                  </div>
-                  <div class="col s12 m12 l12 center" id="id_error_img">
-                    <!--Aqui van los errores de las img's-->
-                  </div>
-                </form>
-              </div>
-
-              <!--Adjuntar Documento-->
-
-              <div class="row" id="Id_Doc_Field" style="display: none;">
-                <form enctype="multipart/form-data" id="formuDocAjax" method="post">
-                  <div class="col s10 m10 l10">
-
-
-                    <div class="file-field input-field">
-                      <div class="btn green">
-                        <span>Seleccionar</span>
-                        <input id="id_doc" type="file" name="Nombre_File" value="fichero">
+                </div>
+                <div class="row"></div>
+                <div class="row">
+                  <div class="col s12 m12 l12" id="card_1">
+                    <div class="row" id="Id_Mensaje_Field">
+                      <div class="input-field col s11 m11 l11 center">
+                        <?php echo $this->tag->textArea(['id_mensaje', 'name' => 'mensaje_name', 'required' => 'required', 'onkeypress' => "return checarEnterMensaje(event)", 'class' => 'materialize-textarea']); ?>
+                        <label for="id_mensaje">Escribe un mensaje</label>
                       </div>
-                      <div class="file-path-wrapper">
-                        <input id="id_path_doc" class="file-path" placeholder="Selecciona un documento" readonly="readonly" type="text">
+                      <div class="col s1 m1 l1">
+                        <div class="row">
+                          <button id="id_boton_mensaje" class="boton col s12 m12 l12 waves-effect  waves-light btn-small prefix" name="action">
+                            <i class="material-icons yellow-text text-lighten-5">send</i>
+                          </button>
+                        </div>
                       </div>
                     </div>
-                  </div>
+                    <!--Adjuntar Foto-->
+                    <div class="row" id="Id_Foto_Field" style="display: none;">
+                      <form enctype="multipart/form-data" id="formuFotoAjax" method="post">
+                        <div class="col s10 m10 l10">
+                          <div class="file-field input-field">
+                            <div class="btn blue">
+                              <span>Seleccionar</span>
+                              <input id="id_foto" type="file" name="Nombre_Img" value="fichero">
+                            </div>
+                            <div class="file-path-wrapper">
+                              <input id="id_path_foto" class="file-path" placeholder="Selecciona una imagen" readonly="readonly" type="text">
+                            </div>
+                          </div>
+                        </div>
 
-                  <a href=# class="col s1 m1 l1 white" style="border: 0px;" onclick="return borrarDocField()"><i class="tiny material-icons white red-text text-darken-1" style="">cancel</i></a>
-                  <div class="col s1 m1 l1">
-                    <div class="row">
-                      <button id="id_boton_doc" class="boton col s12 m12 l12 waves-effect  waves-light btn-small prefix" name="action">
-                        <i class="material-icons yellow-text text-lighten-5">send</i>
-                      </button>
-                      <!--a class="waves-effect waves-light btn-small prefix" id="boton"><i class="material-icons">send</i></a-->
+                        <a href=# class="col s1 m1 l1" onClick="borrarFotoField()"><i class="tiny material-icons white red-text text-darken-1">cancel</i></a>
+
+                        <div class="col s1 m1 l1">
+                          <div class="row">
+                            <button id="id_boton_foto" type="submit" class="boton col s12 m12 l12 waves-effect  waves-light btn-small" name="action">
+                              <i class="material-icons yellow-text text-lighten-5">send</i>
+                            </button>
+                          </div>
+                        </div>
+                        <div class="col s12 m12 l12 center" id="id_error_img">
+                          <!--Aqui van los errores de las img's-->
+                        </div>
+                      </form>
+                    </div>
+
+                    <!--Adjuntar Documento-->
+
+                    <div class="row" id="Id_Doc_Field" style="display: none;">
+                      <form enctype="multipart/form-data" id="formuDocAjax" method="post">
+                        <div class="col s10 m10 l10">
+
+
+                          <div class="file-field input-field">
+                            <div class="btn green">
+                              <span>Seleccionar</span>
+                              <input id="id_doc" type="file" name="Nombre_File" value="fichero">
+                            </div>
+                            <div class="file-path-wrapper">
+                              <input id="id_path_doc" class="file-path" placeholder="Selecciona un documento" readonly="readonly" type="text">
+                            </div>
+                          </div>
+                        </div>
+
+                        <a href=# class="col s1 m1 l1 white" style="border: 0px;" onclick="return borrarDocField()"><i class="tiny material-icons white red-text text-darken-1" style="">cancel</i></a>
+                        <div class="col s1 m1 l1">
+                          <div class="row">
+                            <button id="id_boton_doc" class="boton col s12 m12 l12 waves-effect  waves-light btn-small prefix" name="action">
+                              <i class="material-icons yellow-text text-lighten-5">send</i>
+                            </button>
+                            <!--a class="waves-effect waves-light btn-small prefix" id="boton"><i class="material-icons">send</i></a-->
+                          </div>
+                        </div>
+                        <div class="col s10 m10 l10 center" id="id_error_doc">
+                          <!--Aqui van los errores de los doc's-->
+                        </div>
+                      </form>
                     </div>
                   </div>
-                  <div class="col s10 m10 l10 center" id="id_error_doc">
-                    <!--Aqui van los errores de los doc's-->
-                  </div>
-                </form>
+                </div>
+                  
               </div>
             </div>
+            
           </div>
 
           <div class="row">
@@ -657,7 +691,7 @@
 
                   switch (data[i].Tipo_M) {
                     case '0':
-                      newDiv1_2_2.textContent = data[i].Mensaje;
+                      newDiv1_2_2.innerHTML = data[i].Mensaje;
                       break;
                     case '1':
                       var auxImgMessage = document.createElement('img');
@@ -700,7 +734,7 @@
 
                   switch (data[i].Tipo_M) {
                     case '0':
-                      newDiv1_2_2.textContent = data[i].Mensaje;
+                      newDiv1_2_2.innerHTML = data[i].Mensaje;
                       break;
                     case '1':
                       var auxImgMessage = document.createElement('img');
@@ -959,6 +993,45 @@
 
       }
 
+    </script>
+    <script type="text/javascript">
+      function cambiarBiblioteca(){
+        var iframe = document.getElementById('id_iFrame');
+        var optionSelected = document.getElementById('id_filtro_biblio').value;
+
+        switch(optionSelected){
+          case '1':
+              iframe.src = "https://www.proxydgb.buap.mx:2131/";
+          break;
+          case '2':
+              iframe.src = "https://ieeexplore.ieee.org/Xplore/guesthome.jsp";
+          break;
+          case '3':
+              iframe.src = "https://www.proxydgb.buap.mx:4420/insight/";
+          break;
+          case '4':
+              iframe.src = "https://www.proxydgb.buap.mx:2247/php/dashboard?pc=MX";
+          break;
+          case '5':
+              iframe.src = "http://www.proxydgb.buap.mx:2165/";
+          break;
+          case '6':
+              iframe.src = "https://www.proxydgb.buap.mx:2100/";
+          break;
+          case '7':
+              iframe.src = "https://www.proxydgb.buap.mx:2067/";
+          break;
+          case '8':
+              iframe.src = "https://www.proxydgb.buap.mx:2071/";
+          break;
+          case '9':
+              iframe.src = "https://www.proxydgb.buap.mx:2119/mathscinet/";
+          break;
+          case '10':
+              iframe.src = "https://www.proxydgb.buap.mx:2175/";
+          break;
+        }
+      }
     </script>
     <script type="text/javascript">
       var body = document.querySelector('body');
