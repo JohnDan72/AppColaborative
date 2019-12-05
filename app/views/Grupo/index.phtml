@@ -56,7 +56,7 @@
                     <?php echo $grupo->Nombre_G; ?>
                   </div>
                 </div>
-                <ul class='submenu'>
+                <ul id="li_1" class='submenu'>
                   <li><?php echo $this->tag->linkTo("grupo/desplegarGrupo/?id_grupo=$grupo->Id_Grupo &tipo=1", '<i class="material-icons">donut_large</i> Abrir') ?></li>
                   <li><?php echo $this->tag->linkTo("grupo/desplegarGrupo/?id_grupo=$grupo->Id_Grupo &tipo=2", '<i class="material-icons">build</i> Administrar') ?></li>
 
@@ -257,7 +257,7 @@
               </div>
             </div>
 
-
+            
             <div class="row">
               <div class="col s12 m5 l5 offset-m1 offset-l1">
                 <div class="row">
@@ -279,12 +279,25 @@
                     <label>Materialize Select</label>
                   </div>
                   <div class="col s12 m12 l12">
-                    <iframe id="id_iFrame" src="" width="500px" height="400px"></iframe>
+                    <iframe id="id_iFrame" src="" width="100%" height="400px"></iframe>
                   </div>
                 </div>
               </div>
               <div class="col s12 m5 l5">
-                <div class="row"></div><div class="row"></div><div class="row"></div>
+                <div class="row">
+                  <div  id="id_biblio_div" style="display: none;">
+                    
+                      <a class="left btn-floating btn-large white pulse">
+                          <!--img src="<?php echo $this->url->get('img/bibliotecas/ieee.png')?>" width="50px" height="50px"-->
+                          <img src="" id="id_biblio_icon" width="50px" height="50px">
+                      </a>
+                      <div class="chip" id="id_biblio_text" style="font-size: 16px; margin-top: 12px; margin-left: 7px;">
+                        <!-- Está navegando por: IEEE<-->
+                      </div>
+                    
+                    
+                  </div>
+                </div>
                 <div class="row">
                   <div id="Id_Caja_Grande" class="col s12 m12 l12 card">
                     <ul id="div_chat">
@@ -605,7 +618,7 @@
         document.getElementById('id_path_foto').value = "";
         document.getElementById('id_error_img').textContent = "";
         document.getElementById('id_error_doc').textContent = "";
-        document.getElementById('Id_Foto_Field').style.display = 'block';;
+        document.getElementById('Id_Foto_Field').style.display = 'block';
         document.getElementById('Id_Doc_Field').style.display = 'none';
         document.getElementById('Id_Mensaje_Field').style.display = 'none';
       }
@@ -941,6 +954,13 @@
                           auxP.textContent = data[i].Fecha+" ("+data[i].Hora+") - "+data[i].Nombre+" creó el grupo";
                       break;
 
+                      case '10':
+                          auxP.textContent = data[i].Fecha+" ("+data[i].Hora+") - "+data[i].Nombre+" compartió un enlace en el grupo";
+                      break;
+                      case '12':
+                          auxP.textContent = data[i].Fecha+" ("+data[i].Hora+") - "+data[i].Nombre+" navegó por la biblioteca: "+data[i].Biblioteca;
+                      break;
+
                       default: auxP.textContent = "Mensaje Dafault";
                     }
                     divHistory.appendChild(auxP);
@@ -950,7 +970,15 @@
                   alert(data);
                 }
               });
-            });
+        });
+
+        //$("#id_iFrame").on("load", function(e) {
+            //var iFrame = document.getElementById('id_iFrame');
+            //iFrame.contentDocument.body.addEventListener('mouseup', function(evt){
+            //    alert("WORKS!!");
+            //});
+            //alert("Content: "+document.getElementById('id_iFrame').contentDocument);
+        //});
 
       });
     </script>
@@ -996,9 +1024,25 @@
     </script>
     <script type="text/javascript">
       function cambiarBiblioteca(){
+        var bibliosImg = [ "acm.png",
+                                      "ieee.png",
+                                      "emerald.png",
+                                      "emis.png",
+                                      "nature.png",
+                                      "acs.png",
+                                      "springer.png",
+                                      "tylor.png",
+                                      "ams.png",
+                                      "wiley.png"];
+        //alert(bibliosImg[2]);
         var iframe = document.getElementById('id_iFrame');
         var optionSelected = document.getElementById('id_filtro_biblio').value;
 
+        
+        var url = "<?php echo $this->url->get('img/bibliotecas/');?>"+bibliosImg[optionSelected-1];
+        document.getElementById('id_biblio_icon').src = url;
+        document.getElementById('id_biblio_text').innerHTML = "Esta navegando por: "+document.getElementById('id_filtro_biblio')[optionSelected].text.bold();
+        document.getElementById('id_biblio_div').style.display = 'block';
         switch(optionSelected){
           case '1':
               iframe.src = "https://www.proxydgb.buap.mx:2131/";
@@ -1031,7 +1075,85 @@
               iframe.src = "https://www.proxydgb.buap.mx:2175/";
           break;
         }
+
+        //
+
+        $.ajax({
+                url: "<?php echo $this->url->get('Grupo/sendBiblioAjax'); ?>",
+                type: 'POST',
+                dataType: 'json',
+                data: {biblio: optionSelected}
+              }).done(function(data) {
+                //alert("Respuesta: "+data);
+              });
+        
+
       }
+    </script>
+
+    <script type="text/javascript">
+        //document.getElementById('id_frame_aux').onload = function(){
+        //  var newiframe = document.createElement('iframe');
+        //  newiframe.src = "https://www.proxydgb.buap.mx:2131/";
+        //
+        //  document.getElementById('id_iFrame').contentDocument = newiframe.contentDocument;
+        //  alert("frame local: "+document.getElementById('id_iFrame').contentDocument+"   el otro: "+newiframe);
+        //  //document.getElementById('id_iFrame').body = document.createElement('body');
+        //  document.getElementById('id_iFrame').addEventListener("mouseup", function(evt){
+        //      alert("yeiiii!");
+        //  });
+        //}
+
+        //var invocation = new XMLHttpRequest();
+        //var url = 'http://localhost/_Phalcon/AppColavorative/grupo/index';
+           
+        //function callOtherDomain() {
+        //  if(invocation) {    
+        //    invocation.open('GET', url, true);
+            //invocation.onreadystatechange = handler;
+        //    invocation.send(); 
+        //  }
+        //}
+        
+        //console.log("response: "+callOtherDomain());
+        
+
+        //var iframe = document.getElementById('id_iFrame');
+        //iframe.addEventListener("mouseup",function(evt){
+        //  alert("yhea");
+        //});
+        // Record all key presses into an array
+        //var presses = [];
+        
+        //iframe.contentDocument.body.addEventListener("keypress", function(evt){
+        //  presses.push({
+        //    t: Math.round((new Date()).getTime() / 1000),
+        //    k: evt.key
+        //  });
+          //alert("Se preciono tecla en el iframe:  "+evt.key);
+        //});
+
+        //iframe.contentDocument.body.addEventListener("submit", function(evt){
+        //  evt.preventDefault();
+        //  alert("Teclas: "+JSON.stringify(presses));
+        //});
+        // Push to server at regular intervals
+        // Reduce interval timing for more frequent recordings, but increases server load
+        // You can also set this to send only if certain number of key stroke were made.
+        //setInterval(function () {
+            //var iframeaux;
+            //iframeaux = window;
+            //alert(iframeaux.document.getElementById('id_iFrame').contentDocument);
+        //    var data = JSON.stringify(presses);
+        //    console.log("Presses: "+data);
+        //    console.log("iframe: "+document.getElementById('id_iFrame'));
+        //    console.log("content: "+JSON.stringify(document.getElementById('id_iFrame')));
+        //    console.log("body: "+this.document.getElementById('id_iFrame').body);
+            
+        //    presses = [];
+          
+        //}, 5000);
+
     </script>
     <script type="text/javascript">
       var body = document.querySelector('body');

@@ -77,6 +77,9 @@ class GrupoController extends ControllerBase
                 }
                 //se checa si contiene algun enlace el mensaje
                 $mensaje = $this->detectarEnlaces($mensaje);
+                if (substr_count($mensaje, '</a>')>0) {
+                    $this->saveHistory(10,$this->session->get('user')['Matricula'],$this->session->get('Id_Grupo_Actual'));
+                }
 
                 $matricula = $this->session->get('user')['Matricula'];
                 $tipoM = 0;
@@ -1231,6 +1234,8 @@ class GrupoController extends ControllerBase
                         $data[$ind]['Id_User']      = $success[$ind]['Id_User'];
                         $data[$ind]['Id_Grupo']     = $success[$ind]['Id_Grupo'];
                         $data[$ind]['Fecha_Hora']   = $success[$ind]['Fecha_Hora'];
+                        $data[$ind]['Biblioteca']   = $success[$ind]['Biblioteca'];
+                        $data[$ind]['Archivo_Biblio']   = $success[$ind]['Archivo_Biblio'];
                         $data[$ind]['Nombre']       = $success[$ind]['Nombre'];
                         $data[$ind]['Hora'] = $this->formatearFecha($success[$ind]['Fecha_Hora']);
                         $data[$ind]['Fecha'] = date_format(date_create($success[$ind]['Fecha_Hora']), 'd-m-Y');
@@ -1246,7 +1251,7 @@ class GrupoController extends ControllerBase
         else echo json_encode("Error 3");
     }
 
-    public function saveHistory($tipo_h, $id_user, $id_grupo){
+    public function saveHistory($tipo_h, $id_user, $id_grupo, $biblio = null, $file_biblio = null){
             $modelGrupo = new Grupo();
             $historialModel = new Historialg();
             $fechaHora = $modelGrupo->getFechaNow();
@@ -1255,7 +1260,9 @@ class GrupoController extends ControllerBase
                 "Tipo_H" => $tipo_h,
                 "Id_User" => $id_user,
                 "Id_Grupo" => $id_grupo,
-                "Fecha_Hora" => $fechaHora
+                "Fecha_Hora" => $fechaHora,
+                "Biblioteca" => $biblio,
+                "Archivo_Biblio" => $file_biblio
             ];
             //echo var_dump($post);
             $historialModel->save(
@@ -1264,7 +1271,9 @@ class GrupoController extends ControllerBase
                     "Tipo_H",
                     "Id_User",
                     "Id_Grupo",
-                    "Fecha_Hora"
+                    "Fecha_Hora",
+                    "Biblioteca",
+                    "Archivo_Biblio"
                 ]
             );
     }
@@ -1294,6 +1303,41 @@ class GrupoController extends ControllerBase
         $response = new Response();
         $response->redirect("grupo/index");
         $response->send();
+    }
+
+    public function sendBiblioAjaxAction(){
+
+        $this->view->disable();
+
+        $biblios = array("-",
+                        "ACM",
+                        "IEEE",
+                        "Emerald Insight",
+                        "EMIS Intelligence",
+                        "Nature",
+                        "ACS",
+                        "Springer",
+                        "Tylor & Francis",
+                        "AMS",
+                        "Wiley Online Library"
+                    );
+        if (!$this->session->get('user')) 
+        {
+            $response = new Response();
+            $response->redirect("session/index");
+            $response->send();
+        }
+
+        if ($this->request->isPost()) 
+        {
+            $indice_Biblio = $this->request->getPost('biblio');
+            //echo json_encode($biblios[$indice_Biblio]);
+            //HISTORIAL para biblioteca en la que se esta navegando
+            $this->saveHistory(12,$this->session->get('user')['Matricula'],$this->session->get('Id_Grupo_Actual'),$biblios[$indice_Biblio],null);
+            echo json_encode("Éxito al guardar en historial");
+
+        }
+        else echo json_encode("Error 1");
     }
 
 //Detección de Enlaces para mensajes en Chat
