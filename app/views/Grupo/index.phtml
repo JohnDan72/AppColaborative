@@ -392,20 +392,17 @@
           </div>
 
           <div class="row">
-            <div class="col s12 m12 l12 center">
-              <button id="id_boton_history" class="waves-effect waves-light btn modal-trigger center" href="#modal_ac">Actividad de grupo</button>
+            <div id="cajaGrande2" class="col s12 m12 l6 offset-l3 center card">
+              <!--<button id="id_boton_history" class="waves-effect waves-light btn modal-trigger center" -href="#modal_ac">Actividad de grupo</button> -->
 
               <!-- Modal Structure -->
-              <div id="modal_ac" class="modal">
-                <div class="modal-content">
+              <div id="modal_ac">
+                <div id="id_history_Caja_Grande">
                   <h4>Actividad del grupo</h4>
-                  <div id="id_history_content">
+                  <div class="divider"></div>
+                  <div id="id_history_content" align="left">
                     <!--Aqui va el historial de cada grupo-->               
                   </div>
-              
-                </div>
-                <div class="modal-footer">
-                  <a href="#!" class="modal-close waves-effect waves-green btn-flat">Cerrar</a>
                 </div>
               </div>
             </div>
@@ -654,8 +651,101 @@
         var instances = M.FloatingActionButton.init(elems);
       });
     </script>
+
+        <script type="text/javascript">
+      var numHistory = 0;
+      function ajaxFuncion2(){
+        $.ajax({
+                url: "<?php echo $this->url->get('Grupo/getHistoryAjax'); ?>",
+                type: 'GET',
+                dataType: 'json',
+                data: {}
+              }).done(function(data) {
+                var sizeApend = 0;
+                if(!((typeof data) == "string"))
+                { 
+                  if (data.length < numHistory) { 
+                    //reinicio por DB comprometida
+                    document.getElementById("id_history_content").textContent = "";
+                    sizeApend = data.length;
+                  }
+                  else if (data.length > numHistory) {
+                    //Apendizar historial restante
+                    sizeApend = data.length - numHistory;
+                  }
+
+                  var divHistory = document.getElementById("id_history_content");
+                  for(var i=numHistory,k=0;k<sizeApend; i++,k++){
+                    //console.log("for history: i = "+i);
+                    var auxP = document.createElement('p');
+                    switch(data[i].Tipo_H){
+                      case '0':
+                          auxP.textContent = data[i].Fecha+" ("+data[i].Hora+") - "+data[i].Nombre+" se desconectó";
+                      break;
+                      case '1':
+                          auxP.textContent = data[i].Fecha+" ("+data[i].Hora+") - "+data[i].Nombre+" se conectó";
+                      break;
+                      case '2':
+                          auxP.textContent = data[i].Fecha+" ("+data[i].Hora+") - "+data[i].Nombre+" compartió una imagen al grupo";
+                      break;
+                      case '3':
+                          auxP.textContent = data[i].Fecha+" ("+data[i].Hora+") - "+data[i].Nombre+" compartió un documento al grupo";
+                      break;
+                      case '4':
+                          auxP.textContent = data[i].Fecha+" ("+data[i].Hora+") - "+data[i].Nombre+" cambió el nombre del grupo";
+                      break;
+                      case '5':
+                          auxP.textContent = data[i].Fecha+" ("+data[i].Hora+") - "+data[i].Nombre+" cambió la contraseña del grupo";
+                      break;
+                      case '6':
+                          auxP.textContent = data[i].Fecha+" ("+data[i].Hora+") - "+data[i].Nombre+" eliminó a alguien del grupo";
+                      break;
+                      case '7':
+                          auxP.textContent = data[i].Fecha+" ("+data[i].Hora+") - "+data[i].Nombre+" se ha unido al grupo";
+                      break;
+                      case '8':
+                          auxP.textContent = data[i].Fecha+" ("+data[i].Hora+") - "+data[i].Nombre+" ha salido del grupo";
+                      break;
+                      case '9':
+                          auxP.textContent = data[i].Fecha+" ("+data[i].Hora+") - "+data[i].Nombre+" creó el grupo";
+                      break;
+
+                      case '10':
+                          auxP.textContent = data[i].Fecha+" ("+data[i].Hora+") - "+data[i].Nombre+" compartió un enlace en el grupo";
+                      break;
+                      case '12':
+                          auxP.textContent = data[i].Fecha+" ("+data[i].Hora+") - "+data[i].Nombre+" navegó por la biblioteca: "+data[i].Biblioteca;
+                      break;
+
+                      default: auxP.textContent = "Mensaje Dafault";
+                    }
+                    divHistory.appendChild(auxP);
+                  }
+
+                  numHistory = data.length;
+                }
+                else{
+                  alert(data);
+                }
+
+                
+
+                //var cajaHistory = document.getElementById('id_history_content');
+                //if (globalScrollTopHistory != cajaHistory.scrollHeight) {
+                //  document.getElementById('id_history_content').scrollTop = cajaHistory.scrollHeight;
+                //  globalScrollTopHistory = cajaHistory.scrollHeight;
+                //}
+
+                //console.log("Se esta ejecutando tarea de historial");
+              });
+      }
+
+      window.setInterval(function() {
+        ajaxFuncion2();
+      }, 2500);
+    </script>
     <script type="text/javascript">
-      var globalScrollTop = 0;
+      var numMensaje = 0;
 
       function ajaxFuncion() {
 
@@ -666,14 +756,24 @@
           data: {
             id_grupo: <?php echo ($this->session->has('Id_Grupo_Actual')) ? $this->session->get('Id_Grupo_Actual') : 0 ?>
           }
-
         }).done(function(data) {
 
           if (!((typeof data) == "string")) {
             var chat_Caja = document.getElementById("div_chat");
             if (chat_Caja != null) {
-              chat_Caja.textContent = "";
-              for (var i = 0; i < data.length; i++) {
+              var sizeApend = 0;
+              if (data.length < numMensaje) { 
+                //reinicio por DB comprometida
+                chat_Caja.textContent = "";
+                sizeApend = data.length;
+              }
+              else if (data.length > numMensaje) {
+                //Apendizar historial restante
+                sizeApend = data.length - numMensaje;
+              }
+              
+              for (var i=numMensaje,k=0;k<sizeApend; i++,k++) {
+                //console.log("for mensajes: i = "+i);
                 var newLi = document.createElement("li");
                 var newDiv1 = document.createElement("div");
                 newDiv1.className = "row";
@@ -798,25 +898,41 @@
                 chat_Caja.appendChild(newLi);
               }
 
-              if (globalScrollTop != chat_Caja.scrollHeight) {
+
+              if (data.length > numMensaje) {
+                //Ajustar ScrollTop
                 document.getElementById('Id_Caja_Grande').scrollTop = chat_Caja.scrollHeight;
-                globalScrollTop = chat_Caja.scrollHeight;
               }
+
+
+              numMensaje = data.length;
+
+              //if (globalScrollTop != chat_Caja.scrollHeight) {
+              //  document.getElementById('Id_Caja_Grande').scrollTop = chat_Caja.scrollHeight;
+              //  globalScrollTop = chat_Caja.scrollHeight;
+              //}
+
+              //console.log("Se esta ejecutando Mensajes");
             }
           } else {
             if (data.startsWith("Error")) {} else if (data == "Fatal Error") {
               window.location.replace("<?php echo $this->url->get('Grupo/index/#'); ?>");
             }
-          }
+          } 
         });
 
       }
 
 
-      setInterval(function() {
-        ajaxFuncion(globalScrollTop);
-      }, 2000);
+
+      window.setInterval(function() {
+        ajaxFuncion();
+      }, 1500);
+      
+      
     </script>
+
+
 
     <script type="text/javascript">
       $(document).ready(function() {
@@ -1105,12 +1221,12 @@
         //}
 
         //var invocation = new XMLHttpRequest();
-        //var url = 'http://localhost/_Phalcon/AppColavorative/grupo/index';
-           
+        //var url = 'https://www.proxydgb.buap.mx:2131/';
+        //   
         //function callOtherDomain() {
         //  if(invocation) {    
         //    invocation.open('GET', url, true);
-            //invocation.onreadystatechange = handler;
+        //    //invocation.onreadystatechange = handler;
         //    invocation.send(); 
         //  }
         //}
@@ -1118,10 +1234,10 @@
         //console.log("response: "+callOtherDomain());
         
 
-        //var iframe = document.getElementById('id_iFrame');
-        //iframe.addEventListener("mouseup",function(evt){
-        //  alert("yhea");
-        //});
+        var iframe = document.getElementById('id_iFrame');
+        iframe.contentDocument.body.addEventListener("mouseup",function(evt){
+          alert("mouse detectado");
+        });
         // Record all key presses into an array
         //var presses = [];
         
@@ -1144,11 +1260,11 @@
             //var iframeaux;
             //iframeaux = window;
             //alert(iframeaux.document.getElementById('id_iFrame').contentDocument);
-        //    var data = JSON.stringify(presses);
-        //    console.log("Presses: "+data);
-        //    console.log("iframe: "+document.getElementById('id_iFrame'));
-        //    console.log("content: "+JSON.stringify(document.getElementById('id_iFrame')));
-        //    console.log("body: "+this.document.getElementById('id_iFrame').body);
+            //var data = JSON.stringify(presses);
+            //console.log("Presses: "+data);
+            //console.log("iframe: "+document.getElementById('id_iFrame'));
+            //console.log("content: "+JSON.stringify(document.getElementById('id_iFrame')));
+            //console.log("body: "+this.document.getElementById('id_iFrame').contentDocument);
             
         //    presses = [];
           
