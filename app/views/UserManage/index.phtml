@@ -1,0 +1,296 @@
+<?php echo $this->getContent(); ?>
+<br><br>
+<div class="container">
+    <!-- Menu responsivo -->
+    <ul id="slide-out" class="sidenav">
+	    <li>
+		    <div class="user-view">
+		        <div class="background">
+		            <img src="https://i.ibb.co/JFVv2m5/ey29-Qkq-jpg.png" class="">
+		        </div>
+		        <div style="margin-bottom: 10px;">
+		        	<a href="<?php echo $this->url->get('usermanage/index')?>">
+		        		<?php
+			                if ($this->session->get('userFoto')!=null) {
+			                  ?>
+			                  <img src="data:image/jpg;base64,<?php echo base64_encode($this->session->get('userFoto'))?>" class="circle"> <!-- notice the "circle" class -->
+			                  <?php
+			                }
+			                else{
+			                  ?>
+			                  <img src="https://www.stickpng.com/assets/images/585e4beacb11b227491c3399.png" class="circle"> <!-- notice the "circle" class -->
+			                  <?php
+			                }
+			            ?> 
+		            	
+		            </a>
+		            
+		        </div>
+		        <div style="color: #ffffff;">
+		            <p class="p_sidenav"><?php echo $this->session->get('user')['Nombre'] ?> - <?php echo $this->session->get('user')['Matricula'] ?></p>
+		            <p class="p_sidenav"><?php echo $this->session->get('user')['Correo'] ?></p>
+		        </div>
+	        </div>
+	    </li>
+
+
+	      <!--li><a class="subheader"></a></li-->
+	      <li style="margin-top:15px">
+	        <?php
+	        $id_grupo_aux = null;
+	        //si esta definido el id de grupo actual se manda para guardar en HISTORIAL (user logout)
+	        if ($this->session->has('Id_Grupo_Actual')) $id_grupo_aux = $this->session->get('Id_Grupo_Actual');
+
+
+	        
+	        echo $this->tag->linkTo("grupo/desconectarGrupo/?id_grupo=$id_grupo_aux", "<i class=\"material-icons text-grey\">home</i>Inicio");
+	          //linkTo("grupo/desplegarGrupo/?id_grupo=$grupo->Id_Grupo &tipo=1", '<i class="material-icons">donut_large</i> Abrir')
+	        ?>
+	        
+	      </li>
+	      <li>
+	        <div class="divider"></div>
+	      </li>
+	      <li><a class="subheader">Grupos</a></li>
+	      <li><a href="#modal1" class="modal-trigger"><i class="material-icons" style="color: #7cb342">add</i>Crear</a></li>
+	      <li><a href="#modal2" class="modal-trigger"><i class="material-icons" style="color: #ffa726">device_hub</i>Unirse</a></li>
+	      <!--<li><a href="#modal3" class="modal-trigger"><i class="material-icons" style="color: #e65100">delete</i>Eliminar</a></li>-->
+	      <li>
+	        <div class="divider"></div>
+	      </li>
+	      <li><a class="subheader">Mis Grupos</a></li>
+	      <?php if ($grupos->count() > 0) { ?>
+	          <ul id='dropdown1' class='mainmenu'>
+	            <?php foreach ($grupos as $grupo) { ?>
+	              <li>
+	                <div class="row">
+	                  <div class="col s11 m11 l11" >
+	                    <?php echo $this->tag->linkTo("grupo/desplegarGrupo/?id_grupo=$grupo->Id_Grupo &tipo=1", $grupo->Nombre_G) ?> 
+	                  </div>
+	                  <div class="col s1 m1 l1" style="margin-left: -30px">
+	                    <?php echo $this->tag->linkTo("grupo/desplegarGrupo/?id_grupo=$grupo->Id_Grupo &tipo=2", '<i class="material-icons" style="color: #263238">build</i>') ?>  
+	                  </div>
+	                </div>
+	              </li>
+	            <?php } ?>
+	          </ul>
+	        </li>
+	      <?php } else { ?>
+	        <li align="center">Aquí se mostrarán tus grupos</li>
+	      <?php } ?>
+	      <li>
+	        <div class="divider"></div>
+	      </li>
+	      <li><a class="subheader">Salir</a></li>
+	      <li>
+	        <?php
+	        echo $this->tag->linkTo("grupo/logout", "<i class=\"material-icons\" style=\"color: #e53935\">clear</i>Cerrar Sesión");
+	        ?>
+	      </li>
+    </ul>
+    <a href="#" data-target="slide-out" class="sidenav-trigger"><i id="icon_menu" class="small material-icons grey-text text-darken-1">clear_all</i></a>
+</div>
+
+  <!--Crear grupo nuevo-->
+<div id="modal1" class="modal modal-fixed-footer">
+    <div class="row">
+      <div class="modal-content col s12 m6 ">
+        <h4 class="center espaciado_up_down_m">Crear nuevo grupo</h4>
+        <p class="center color_p espaciado_up_down_m">Hola <?php echo $this->session->get('user')['Nombre'] ?>, por favor completa los campos solicitados para crear un nuevo grupo</p>
+
+        <?= $this->tag->form(['name' => 'add_group', "grupo/crearGrupo"]); ?>
+        <div class="col s12 m4 espaciado_up_down_m center">
+          <i class="material-icons large" style="color: #7cb342">add</i>
+        </div>
+
+        <div class="col s12 m8">
+          <div class="col m12 s12">
+            <div class="input-field">
+              <?= $this->tag->textfield(['name_group', 'name' => 'name_group', 'class' => 'validate']); ?>
+              <label for="name_group">Nombre del grupo</label>
+            </div>
+          </div>
+
+          <div class="col s12 m12">
+
+            <div class="input-field">
+              <?= $this->tag->textfield(['clave_group', 'name' => 'clave_group', 'class' => 'validate']); ?>
+              <label for="clave_group">Clave del grupo</label>
+            </div>
+
+            <!--<div class="chips chips-placeholder chips-initial input-field" id="chipsArrayId">
+             <input class="chips-placeholder" onkeypress="return checar(event)">
+           </div>-->
+          </div>
+
+          <br>
+        </div>
+        <div class="class s12 m12 l12">
+          <p class="color_p center espaciado_up_down_m">Nota: El grupo solo contendrá a un integrante, el cual es usted, para que más personas puedan acceder al grupo,
+            comparta la clave con los usuarios que desee.</p>
+          <p class="color_p center">Ingresando en la seccion "Unirse" usted podrá acceder a nuevos grupos</p>
+        </div>
+        <span class="helper-text" id="span1" style="color:red;"></span>
+      </div>
+
+      <!--input type="hidden" id="arrayChipPostId" name="arrayChipPost" value=""-->
+      <div class="modal-footer">
+        <div class="center">
+          <button id="id_boton_chips" class="waves-effect waves-green btn-flat" type="submit" name="action" onclick="return validate('add_group',['name_group'], 'span1')">Crear</button>
+          <a href="#!" class="modal-close waves-effect waves-red btn-flat">Cancelar</a>
+        </div>
+
+      </div>
+      <?= $this->tag->endform(); ?>
+    </div>
+</div>
+
+  <!--Unirse a grupo-->
+<div id="modal2" class="modal modal-fixed-footer">
+    <div class="row">
+      <div class="modal-content col s12 m6">
+        <h4 class="center espaciado_up_down_m">Unirse al grupo</h4>
+        <p class="color_p center espaciado_up_down_m">Por favor completa los campos solicitados para unirte a algún grupo</p>
+        <div class="col s12 m12 l12 center"><i class="material-icons medium" style="color: #ffa726">device_hub</i></div>
+        <?= $this->tag->form(['name' => 'join_to_group', "grupo/unirseGrupo"]); ?>
+
+        <div class="col s12 m12 l12 center">
+          <div class="col offset-m3 m6 s12">
+            <select id="id_group" name="id_group_name">
+              <option value="" disabled selected>Elije un grupo</option>
+              <?php
+              if (isset($gruposComp)) {
+                foreach ($gruposComp as $grupo) {
+                  ?>
+                  <option value="<?php echo $grupo->Id_Grupo ?>"><?php echo $grupo->Nombre_G; ?></option>
+                <?php
+                  }
+                  ?>
+              <?php
+              } else {
+                ?>
+                <option value="" disabled selected>No hay grupos que mostrar para unirse</option>
+              <?php
+              }
+              ?>
+            </select>
+            <label>Materialize Select</label>
+          </div>
+          <div class="col offset-m3 m6 s12">
+            <div class="input-field"><?= $this->tag->passwordfield(['cl_group', 'name' => 'cl_group', 'class' => 'validate']); ?>
+              <label for="cl_group">Clave del grupo</label>
+            </div>
+          </div>
+        </div>
+        <div class="row center">
+          <span class="helper-text" id="span2" style="color:red;"></span>
+        </div>
+
+      </div>
+
+      <div class="modal-footer">
+        <div class="center">
+          <button class="waves-effect waves-green btn-flat" type="submit" name="action" onclick="return validate('join_to_group',['id_group','cl_group'], 'span2')">Unirme</button>
+          <a href="#!" class="modal-close waves-effect waves-red btn-flat">Cancelar</a>
+        </div>
+
+      </div>
+      <?= $this->tag->endform(); ?>
+    </div>
+</div>
+
+
+<div class="row" ALIGN="center">
+    <h3>Mi Perfil</h3>
+    <div class="row grey-text text-darken-1">Aquí podrás ver tu información personal asi como cambiar tu foto personal o actualizar tu correo</div>
+    <?php echo (isset($Result_UserManage['Sin_Cambio']))?$Result_UserManage['Sin_Cambio']:"";?>
+    <div class="col s12">
+    	<?php
+    		if ($this->session->get('userFoto')!=null) {
+    			?>
+    			<img src="data:image/jpg;base64,<?php echo base64_encode($this->session->get('userFoto'))?>" alt="" class="circle responsive-img" width="200px" height="200px"> <!-- notice the "circle" class -->
+    			<?php
+    		}
+    		else{
+    			?>
+    			<img src="https://www.stickpng.com/assets/images/585e4beacb11b227491c3399.png" alt="" class="circle responsive-img" width="200px" height="200px"> <!-- notice the "circle" class -->
+    			<?php
+    		}
+    	?>
+        
+    </div>
+    <?php echo (isset($Result_UserManage['Cambio_Foto']))?$Result_UserManage['Cambio_Foto']:"";?>
+	<form enctype="multipart/form-data" method="post" action="<?= $this->url->get("usermanage/changeInfo")?>">
+		<div class="row">
+		    <div class="col s12 m4 l4  offset-m4 offset-l4">
+		        	
+
+		            <div class="file-field input-field">
+		                <div class="btn blue">
+		                    <span>Buscar</span>
+		                    <input id="id_foto" type="file" name="Nombre_Img" value="fichero">
+		                </div>
+		                <div class="file-path-wrapper">
+		                    <input class="file-path validate" type="text" placeholder="Selecciona una imagen">
+		                </div>
+		            </div>
+
+		        
+		    </div>
+		</div>
+
+	    <br>
+	    <?php echo (isset($Result_UserManage['Cambio_Correo']))?$Result_UserManage['Cambio_Correo']:"";?>
+	    <div class="row">
+	    	<div class="col s12 m1 l1 offset-m4 offset-l4" style="margin-top: 30px">
+	    		<b>Correo: </b>
+	    	</div>
+	    	<div class="input-field col s12 m3 l3">
+		        <input required id="email" name="Correo" type="email" class="validate" value="<?php echo $this->session->get('user')['Correo']?>">
+		        
+		    </div>
+	    </div>
+	    <div class=" col s12">
+	        <p><b>Nombre: </b><span><?php echo $this->session->get('user')['Nombre'];?></span></p>
+	        <p><b>Matricula: </b><span><?php echo $this->session->get('user')['Matricula'];?></span></p>
+	        <p><b>Facultad: </b><span><?php echo $this->session->get('user')['Facultad'];?></span></p>
+	        <p><b>Mis Grupos : </b>
+	        	<?php
+	        		if ($grupos->count() > 0) 
+	        		{
+	        			foreach ($grupos as $grupo)
+	        			{		
+	        				?>
+	        				<span>
+				                <ul>
+				                    <li><?php echo $grupo->Nombre_G;?></li>
+				                </ul>
+				            </span>
+	        				<?php
+	        			}
+	        		}
+	        		else
+	        		{
+	        			?>
+	        			<span>
+			                <b>Aquí se desplegarán los grupos a los que perteneces.</b>
+			            </span>
+	        			<?php
+	        		}
+	        	?>  
+	        </p>
+	    </div>
+
+	    <button class="col s6 m2 l2 offset-s3 offset-m5 offset-l5 btn waves-effect waves-light blue lighten-1"type="submit" name="enviarFoto" >Guardar Cambios</button>
+	</form>   
+</div>
+
+<script type="text/javascript">
+  	M.AutoInit();
+</script>
+<script>
+	document.addEventListener('DOMContentLoaded', function() {
+	  var elems = document.querySelectorAll('.fixed-action-btn');
+	  var instances = M.FloatingActionButton.init(elems);
+	});
+</script>

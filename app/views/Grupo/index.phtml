@@ -1,5 +1,6 @@
   <?php echo $this->getContent(); ?>
 
+<!--img src="data:image/jpg;base64, echo base64_encode($this->session->get('user')['Foto'])"/-->
 
   <div class="container">
     <!-- Menu responsivo -->
@@ -9,8 +10,24 @@
           <div class="background">
             <img src="https://i.ibb.co/JFVv2m5/ey29-Qkq-jpg.png" class="">
           </div>
-          <div>
-            <a href="#user"><img class="circle" id="img_avatar" src="https://i.ibb.co/DMqW5Y1/1485499779158756.jpg"></a>
+          <div style="margin-bottom: 20px;">
+            <a href="<?php echo $this->url->get('usermanage/index')?>">
+              <?php
+                if ($this->session->get('userFoto')!=null) {
+                  ?>
+                  <img class="circle" src="data:image/jpg;base64,<?php echo base64_encode($this->session->get('userFoto'))?>">
+                  
+                  <?php
+                }
+                else{
+                  ?>
+                  <img class="circle responsive-img" src="https://www.stickpng.com/assets/images/585e4beacb11b227491c3399.png">
+                  <?php
+                }
+              ?>  
+              
+            </a>
+            
           </div>
           <div>
             <p class="p_sidenav"><?php echo $this->session->get('user')['Nombre'] ?> - <?php echo $this->session->get('user')['Matricula'] ?></p>
@@ -46,21 +63,17 @@
       </li>
       <li><a class="subheader">Mis Grupos</a></li>
       <?php if ($grupos->count() > 0) { ?>
-        <li><a class='dropdown-trigger' href='#' data-target='dropdown1'><i class="material-icons">arrow_drop_down</i> Selecciona tu grupo</a></li>
-        <li>
-          <ul id='dropdown1' class='dropdown-content mainmenu'>
+          <ul id='dropdown1' class='mainmenu'>
             <?php foreach ($grupos as $grupo) { ?>
               <li>
                 <div class="row">
-                  <div class="col s11 m11 l11">
-                    <?php echo $grupo->Nombre_G; ?>
+                  <div class="col s11 m11 l11" >
+                    <?php echo $this->tag->linkTo("grupo/desplegarGrupo/?id_grupo=$grupo->Id_Grupo &tipo=1", $grupo->Nombre_G) ?> 
+                  </div>
+                  <div class="col s1 m1 l1" style="margin-left: -30px">
+                    <?php echo $this->tag->linkTo("grupo/desplegarGrupo/?id_grupo=$grupo->Id_Grupo &tipo=2", '<i class="material-icons" style="color: #263238">build</i>') ?>  
                   </div>
                 </div>
-                <ul id="li_1" class='submenu'>
-                  <li><?php echo $this->tag->linkTo("grupo/desplegarGrupo/?id_grupo=$grupo->Id_Grupo &tipo=1", '<i class="material-icons">donut_large</i> Abrir') ?></li>
-                  <li><?php echo $this->tag->linkTo("grupo/desplegarGrupo/?id_grupo=$grupo->Id_Grupo &tipo=2", '<i class="material-icons">build</i> Administrar') ?></li>
-
-                </ul>
               </li>
             <?php } ?>
           </ul>
@@ -258,12 +271,27 @@
             </div>
 
             
-            <div class="row">
-              <div class="col s12 m5 l5 offset-m1 offset-l1">
+            
+            
+          </div>
+          <script type="text/javascript">
+            var instance = M.Tabs.init(el);
+          </script>
+
+          <div class="row container">
+            <div class="col s12">
+              <ul class="tabs">
+                <li class="tab col s3"><a href="#test1" class="active">Principal</a></li>
+                <li class="tab col s3"><a  href="#test2">Actividad del grupo</a></li>
+              </ul>
+            </div>
+            <div id="test1" class="col s12">
+              <div class="row">
+              <div class="col s12 m6 l6">
                 <div class="row">
                   <div class="col s12 m6 l6">
                     <select id="id_filtro_biblio" name="biblioteca_name" onchange="cambiarBiblioteca()">
-                      <option value="" disabled selected>Elije una biclioteca</option>
+                      <option value="" disabled selected>Elije una biblioteca</option>
                       <option value="1">ACM</option>
                       <option value="2">IEEE</option>
                       <option value="3">Emerald Insight</option>
@@ -387,26 +415,33 @@
                 </div>
                   
               </div>
-            </div>
-            
           </div>
+            </div>
+            <div id="test2" class="col s12">
+              <div class="row">
+                <div id="cajaGrande2" class="col s12 m12 l8 offset-l2 center card">
+                  <!--<button id="id_boton_history" class="waves-effect waves-light btn modal-trigger center" -href="#modal_ac">Actividad de grupo</button> -->
 
-          <div class="row">
-            <div id="cajaGrande2" class="col s12 m12 l6 offset-l3 center card">
-              <!--<button id="id_boton_history" class="waves-effect waves-light btn modal-trigger center" -href="#modal_ac">Actividad de grupo</button> -->
-
-              <!-- Modal Structure -->
-              <div id="modal_ac">
-                <div id="id_history_Caja_Grande">
-                  <h4>Actividad del grupo</h4>
-                  <div class="divider"></div>
-                  <div id="id_history_content" align="left">
-                    <!--Aqui va el historial de cada grupo-->               
+                  <!-- Modal Structure -->
+                  <div id="modal_ac">
+                    <div id="id_history_Caja_Grande">
+                      <h4>Actividad del grupo</h4>
+                      <div class="divider"></div>
+                      <div id="id_history_content" align="left">
+                        <!--Aqui va el historial de cada grupo-->               
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
+
+
           </div>
+
+          
+
+          
 
           <div class="fixed-action-btn">
             <a class="btn-floating btn-large red">
@@ -1206,70 +1241,6 @@
       }
     </script>
 
-    <script type="text/javascript">
-        //document.getElementById('id_frame_aux').onload = function(){
-        //  var newiframe = document.createElement('iframe');
-        //  newiframe.src = "https://www.proxydgb.buap.mx:2131/";
-        //
-        //  document.getElementById('id_iFrame').contentDocument = newiframe.contentDocument;
-        //  alert("frame local: "+document.getElementById('id_iFrame').contentDocument+"   el otro: "+newiframe);
-        //  //document.getElementById('id_iFrame').body = document.createElement('body');
-        //  document.getElementById('id_iFrame').addEventListener("mouseup", function(evt){
-        //      alert("yeiiii!");
-        //  });
-        //}
-
-        //var invocation = new XMLHttpRequest();
-        //var url = 'https://www.proxydgb.buap.mx:2131/';
-        //   
-        //function callOtherDomain() {
-        //  if(invocation) {    
-        //    invocation.open('GET', url, true);
-        //    //invocation.onreadystatechange = handler;
-        //    invocation.send(); 
-        //  }
-        //}
-        
-        //console.log("response: "+callOtherDomain());
-        
-
-        var iframe = document.getElementById('id_iFrame');
-        iframe.contentDocument.body.addEventListener("mouseup",function(evt){
-          alert("mouse detectado");
-        });
-        // Record all key presses into an array
-        //var presses = [];
-        
-        //iframe.contentDocument.body.addEventListener("keypress", function(evt){
-        //  presses.push({
-        //    t: Math.round((new Date()).getTime() / 1000),
-        //    k: evt.key
-        //  });
-          //alert("Se preciono tecla en el iframe:  "+evt.key);
-        //});
-
-        //iframe.contentDocument.body.addEventListener("submit", function(evt){
-        //  evt.preventDefault();
-        //  alert("Teclas: "+JSON.stringify(presses));
-        //});
-        // Push to server at regular intervals
-        // Reduce interval timing for more frequent recordings, but increases server load
-        // You can also set this to send only if certain number of key stroke were made.
-        //setInterval(function () {
-            //var iframeaux;
-            //iframeaux = window;
-            //alert(iframeaux.document.getElementById('id_iFrame').contentDocument);
-            //var data = JSON.stringify(presses);
-            //console.log("Presses: "+data);
-            //console.log("iframe: "+document.getElementById('id_iFrame'));
-            //console.log("content: "+JSON.stringify(document.getElementById('id_iFrame')));
-            //console.log("body: "+this.document.getElementById('id_iFrame').contentDocument);
-            
-        //    presses = [];
-          
-        //}, 5000);
-
-    </script>
     <script type="text/javascript">
       var body = document.querySelector('body');
 

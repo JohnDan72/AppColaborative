@@ -39,8 +39,9 @@ class SessionController extends ControllerBase
             'Ap_Materno' => $user->Ap_Materno,
             'Correo' => $user->Correo,
             'Facultad' => $user->Facultad
-
         ]);
+
+        $this->session->set('userFoto',$user->Foto);
         //$this->session->set('Id_Grupo_Actual',"-3");
     }
 
@@ -81,6 +82,7 @@ class SessionController extends ControllerBase
     public function endAction()
     {
         $this->session->remove('user');
+        $this->session->remove('userFoto');
         $this->session->remove('Id_Grupo_Actual');
         $this->session->remove('Tipo_Despli');
         //$this->flash->success('Goodbye!');

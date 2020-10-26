@@ -367,7 +367,7 @@ class GrupoController extends ControllerBase
 
     public function desplegarGrupoAction($id_grupo_aux = null,$tipo_aux = null)
     {   //tipo_despli=1 ->  'Abrir grupo'  
-        //tipo_despli=2 -> 'Abrir administración'
+        //tipo_despli=2 ->  'Abrir administración'
         if($this->request->isGet()){
             $id_grupo = $this->request->getQuery('id_grupo');
             $tipo_despli = $this->request->getQuery('tipo');

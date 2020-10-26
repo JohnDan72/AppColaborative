@@ -15,33 +15,62 @@ class Usuario extends Model
     public $Ap_Materno;
     public $Correo;
     public $Facultad;
+    public $Foto;
 
-    public function validation()
-    {
-        $validator = new Validation();
-        
-        $validator->add(
-            'Matricula',
-            new DigitValidator(
-                [
-                    'message' => 'La matrícula debe ser un número'
-                ]
-            )
-        );
+    
 
-        $validator->add(
-            'Matricula',
-            new PresenceOf(
-                [
-                    'message' => 'Campo \'Matricula\' requerido'
-                ]
-            )
-        );
+    public function updateFoto($id_user,$fotoData){
+        $conexion = mysqli_connect("localhost","root","");
+        mysqli_select_db( $conexion, "appcolaborativo" ) or die ( "Upps! Pues va a ser que no se ha podido conectar a la base de datos" );
+        mysqli_set_charset($conexion, "utf8");  //Establecer recuperacion de info en utf8 para acentos y tildes
         
-        return $this->validate($validator);
+        $sql = "
+            UPDATE usuario 
+            SET Foto = '".$fotoData."' 
+            WHERE usuario.Matricula = $id_user
+        ";
+        $result = mysqli_query($conexion,$sql);
+
+        mysqli_close($conexion);
+
+        if ($result) {
+            //echo "var_dump(expression) :".var_dump($result);
+            return true;
+        }
+        else{
+            //echo "var_dump(expression) :".var_dump($result);
+            return false;
+        }
+        
+    }
+    public function getImage($id_user){
+        $conexion = mysqli_connect("localhost","root","");
+        mysqli_select_db( $conexion, "appcolaborativo" ) or die ( "Upps! Pues va a ser que no se ha podido conectar a la base de datos" );
+        mysqli_set_charset($conexion, "utf8");  //Establecer recuperacion de info en utf8 para acentos y tildes
+        
+        $sql = "
+            SELECT usuario.Foto
+            FROM usuario
+            WHERE usuario.Matricula = $id_user
+        ";
+        $result = mysqli_query($conexion,$sql);
+        $data = $result->fetch_all(MYSQLI_ASSOC);
+
+        mysqli_close($conexion);
+        echo "Result: ".var_dump($data);
+        return $data[0];
     }
 
     /*
+
+    $query = $this->modelsManager->createQuery("
+            UPDATE usuario 
+            SET Foto = ".$fotoData." 
+            WHERE usuario.Matricula = $id_user
+        ");
+    return $query->execute();
+
+
     if ($this->validationHasFailed() === true) {
             return false;
         }

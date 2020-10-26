@@ -257,8 +257,8 @@ form button:hover {
   we're changing the submenu's max-height from 0 to 200px;
 */
 
-.mainmenu li:hover .submenu {
-  max-height: 100px
+.mainmenu li:active .submenu {
+  max-height: 10px
 }
 
 /*
@@ -329,7 +329,4 @@ form button:hover {
 
 }
 
-#li_1{
-    margin-top: 20px !important;
-    margin-bottom: 50px !important;
-}
+
