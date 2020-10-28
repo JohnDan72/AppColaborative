@@ -1,6 +1,6 @@
   <?php echo $this->getContent(); ?>
 
-<!--img src="data:image/jpg;base64, echo base64_encode($this->session->get('user')['Foto'])"/-->
+  <!--img src="data:image/jpg;base64, echo base64_encode($this->session->get('user')['Foto'])"/-->
 
 
 
@@ -13,23 +13,22 @@
             <img src="https://i.ibb.co/JFVv2m5/ey29-Qkq-jpg.png" class="">
           </div>
           <div style="margin-bottom: 20px;">
-            <a href="<?php echo $this->url->get('usermanage/index')?>">
+            <a href="<?php echo $this->url->get('usermanage/index') ?>">
               <?php
-                if ($this->session->get('userFoto')!=null) {
-                  ?>
-                  <img class="circle" src="data:image/jpg;base64,<?php echo base64_encode($this->session->get('userFoto'))?>">
-                  
-                  <?php
-                }
-                else{
-                  ?>
-                  <img class="circle responsive-img" src="https://www.stickpng.com/assets/images/585e4beacb11b227491c3399.png">
-                  <?php
-                }
-              ?>  
-              
+              if ($this->session->get('userFoto') != null) {
+              ?>
+                <img class="circle" src="data:image/jpg;base64,<?php echo base64_encode($this->session->get('userFoto')) ?>">
+
+              <?php
+              } else {
+              ?>
+                <img class="circle responsive-img" src="https://www.stickpng.com/assets/images/585e4beacb11b227491c3399.png">
+              <?php
+              }
+              ?>
+
             </a>
-            
+
           </div>
           <div>
             <p class="p_sidenav"><?php echo $this->session->get('user')['Nombre'] ?> - <?php echo $this->session->get('user')['Matricula'] ?></p>
@@ -47,11 +46,11 @@
         if ($this->session->has('Id_Grupo_Actual')) $id_grupo_aux = $this->session->get('Id_Grupo_Actual');
 
 
-        
+
         echo $this->tag->linkTo("grupo/desconectarGrupo/?id_grupo=$id_grupo_aux", "<i class=\"material-icons text-grey\">home</i>Inicio");
-          //linkTo("grupo/desplegarGrupo/?id_grupo=$grupo->Id_Grupo &tipo=1", '<i class="material-icons">donut_large</i> Abrir')
+        //linkTo("grupo/desplegarGrupo/?id_grupo=$grupo->Id_Grupo &tipo=1", '<i class="material-icons">donut_large</i> Abrir')
         ?>
-        
+
       </li>
       <li>
         <div class="divider"></div>
@@ -65,20 +64,20 @@
       </li>
       <li><a class="subheader">Mis Grupos</a></li>
       <?php if ($grupos->count() > 0) { ?>
-          <ul id='dropdown1' class='mainmenu'>
-            <?php foreach ($grupos as $grupo) { ?>
-              <li>
-                <div class="row">
-                  <div class="col s11 m11 l11" >
-                    <?php echo $this->tag->linkTo("grupo/desplegarGrupo/?id_grupo=$grupo->Id_Grupo &tipo=1", $grupo->Nombre_G) ?> 
-                  </div>
-                  <div class="col s1 m1 l1" style="margin-left: -30px">
-                    <?php echo $this->tag->linkTo("grupo/desplegarGrupo/?id_grupo=$grupo->Id_Grupo &tipo=2", '<i class="material-icons" style="color: #263238">build</i>') ?>  
-                  </div>
+        <ul id='dropdown1' class='mainmenu'>
+          <?php foreach ($grupos as $grupo) { ?>
+            <li>
+              <div class="row">
+                <div class="col s11 m11 l11">
+                  <?php echo $this->tag->linkTo("grupo/desplegarGrupo/?id_grupo=$grupo->Id_Grupo &tipo=1", $grupo->Nombre_G) ?>
                 </div>
-              </li>
-            <?php } ?>
-          </ul>
+                <div class="col s1 m1 l1" style="margin-left: -30px">
+                  <?php echo $this->tag->linkTo("grupo/desplegarGrupo/?id_grupo=$grupo->Id_Grupo &tipo=2", '<i class="material-icons" style="color: #263238">build</i>') ?>
+                </div>
+              </div>
+            </li>
+          <?php } ?>
+        </ul>
         </li>
       <?php } else { ?>
         <li align="center">Aquí se mostrarán tus grupos</li>
@@ -167,14 +166,14 @@
               <?php
               if (isset($gruposComp)) {
                 foreach ($gruposComp as $grupo) {
-                  ?>
+              ?>
                   <option value="<?php echo $grupo->Id_Grupo ?>"><?php echo $grupo->Nombre_G; ?></option>
                 <?php
-                  }
-                  ?>
+                }
+                ?>
               <?php
               } else {
-                ?>
+              ?>
                 <option value="" disabled selected>No hay grupos que mostrar para unirse</option>
               <?php
               }
@@ -207,7 +206,7 @@
 
   <?php
   if (!$this->session->has('Tipo_Despli')) {
-    ?>
+  ?>
     <!--Pantalla de bienvenida-->
     <div class="row" id="view_ini">
       <div class="col s12 m12 l12 center">
@@ -230,17 +229,17 @@
       </div>
     </div>
     <?php
-    } else {
-      if (isset($infoGrupo)) {
-        //Se crea un arreglo de avatares para imágenes random en users
-        $avatar = array(
-          "https://i.ibb.co/3WxvDCf/boy.png", "https://i.ibb.co/PFthpPT/boy-1.png", "https://i.ibb.co/KjNNY64/girl.png", "https://i.ibb.co/tsytp0V/girl-1.png",
-          "https://i.ibb.co/p2G5vJ3/man.png", "https://i.ibb.co/T0hn4Qg/man-1.png", "https://i.ibb.co/5sJgMm3/man-2.png", "https://i.ibb.co/r4W8m4Y/man-3.png",
-          "https://i.ibb.co/YT0Y6Ws/man-4.png"
-        );
-        switch ($this->session->get('Tipo_Despli')) {
-          case '1': //se despliega Abrir grupo (Con chats)
-            ?>
+  } else {
+    if (isset($infoGrupo)) {
+      //Se crea un arreglo de avatares para imágenes random en users
+      $avatar = array(
+        "https://i.ibb.co/3WxvDCf/boy.png", "https://i.ibb.co/PFthpPT/boy-1.png", "https://i.ibb.co/KjNNY64/girl.png", "https://i.ibb.co/tsytp0V/girl-1.png",
+        "https://i.ibb.co/p2G5vJ3/man.png", "https://i.ibb.co/T0hn4Qg/man-1.png", "https://i.ibb.co/5sJgMm3/man-2.png", "https://i.ibb.co/r4W8m4Y/man-3.png",
+        "https://i.ibb.co/YT0Y6Ws/man-4.png"
+      );
+      switch ($this->session->get('Tipo_Despli')) {
+        case '1': //se despliega Abrir grupo (Con chats)
+    ?>
           <div class="row view_group">
             <div class="col s12 m12 l12 center">
               <h5><?php echo $infoGrupo->Nombre_G; ?></h5>
@@ -256,9 +255,9 @@
             <div class="col s12 m12 l12 center">
               <p id="p_6">Integrantes: </p>
               <?php
-                    foreach ($miembros as $miembro) {
-                      $get_position = random_int(0, 8);
-                      ?>
+              foreach ($miembros as $miembro) {
+                $get_position = random_int(0, 8);
+              ?>
                 <div class="chip" style="margin-top: 10px">
                   <img class="tooltipped hand" data-position="bottom" data-tooltip="<?php echo $miembro['Correo']; ?>" src='<?php echo $avatar[$get_position]; ?>' height="32" width="32">
                   <?php echo $miembro['Nombre']; ?>
@@ -272,9 +271,9 @@
               </div>
             </div>
 
-            
-            
-            
+
+
+
           </div>
           <script type="text/javascript">
             var instance = M.Tabs.init(el);
@@ -284,140 +283,141 @@
             <div class="col s12">
               <ul class="tabs">
                 <li class="tab col s3"><a href="#test1" class="active">Principal</a></li>
-                <li class="tab col s3"><a  href="#test2">Actividad del grupo</a></li>
+                <li class="tab col s3"><a href="#test2">Actividad del grupo</a></li>
+                <li class="tab col s3"><a href="#test3">Actividad Individual</a></li>
               </ul>
             </div>
             <div id="test1" class="col s12">
               <div class="row">
-              <div class="col s12 m6 l6">
-                <div class="row">
-                  <div class="col s12 m6 l6">
-                    <select id="id_filtro_biblio" name="biblioteca_name" onchange="cambiarBiblioteca()">
-                      <option value="" disabled selected>Elije una biblioteca</option>
-                      <option value="1">ACM</option>
-                      <option value="2">IEEE</option>
-                      <option value="3">Emerald Insight</option>
-                      <option value="4">EMIS Intelligence</option>
-                      <option value="5">Nature</option>
-                      <option value="6">ACS</option>
+                <div class="col s12 m6 l6">
+                  <div class="row">
+                    <div class="col s12 m6 l6">
+                      <select id="id_filtro_biblio" name="biblioteca_name" onchange="cambiarBiblioteca()">
+                        <option value="" disabled selected>Elije una biblioteca</option>
+                        <option value="1">ACM</option>
+                        <option value="2">IEEE</option>
+                        <option value="3">Emerald Insight</option>
+                        <option value="4">EMIS Intelligence</option>
+                        <option value="5">Nature</option>
+                        <option value="6">ACS</option>
 
-                      <option value="7">Springer</option>
-                      <option value="8">Tylor & Francis</option>
-                      <option value="9">AMS</option>
-                      <option value="10">Wiley Online Library</option>
-                    </select>
-                    <label>Materialize Select</label>
-                  </div>
-                  <div class="col s12 m12 l12">
-                    <iframe id="id_iFrame" src="" width="100%" height="400px"></iframe>
+                        <option value="7">Springer</option>
+                        <option value="8">Tylor & Francis</option>
+                        <option value="9">AMS</option>
+                        <option value="10">Wiley Online Library</option>
+                      </select>
+                      <label>Materialize Select</label>
+                    </div>
+                    <div class="col s12 m12 l12">
+                      <iframe id="id_iFrame" src="" width="100%" height="400px"></iframe>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div class="col s12 m5 l5">
-                <div class="row">
-                  <div  id="id_biblio_div" style="display: none;">
-                    
+                <div class="col s12 m5 l5">
+                  <div class="row">
+                    <div id="id_biblio_div" style="display: none;">
+
                       <a class="left btn-floating btn-large white pulse">
-                          <!--img src="<?php echo $this->url->get('img/bibliotecas/ieee.png')?>" width="50px" height="50px"-->
-                          <img src="" id="id_biblio_icon" width="50px" height="50px">
+                        <!--img src="<?php echo $this->url->get('img/bibliotecas/ieee.png') ?>" width="50px" height="50px"-->
+                        <img src="" id="id_biblio_icon" width="50px" height="50px">
                       </a>
                       <div class="chip" id="id_biblio_text" style="font-size: 16px; margin-top: 12px; margin-left: 7px;">
                         <!-- Está navegando por: IEEE<-->
                       </div>
-                    
-                    
-                  </div>
-                </div>
-                <div class="row">
-                  <div id="Id_Caja_Grande" class="col s12 m12 l12 card">
-                    <ul id="div_chat">
-                      <!--Aqui van los mensajes del Chat-->
-                    </ul>
-                  </div>
-                </div>
-                <div class="row"></div>
-                <div class="row">
-                  <div class="col s12 m12 l12" id="card_1">
-                    <div class="row" id="Id_Mensaje_Field">
-                      <div class="input-field col s11 m11 l11 center">
-                        <?php echo $this->tag->textArea(['id_mensaje', 'name' => 'mensaje_name', 'required' => 'required', 'onkeypress' => "return checarEnterMensaje(event)", 'class' => 'materialize-textarea']); ?>
-                        <label for="id_mensaje">Escribe un mensaje</label>
-                      </div>
-                      <div class="col s1 m1 l1">
-                        <div class="row">
-                          <button id="id_boton_mensaje" class="boton col s12 m12 l12 waves-effect  waves-light btn-small prefix" name="action">
-                            <i class="material-icons yellow-text text-lighten-5">send</i>
-                          </button>
-                        </div>
-                      </div>
+
+
                     </div>
-                    <!--Adjuntar Foto-->
-                    <div class="row" id="Id_Foto_Field" style="display: none;">
-                      <form enctype="multipart/form-data" id="formuFotoAjax" method="post">
-                        <div class="col s10 m10 l10">
-                          <div class="file-field input-field">
-                            <div class="btn blue">
-                              <span>Seleccionar</span>
-                              <input id="id_foto" type="file" name="Nombre_Img" value="fichero">
-                            </div>
-                            <div class="file-path-wrapper">
-                              <input id="id_path_foto" class="file-path" placeholder="Selecciona una imagen" readonly="readonly" type="text">
-                            </div>
-                          </div>
+                  </div>
+                  <div class="row">
+                    <div id="Id_Caja_Grande" class="col s12 m12 l12 card">
+                      <ul id="div_chat">
+                        <!--Aqui van los mensajes del Chat-->
+                      </ul>
+                    </div>
+                  </div>
+                  <div class="row"></div>
+                  <div class="row">
+                    <div class="col s12 m12 l12" id="card_1">
+                      <div class="row" id="Id_Mensaje_Field">
+                        <div class="input-field col s11 m11 l11 center">
+                          <?php echo $this->tag->textArea(['id_mensaje', 'name' => 'mensaje_name', 'required' => 'required', 'onkeypress' => "return checarEnterMensaje(event)", 'class' => 'materialize-textarea']); ?>
+                          <label for="id_mensaje">Escribe un mensaje</label>
                         </div>
-
-                        <a href=# class="col s1 m1 l1" onClick="borrarFotoField()"><i class="tiny material-icons white red-text text-darken-1">cancel</i></a>
-
                         <div class="col s1 m1 l1">
                           <div class="row">
-                            <button id="id_boton_foto" type="submit" class="boton col s12 m12 l12 waves-effect  waves-light btn-small" name="action">
+                            <button id="id_boton_mensaje" class="boton col s12 m12 l12 waves-effect  waves-light btn-small prefix" name="action">
                               <i class="material-icons yellow-text text-lighten-5">send</i>
                             </button>
                           </div>
                         </div>
-                        <div class="col s12 m12 l12 center" id="id_error_img">
-                          <!--Aqui van los errores de las img's-->
-                        </div>
-                      </form>
-                    </div>
-
-                    <!--Adjuntar Documento-->
-
-                    <div class="row" id="Id_Doc_Field" style="display: none;">
-                      <form enctype="multipart/form-data" id="formuDocAjax" method="post">
-                        <div class="col s10 m10 l10">
-
-
-                          <div class="file-field input-field">
-                            <div class="btn green">
-                              <span>Seleccionar</span>
-                              <input id="id_doc" type="file" name="Nombre_File" value="fichero">
-                            </div>
-                            <div class="file-path-wrapper">
-                              <input id="id_path_doc" class="file-path" placeholder="Selecciona un documento" readonly="readonly" type="text">
+                      </div>
+                      <!--Adjuntar Foto-->
+                      <div class="row" id="Id_Foto_Field" style="display: none;">
+                        <form enctype="multipart/form-data" id="formuFotoAjax" method="post">
+                          <div class="col s10 m10 l10">
+                            <div class="file-field input-field">
+                              <div class="btn blue">
+                                <span>Seleccionar</span>
+                                <input id="id_foto" type="file" name="Nombre_Img" value="fichero">
+                              </div>
+                              <div class="file-path-wrapper">
+                                <input id="id_path_foto" class="file-path" placeholder="Selecciona una imagen" readonly="readonly" type="text">
+                              </div>
                             </div>
                           </div>
-                        </div>
 
-                        <a href=# class="col s1 m1 l1 white" style="border: 0px;" onclick="return borrarDocField()"><i class="tiny material-icons white red-text text-darken-1" style="">cancel</i></a>
-                        <div class="col s1 m1 l1">
-                          <div class="row">
-                            <button id="id_boton_doc" class="boton col s12 m12 l12 waves-effect  waves-light btn-small prefix" name="action">
-                              <i class="material-icons yellow-text text-lighten-5">send</i>
-                            </button>
-                            <!--a class="waves-effect waves-light btn-small prefix" id="boton"><i class="material-icons">send</i></a-->
+                          <a href=# class="col s1 m1 l1" onClick="borrarFotoField()"><i class="tiny material-icons white red-text text-darken-1">cancel</i></a>
+
+                          <div class="col s1 m1 l1">
+                            <div class="row">
+                              <button id="id_boton_foto" type="submit" class="boton col s12 m12 l12 waves-effect  waves-light btn-small" name="action">
+                                <i class="material-icons yellow-text text-lighten-5">send</i>
+                              </button>
+                            </div>
                           </div>
-                        </div>
-                        <div class="col s10 m10 l10 center" id="id_error_doc">
-                          <!--Aqui van los errores de los doc's-->
-                        </div>
-                      </form>
+                          <div class="col s12 m12 l12 center" id="id_error_img">
+                            <!--Aqui van los errores de las img's-->
+                          </div>
+                        </form>
+                      </div>
+
+                      <!--Adjuntar Documento-->
+
+                      <div class="row" id="Id_Doc_Field" style="display: none;">
+                        <form enctype="multipart/form-data" id="formuDocAjax" method="post">
+                          <div class="col s10 m10 l10">
+
+
+                            <div class="file-field input-field">
+                              <div class="btn green">
+                                <span>Seleccionar</span>
+                                <input id="id_doc" type="file" name="Nombre_File" value="fichero">
+                              </div>
+                              <div class="file-path-wrapper">
+                                <input id="id_path_doc" class="file-path" placeholder="Selecciona un documento" readonly="readonly" type="text">
+                              </div>
+                            </div>
+                          </div>
+
+                          <a href=# class="col s1 m1 l1 white" style="border: 0px;" onclick="return borrarDocField()"><i class="tiny material-icons white red-text text-darken-1" style="">cancel</i></a>
+                          <div class="col s1 m1 l1">
+                            <div class="row">
+                              <button id="id_boton_doc" class="boton col s12 m12 l12 waves-effect  waves-light btn-small prefix" name="action">
+                                <i class="material-icons yellow-text text-lighten-5">send</i>
+                              </button>
+                              <!--a class="waves-effect waves-light btn-small prefix" id="boton"><i class="material-icons">send</i></a-->
+                            </div>
+                          </div>
+                          <div class="col s10 m10 l10 center" id="id_error_doc">
+                            <!--Aqui van los errores de los doc's-->
+                          </div>
+                        </form>
+                      </div>
                     </div>
                   </div>
+
                 </div>
-                  
               </div>
-          </div>
             </div>
             <div id="test2" class="col s12">
               <div class="row">
@@ -430,8 +430,48 @@
                       <h4>Actividad del grupo</h4>
                       <div class="divider"></div>
                       <div id="id_history_content" align="left">
-                        <!--Aqui va el historial de cada grupo-->               
+                        <!--Aqui va el historial de cada grupo-->
                       </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div id="test3" class="col s12">
+              <div class="row">
+                <div id="cajaGrande2" class="col s12 m12 l12  center">
+                  <!--<button id="id_boton_history" class="waves-effect waves-light btn modal-trigger center" -href="#modal_ac">Actividad de grupo</button> -->
+
+                  <!-- Modal Structure -->
+                  <div id="modal_ac">
+                    <div id="id_history_Caja_Grande">
+                      <h4>Actividad Individual</h4>
+                      <div class="divider"></div>
+
+
+                      <?php for ($i = 0; $i < 13; $i++){?>
+
+                        <div class="col s12 m6 l4">
+                        <ul class="collapsible">
+                          <li class="active">
+                            <div class="collapsible-header "><i class="material-icons">filter_drama</i>Integrante <?php echo $i+1?></div>
+                            <div class="collapsible-body ">
+
+                              <ul>
+                                <li>Acción 1</li>
+                                <li>Acción 2</li>
+                                <li>Acción 3</li>
+                              </ul>
+                            </div>
+                          </li>
+
+                        </ul>
+                      </div>
+
+                      <?php }?>
+
+                      <!--Aqui va el historial de cada grupo-->
                     </div>
                   </div>
                 </div>
@@ -441,9 +481,9 @@
 
           </div>
 
-          
 
-          
+
+
 
           <div class="fixed-action-btn">
             <a class="btn-floating btn-large red">
@@ -462,10 +502,10 @@
             </ul>
           </div>
         <?php
-              break;
+          break;
 
-            case '2': //se despliega Administración de grupo (Líder)
-              ?>
+        case '2': //se despliega Administración de grupo (Líder)
+        ?>
           <!-- Vista para administrador de grupo (Líder)-->
           <div class="row">
             <h4 class="center espaciado_up_down"> Administración grupo: <?php echo $infoGrupo->Nombre_G; ?> (Líder)</h4>
@@ -490,9 +530,9 @@
                   <p class="color_p_ti">Integrantes: </p>
                   <div id="ChipsPadre">
                     <?php
-                          foreach ($miembros as $miembro) {
-                            $get_position = random_int(0, 8);
-                            ?>
+                    foreach ($miembros as $miembro) {
+                      $get_position = random_int(0, 8);
+                    ?>
                       <div class="chip" style="margin-top: 10px">
                         <div class="chipMatricula" style="display: none;"><?php echo $miembro['Matricula'] ?></div>
                         <img class="tooltipped hand" data-position="bottom" data-tooltip="<?php echo $miembro['Correo']; ?>" src='<?php echo $avatar[$get_position]; ?>' height="32" width="32">
@@ -544,9 +584,9 @@
 
                   <?php echo $this->tag->form(['name' => 'delete_group', "grupo/eliminarGrupo", 'onsubmit' => "return confirmacion()"]);
 
-                        echo $this->tag->textfield(['id_grupo_actual', 'name' => 'id_grupo_actual', 'style' => 'display:none', 'value' => $this->session->get('Id_Grupo_Actual')]);
+                  echo $this->tag->textfield(['id_grupo_actual', 'name' => 'id_grupo_actual', 'style' => 'display:none', 'value' => $this->session->get('Id_Grupo_Actual')]);
 
-                        ?>
+                  ?>
                   <div class="col2 s1 m12 l12">
                     <button class=" button_admin_elim red lighten-1 white-text" type="submit" name="action">Eliminar grupo</button>
                   </div>
@@ -558,9 +598,9 @@
           </div>
           <!--hr-->
         <?php
-              break;
-            case '3': //se despliega Administración de grupo (Integrante)
-              ?>
+          break;
+        case '3': //se despliega Administración de grupo (Integrante)
+        ?>
           <!--Vista del usuario del grupo-->
           <div class="row">
             <h4 class="center espaciado_up_down"> Administración grupo: <?php echo $infoGrupo->Nombre_G; ?> (Integrante)</h4>
@@ -578,9 +618,9 @@
                   <p class="color_p_ti espaciado_up_down">Integrantes: </p>
                   <?php
 
-                        foreach ($miembros as $miembro) {
-                          $get_position = random_int(0, 8);
-                          ?>
+                  foreach ($miembros as $miembro) {
+                    $get_position = random_int(0, 8);
+                  ?>
                     <div class="chip" style="margin-top: 10px">
                       <img class="tooltipped hand" data-position="bottom" data-tooltip="<?php echo $miembro['Correo']; ?>" src='<?php echo $avatar[$get_position]; ?>' height="32" width="32">
                       <?php echo $miembro['Nombre']; ?>
@@ -607,644 +647,642 @@
               <?= $this->tag->endform(); ?>
             </div>
           </div>
-        <?php
-              break;
-            default:
-              echo "El tipo no tiene valor válido, Error";
-              break;
-          }
-        } else {
-          ?>
-        <div class="row" id="view_ini">
-          <div class="col s12 m12 l12 center">
-            <img id="img_ini" src="https://i.ibb.co/NVN2rSG/networking-1.png" width="256" height="256">
-            <h4 id="Title">Colaborative</h4>
-          </div>
-          <div class="col s12 m12 l12 center">
-            <h2>¡Bienvenido, <?php echo $this->session->get('user')['Nombre'] ?>!</h2>
-          </div>
-
-          <div class="col s12 m12 l12 center">
-            <div class="container">
-              <ol type="A">
-                <li type="disc" id="p_1">Colaborative es una aplicación que te permite estar conectado con personas como !tu!.</li>
-                <li type="disc" id="p_2">Utíliza Colaborative como más te guste</li>
-                <li type="disc" id="p_3"> Comparte archivos, artículos, fotos, proyectos.</li>
-                <li type="disc" id="p_4">Comienza eligiendo tu grupo de trabajo</li>
-              </ol>
-            </div>
-          </div>
+      <?php
+          break;
+        default:
+          echo "El tipo no tiene valor válido, Error";
+          break;
+      }
+    } else {
+      ?>
+      <div class="row" id="view_ini">
+        <div class="col s12 m12 l12 center">
+          <img id="img_ini" src="https://i.ibb.co/NVN2rSG/networking-1.png" width="256" height="256">
+          <h4 id="Title">Colaborative</h4>
+        </div>
+        <div class="col s12 m12 l12 center">
+          <h2>¡Bienvenido, <?php echo $this->session->get('user')['Nombre'] ?>!</h2>
         </div>
 
-    <?php
-      }
+        <div class="col s12 m12 l12 center">
+          <div class="container">
+            <ol type="A">
+              <li type="disc" id="p_1">Colaborative es una aplicación que te permite estar conectado con personas como !tu!.</li>
+              <li type="disc" id="p_2">Utíliza Colaborative como más te guste</li>
+              <li type="disc" id="p_3"> Comparte archivos, artículos, fotos, proyectos.</li>
+              <li type="disc" id="p_4">Comienza eligiendo tu grupo de trabajo</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+
+  <?php
     }
-    ?>
+  }
+  ?>
 
-    <script type="text/javascript">
-      M.AutoInit();
-      $('.chips').chips();
-    </script>
+  <script type="text/javascript">
+    M.AutoInit();
+    $('.chips').chips();
+  </script>
 
-    <script type="text/javascript">
-      function adjuntarFileImg() {
-        document.getElementById('id_foto').click();
-        document.getElementById('id_path_foto').value = "";
-        document.getElementById('id_error_img').textContent = "";
-        document.getElementById('id_error_doc').textContent = "";
-        document.getElementById('Id_Foto_Field').style.display = 'block';
-        document.getElementById('Id_Doc_Field').style.display = 'none';
-        document.getElementById('Id_Mensaje_Field').style.display = 'none';
-      }
+  <script type="text/javascript">
+    function adjuntarFileImg() {
+      document.getElementById('id_foto').click();
+      document.getElementById('id_path_foto').value = "";
+      document.getElementById('id_error_img').textContent = "";
+      document.getElementById('id_error_doc').textContent = "";
+      document.getElementById('Id_Foto_Field').style.display = 'block';
+      document.getElementById('Id_Doc_Field').style.display = 'none';
+      document.getElementById('Id_Mensaje_Field').style.display = 'none';
+    }
 
-      function adjuntarFileDoc() {
-        document.getElementById('id_doc').click();
-        document.getElementById('id_path_doc').value = "";
-        document.getElementById('id_error_img').textContent = "";
-        document.getElementById('id_error_doc').textContent = "";
-        document.getElementById('Id_Doc_Field').style.display = 'block';
-        document.getElementById('Id_Foto_Field').style.display = 'none';
-        document.getElementById('Id_Mensaje_Field').style.display = 'none';
-      }
+    function adjuntarFileDoc() {
+      document.getElementById('id_doc').click();
+      document.getElementById('id_path_doc').value = "";
+      document.getElementById('id_error_img').textContent = "";
+      document.getElementById('id_error_doc').textContent = "";
+      document.getElementById('Id_Doc_Field').style.display = 'block';
+      document.getElementById('Id_Foto_Field').style.display = 'none';
+      document.getElementById('Id_Mensaje_Field').style.display = 'none';
+    }
 
-      function borrarFotoField() {
-        document.getElementById('id_path_foto').value = "";
-        document.getElementById('id_error_img').textContent = "";
-        document.getElementById('Id_Foto_Field').style.display = 'none';
-        document.getElementById('Id_Mensaje_Field').style.display = 'block';
-      }
+    function borrarFotoField() {
+      document.getElementById('id_path_foto').value = "";
+      document.getElementById('id_error_img').textContent = "";
+      document.getElementById('Id_Foto_Field').style.display = 'none';
+      document.getElementById('Id_Mensaje_Field').style.display = 'block';
+    }
 
-      function borrarDocField() {
-        document.getElementById('id_path_doc').value = "";
-        document.getElementById('id_error_doc').textContent = "";
-        document.getElementById('Id_Doc_Field').style.display = 'none';
-        document.getElementById('Id_Mensaje_Field').style.display = 'block';
-      }
-    </script>
+    function borrarDocField() {
+      document.getElementById('id_path_doc').value = "";
+      document.getElementById('id_error_doc').textContent = "";
+      document.getElementById('Id_Doc_Field').style.display = 'none';
+      document.getElementById('Id_Mensaje_Field').style.display = 'block';
+    }
+  </script>
 
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        var elems = document.querySelectorAll('.fixed-action-btn');
-        var instances = M.FloatingActionButton.init(elems);
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var elems = document.querySelectorAll('.fixed-action-btn');
+      var instances = M.FloatingActionButton.init(elems);
+    });
+  </script>
+
+  <script type="text/javascript">
+    var numHistory = 0;
+
+    function ajaxFuncion2() {
+      $.ajax({
+        url: "<?php echo $this->url->get('Grupo/getHistoryAjax'); ?>",
+        type: 'GET',
+        dataType: 'json',
+        data: {}
+      }).done(function(data) {
+        var sizeApend = 0;
+        if (!((typeof data) == "string")) {
+          if (data.length < numHistory) {
+            //reinicio por DB comprometida
+            document.getElementById("id_history_content").textContent = "";
+            sizeApend = data.length;
+          } else if (data.length > numHistory) {
+            //Apendizar historial restante
+            sizeApend = data.length - numHistory;
+          }
+
+          var divHistory = document.getElementById("id_history_content");
+          for (var i = numHistory, k = 0; k < sizeApend; i++, k++) {
+            //console.log("for history: i = "+i);
+            var auxP = document.createElement('p');
+            switch (data[i].Tipo_H) {
+              case '0':
+                auxP.textContent = data[i].Fecha + " (" + data[i].Hora + ") - " + data[i].Nombre + " se desconectó";
+                break;
+              case '1':
+                auxP.textContent = data[i].Fecha + " (" + data[i].Hora + ") - " + data[i].Nombre + " se conectó";
+                break;
+              case '2':
+                auxP.textContent = data[i].Fecha + " (" + data[i].Hora + ") - " + data[i].Nombre + " compartió una imagen al grupo";
+                break;
+              case '3':
+                auxP.textContent = data[i].Fecha + " (" + data[i].Hora + ") - " + data[i].Nombre + " compartió un documento al grupo";
+                break;
+              case '4':
+                auxP.textContent = data[i].Fecha + " (" + data[i].Hora + ") - " + data[i].Nombre + " cambió el nombre del grupo";
+                break;
+              case '5':
+                auxP.textContent = data[i].Fecha + " (" + data[i].Hora + ") - " + data[i].Nombre + " cambió la contraseña del grupo";
+                break;
+              case '6':
+                auxP.textContent = data[i].Fecha + " (" + data[i].Hora + ") - " + data[i].Nombre + " eliminó a alguien del grupo";
+                break;
+              case '7':
+                auxP.textContent = data[i].Fecha + " (" + data[i].Hora + ") - " + data[i].Nombre + " se ha unido al grupo";
+                break;
+              case '8':
+                auxP.textContent = data[i].Fecha + " (" + data[i].Hora + ") - " + data[i].Nombre + " ha salido del grupo";
+                break;
+              case '9':
+                auxP.textContent = data[i].Fecha + " (" + data[i].Hora + ") - " + data[i].Nombre + " creó el grupo";
+                break;
+
+              case '10':
+                auxP.textContent = data[i].Fecha + " (" + data[i].Hora + ") - " + data[i].Nombre + " compartió un enlace en el grupo";
+                break;
+              case '12':
+                auxP.textContent = data[i].Fecha + " (" + data[i].Hora + ") - " + data[i].Nombre + " navegó por la biblioteca: " + data[i].Biblioteca;
+                break;
+
+              default:
+                auxP.textContent = "Mensaje Dafault";
+            }
+            divHistory.appendChild(auxP);
+          }
+
+          numHistory = data.length;
+        } else {
+          //alert(data);
+        }
+
+
+
+        //var cajaHistory = document.getElementById('id_history_content');
+        //if (globalScrollTopHistory != cajaHistory.scrollHeight) {
+        //  document.getElementById('id_history_content').scrollTop = cajaHistory.scrollHeight;
+        //  globalScrollTopHistory = cajaHistory.scrollHeight;
+        //}
+
+        //console.log("Se esta ejecutando tarea de historial");
       });
-    </script>
+    }
 
-    <script type="text/javascript">
-      var numHistory = 0;
-      function ajaxFuncion2(){
-        $.ajax({
-                url: "<?php echo $this->url->get('Grupo/getHistoryAjax'); ?>",
-                type: 'GET',
-                dataType: 'json',
-                data: {}
-              }).done(function(data) {
-                var sizeApend = 0;
-                if(!((typeof data) == "string"))
-                { 
-                  if (data.length < numHistory) { 
-                    //reinicio por DB comprometida
-                    document.getElementById("id_history_content").textContent = "";
-                    sizeApend = data.length;
-                  }
-                  else if (data.length > numHistory) {
-                    //Apendizar historial restante
-                    sizeApend = data.length - numHistory;
-                  }
+    window.setInterval(function() {
+      ajaxFuncion2();
+    }, 2500);
+  </script>
+  <script type="text/javascript">
+    var numMensaje = 0;
 
-                  var divHistory = document.getElementById("id_history_content");
-                  for(var i=numHistory,k=0;k<sizeApend; i++,k++){
-                    //console.log("for history: i = "+i);
-                    var auxP = document.createElement('p');
-                    switch(data[i].Tipo_H){
-                      case '0':
-                          auxP.textContent = data[i].Fecha+" ("+data[i].Hora+") - "+data[i].Nombre+" se desconectó";
-                      break;
-                      case '1':
-                          auxP.textContent = data[i].Fecha+" ("+data[i].Hora+") - "+data[i].Nombre+" se conectó";
-                      break;
-                      case '2':
-                          auxP.textContent = data[i].Fecha+" ("+data[i].Hora+") - "+data[i].Nombre+" compartió una imagen al grupo";
-                      break;
-                      case '3':
-                          auxP.textContent = data[i].Fecha+" ("+data[i].Hora+") - "+data[i].Nombre+" compartió un documento al grupo";
-                      break;
-                      case '4':
-                          auxP.textContent = data[i].Fecha+" ("+data[i].Hora+") - "+data[i].Nombre+" cambió el nombre del grupo";
-                      break;
-                      case '5':
-                          auxP.textContent = data[i].Fecha+" ("+data[i].Hora+") - "+data[i].Nombre+" cambió la contraseña del grupo";
-                      break;
-                      case '6':
-                          auxP.textContent = data[i].Fecha+" ("+data[i].Hora+") - "+data[i].Nombre+" eliminó a alguien del grupo";
-                      break;
-                      case '7':
-                          auxP.textContent = data[i].Fecha+" ("+data[i].Hora+") - "+data[i].Nombre+" se ha unido al grupo";
-                      break;
-                      case '8':
-                          auxP.textContent = data[i].Fecha+" ("+data[i].Hora+") - "+data[i].Nombre+" ha salido del grupo";
-                      break;
-                      case '9':
-                          auxP.textContent = data[i].Fecha+" ("+data[i].Hora+") - "+data[i].Nombre+" creó el grupo";
-                      break;
+    function ajaxFuncion() {
 
-                      case '10':
-                          auxP.textContent = data[i].Fecha+" ("+data[i].Hora+") - "+data[i].Nombre+" compartió un enlace en el grupo";
-                      break;
-                      case '12':
-                          auxP.textContent = data[i].Fecha+" ("+data[i].Hora+") - "+data[i].Nombre+" navegó por la biblioteca: "+data[i].Biblioteca;
-                      break;
+      $.ajax({
+        url: "<?php echo $this->url->get('Grupo/cargarMensajes'); ?>",
+        type: 'GET',
+        dataType: 'json',
+        data: {
+          id_grupo: <?php echo ($this->session->has('Id_Grupo_Actual')) ? $this->session->get('Id_Grupo_Actual') : 0 ?>
+        }
+      }).done(function(data) {
 
-                      default: auxP.textContent = "Mensaje Dafault";
-                    }
-                    divHistory.appendChild(auxP);
-                  }
+        if (!((typeof data) == "string")) {
+          var chat_Caja = document.getElementById("div_chat");
+          if (chat_Caja != null) {
+            var sizeApend = 0;
+            if (data.length < numMensaje) {
+              //reinicio por DB comprometida
+              chat_Caja.textContent = "";
+              sizeApend = data.length;
+            } else if (data.length > numMensaje) {
+              //Apendizar historial restante
+              sizeApend = data.length - numMensaje;
+            }
 
-                  numHistory = data.length;
+            for (var i = numMensaje, k = 0; k < sizeApend; i++, k++) {
+              //console.log("for mensajes: i = "+i);
+              var newLi = document.createElement("li");
+              var newDiv1 = document.createElement("div");
+              newDiv1.className = "row";
+              var newDiv1_1 = document.createElement("div");
+              var newDiv1_2 = document.createElement("div");
+              var newDiv1_2_1 = document.createElement("div");
+              var newDiv1_2_2 = document.createElement("div");
+              var newDiv1_2_3 = document.createElement("div");
+
+              var imgAux = document.createElement("img");
+              imgAux.src = '<?php echo $avatar[random_int(0, 8)]; ?>';
+              imgAux.height = '32';
+              imgAux.width = '32';
+              imgAux.alt = 'Contact Person';
+
+              if (data[i].Matricula == <?php echo $this->session->get('user')['Matricula']; ?>) {
+
+                newDiv1_1.className = "col s2 m2 l2";
+                newDiv1_1.appendChild(imgAux);
+
+                newDiv1_2.className = 'col s10 m10 l10';
+                newDiv1_2_1.className = "row right blue-grey-text text-lighten-2";
+                newDiv1_2_1.textContent = "Yo";
+                newDiv1_2_2.className = "row grey-text text-darken-2 div_back";
+                newDiv1_2_2.style.marginBottom = "-10px";
+                newDiv1_2_2.style.marginTop = "30px";
+
+
+                switch (data[i].Tipo_M) {
+                  case '0':
+                    newDiv1_2_2.innerHTML = data[i].Mensaje;
+                    break;
+                  case '1':
+                    var auxImgMessage = document.createElement('img');
+                    auxImgMessage.src = data[i].Mensaje;
+                    auxImgMessage.height = "200";
+                    auxImgMessage.width = "200";
+                    newDiv1_2_2.appendChild(auxImgMessage);
+                    break;
+                  case '2':
+                    var aAux = document.createElement('a');
+                    aAux.href = data[i].Mensaje;
+                    aAux.target = "_blank";
+                    aAux.textContent = data[i].Mensaje.replace(/((\/[_a-zA-Z0-9]+){0,}\/)([a-zA-Z0-9\s\.ñ\(\)]+)/, '$3');
+
+                    newDiv1_2_2.appendChild(aAux);
+                    break;
+
+                  default:
                 }
-                else{
-                  //alert(data);
+
+
+
+
+                newDiv1_2_3.className = "row right blue-grey-text text-lighten-2";
+                newDiv1_2_3.textContent = data[i].Hora;
+                newDiv1_2.appendChild(newDiv1_2_1);
+                newDiv1_2.appendChild(newDiv1_2_2);
+                newDiv1_2.appendChild(newDiv1_2_3);
+              } else {
+                newDiv1_2.className = "col s2 m2 l2";
+                newDiv1_2.appendChild(imgAux);
+
+                newDiv1_1.className = 'col s8 m8 l8';
+                newDiv1_2_1.className = "row blue-grey-text text-lighten-2";
+                newDiv1_2_1.textContent = data[i].Nombre;
+                newDiv1_2_2.className = "row grey-text text-darken-2 div_back";
+                newDiv1_2_2.style.marginBottom = "-10px";
+                newDiv1_2_2.style.marginTop = "-6px";
+
+
+                switch (data[i].Tipo_M) {
+                  case '0':
+                    newDiv1_2_2.innerHTML = data[i].Mensaje;
+                    break;
+                  case '1':
+                    var auxImgMessage = document.createElement('img');
+                    auxImgMessage.src = data[i].Mensaje;
+                    auxImgMessage.height = "200";
+                    auxImgMessage.width = "200";
+                    newDiv1_2_2.appendChild(auxImgMessage);
+                    break;
+                  case '2':
+                    var aAux = document.createElement('a');
+                    aAux.href = data[i].Mensaje;
+                    aAux.target = "_blank";
+                    aAux.textContent = data[i].Mensaje.replace(/((\/[_a-zA-Z0-9]+){0,}\/)([a-zA-Z0-9\s\.ñ\(\)]+)/, '$3');
+                    newDiv1_2_2.appendChild(aAux);
+                    break;
+
+                  default:
                 }
 
-                
 
-                //var cajaHistory = document.getElementById('id_history_content');
-                //if (globalScrollTopHistory != cajaHistory.scrollHeight) {
-                //  document.getElementById('id_history_content').scrollTop = cajaHistory.scrollHeight;
-                //  globalScrollTopHistory = cajaHistory.scrollHeight;
-                //}
 
-                //console.log("Se esta ejecutando tarea de historial");
-              });
-      }
 
-      window.setInterval(function() {
-        ajaxFuncion2();
-      }, 2500);
-    </script>
-    <script type="text/javascript">
-      var numMensaje = 0;
 
-      function ajaxFuncion() {
+                newDiv1_2_3.className = "row right blue-grey-text text-lighten-2";
+                newDiv1_2_3.textContent = data[i].Hora;
+                newDiv1_1.appendChild(newDiv1_2_1);
+                newDiv1_1.appendChild(newDiv1_2_2);
+                newDiv1_1.appendChild(newDiv1_2_3);
+              }
 
+
+              newDiv1.appendChild(newDiv1_1);
+              newDiv1.appendChild(newDiv1_2);
+
+
+              if (typeof data[i].DiaNuevo != "undefined" && data[i].DiaNuevo != null) {
+                var newDivDia = document.createElement("div");
+                newDivDia.className = "row center";
+                var spanDivDia = document.createElement("span");
+                spanDivDia.className = "blue-grey-text text-lighten-1";
+                spanDivDia.textContent = data[i].DiaNuevo;
+
+                newDivDia.appendChild(spanDivDia);
+                newLi.appendChild(newDivDia);
+              }
+              newLi.appendChild(newDiv1);
+
+              chat_Caja.appendChild(newLi);
+            }
+
+
+            if (data.length > numMensaje) {
+              //Ajustar ScrollTop
+              document.getElementById('Id_Caja_Grande').scrollTop = chat_Caja.scrollHeight;
+            }
+
+
+            numMensaje = data.length;
+
+            //if (globalScrollTop != chat_Caja.scrollHeight) {
+            //  document.getElementById('Id_Caja_Grande').scrollTop = chat_Caja.scrollHeight;
+            //  globalScrollTop = chat_Caja.scrollHeight;
+            //}
+
+            //console.log("Se esta ejecutando Mensajes");
+          }
+        } else {
+          if (data.startsWith("Error")) {} else if (data == "Fatal Error") {
+            window.location.replace("<?php echo $this->url->get('Grupo/index/#'); ?>");
+          }
+        }
+      });
+
+    }
+
+
+
+    window.setInterval(function() {
+      ajaxFuncion();
+    }, 1500);
+  </script>
+
+
+
+  <script type="text/javascript">
+    $(document).ready(function() {
+
+      $("#id_boton_mensaje").click(function() {
+        var textMessage = document.getElementById('id_mensaje').value;
         $.ajax({
-          url: "<?php echo $this->url->get('Grupo/cargarMensajes'); ?>",
+          url: "<?php echo $this->url->get('Grupo/enviarMenAjax'); ?>",
           type: 'GET',
           dataType: 'json',
           data: {
-            id_grupo: <?php echo ($this->session->has('Id_Grupo_Actual')) ? $this->session->get('Id_Grupo_Actual') : 0 ?>
+            mensaje_name: textMessage
           }
         }).done(function(data) {
+          document.getElementById('id_mensaje').value = "";
+          if (data == "Error") {
 
-          if (!((typeof data) == "string")) {
-            var chat_Caja = document.getElementById("div_chat");
-            if (chat_Caja != null) {
-              var sizeApend = 0;
-              if (data.length < numMensaje) { 
-                //reinicio por DB comprometida
-                chat_Caja.textContent = "";
-                sizeApend = data.length;
-              }
-              else if (data.length > numMensaje) {
-                //Apendizar historial restante
-                sizeApend = data.length - numMensaje;
-              }
-              
-              for (var i=numMensaje,k=0;k<sizeApend; i++,k++) {
-                //console.log("for mensajes: i = "+i);
-                var newLi = document.createElement("li");
-                var newDiv1 = document.createElement("div");
-                newDiv1.className = "row";
-                var newDiv1_1 = document.createElement("div");
-                var newDiv1_2 = document.createElement("div");
-                var newDiv1_2_1 = document.createElement("div");
-                var newDiv1_2_2 = document.createElement("div");
-                var newDiv1_2_3 = document.createElement("div");
-
-                var imgAux = document.createElement("img");
-                imgAux.src = '<?php echo $avatar[random_int(0, 8)]; ?>';
-                imgAux.height = '32';
-                imgAux.width = '32';
-                imgAux.alt = 'Contact Person';
-
-                if (data[i].Matricula == <?php echo $this->session->get('user')['Matricula']; ?>) {
-
-                  newDiv1_1.className = "col s2 m2 l2";
-                  newDiv1_1.appendChild(imgAux);
-
-                  newDiv1_2.className = 'col s10 m10 l10';
-                  newDiv1_2_1.className = "row right blue-grey-text text-lighten-2";
-                  newDiv1_2_1.textContent = "Yo";
-                  newDiv1_2_2.className = "row grey-text text-darken-2 div_back";
-                  newDiv1_2_2.style.marginBottom = "-10px";
-                  newDiv1_2_2.style.marginTop = "30px";
-
-
-                  switch (data[i].Tipo_M) {
-                    case '0':
-                      newDiv1_2_2.innerHTML = data[i].Mensaje;
-                      break;
-                    case '1':
-                      var auxImgMessage = document.createElement('img');
-                      auxImgMessage.src = data[i].Mensaje;
-                      auxImgMessage.height = "200";
-                      auxImgMessage.width = "200";
-                      newDiv1_2_2.appendChild(auxImgMessage);
-                      break;
-                    case '2':
-                      var aAux = document.createElement('a');
-                      aAux.href = data[i].Mensaje;
-                      aAux.target = "_blank";
-                      aAux.textContent = data[i].Mensaje.replace(/((\/[_a-zA-Z0-9]+){0,}\/)([a-zA-Z0-9\s\.ñ\(\)]+)/, '$3');
-
-                      newDiv1_2_2.appendChild(aAux);
-                      break;
-
-                    default:
-                  }
-
-
-
-
-                  newDiv1_2_3.className = "row right blue-grey-text text-lighten-2";
-                  newDiv1_2_3.textContent = data[i].Hora;
-                  newDiv1_2.appendChild(newDiv1_2_1);
-                  newDiv1_2.appendChild(newDiv1_2_2);
-                  newDiv1_2.appendChild(newDiv1_2_3);
-                } else {
-                  newDiv1_2.className = "col s2 m2 l2";
-                  newDiv1_2.appendChild(imgAux);
-
-                  newDiv1_1.className = 'col s8 m8 l8';
-                  newDiv1_2_1.className = "row blue-grey-text text-lighten-2";
-                  newDiv1_2_1.textContent = data[i].Nombre;
-                  newDiv1_2_2.className = "row grey-text text-darken-2 div_back";
-                  newDiv1_2_2.style.marginBottom = "-10px";
-                  newDiv1_2_2.style.marginTop = "-6px";
-
-
-                  switch (data[i].Tipo_M) {
-                    case '0':
-                      newDiv1_2_2.innerHTML = data[i].Mensaje;
-                      break;
-                    case '1':
-                      var auxImgMessage = document.createElement('img');
-                      auxImgMessage.src = data[i].Mensaje;
-                      auxImgMessage.height = "200";
-                      auxImgMessage.width = "200";
-                      newDiv1_2_2.appendChild(auxImgMessage);
-                      break;
-                    case '2':
-                      var aAux = document.createElement('a');
-                      aAux.href = data[i].Mensaje;
-                      aAux.target = "_blank";
-                      aAux.textContent = data[i].Mensaje.replace(/((\/[_a-zA-Z0-9]+){0,}\/)([a-zA-Z0-9\s\.ñ\(\)]+)/, '$3');
-                      newDiv1_2_2.appendChild(aAux);
-                      break;
-
-                    default:
-                  }
-
-
-
-
-
-                  newDiv1_2_3.className = "row right blue-grey-text text-lighten-2";
-                  newDiv1_2_3.textContent = data[i].Hora;
-                  newDiv1_1.appendChild(newDiv1_2_1);
-                  newDiv1_1.appendChild(newDiv1_2_2);
-                  newDiv1_1.appendChild(newDiv1_2_3);
-                }
-
-
-                newDiv1.appendChild(newDiv1_1);
-                newDiv1.appendChild(newDiv1_2);
-
-
-                if (typeof data[i].DiaNuevo != "undefined" && data[i].DiaNuevo != null) {
-                  var newDivDia = document.createElement("div");
-                  newDivDia.className = "row center";
-                  var spanDivDia = document.createElement("span");
-                  spanDivDia.className = "blue-grey-text text-lighten-1";
-                  spanDivDia.textContent = data[i].DiaNuevo;
-
-                  newDivDia.appendChild(spanDivDia);
-                  newLi.appendChild(newDivDia);
-                }
-                newLi.appendChild(newDiv1);
-
-                chat_Caja.appendChild(newLi);
-              }
-
-
-              if (data.length > numMensaje) {
-                //Ajustar ScrollTop
-                document.getElementById('Id_Caja_Grande').scrollTop = chat_Caja.scrollHeight;
-              }
-
-
-              numMensaje = data.length;
-
-              //if (globalScrollTop != chat_Caja.scrollHeight) {
-              //  document.getElementById('Id_Caja_Grande').scrollTop = chat_Caja.scrollHeight;
-              //  globalScrollTop = chat_Caja.scrollHeight;
-              //}
-
-              //console.log("Se esta ejecutando Mensajes");
-            }
-          } else {
-            if (data.startsWith("Error")) {} else if (data == "Fatal Error") {
-              window.location.replace("<?php echo $this->url->get('Grupo/index/#'); ?>");
-            }
-          } 
-        });
-
-      }
-
-
-
-      window.setInterval(function() {
-        ajaxFuncion();
-      }, 1500);
-      
-    </script>
-
-
-
-    <script type="text/javascript">
-      $(document).ready(function() {
-
-        $("#id_boton_mensaje").click(function() {
-          var textMessage = document.getElementById('id_mensaje').value;
-          $.ajax({
-            url: "<?php echo $this->url->get('Grupo/enviarMenAjax'); ?>",
-            type: 'GET',
-            dataType: 'json',
-            data: {
-              mensaje_name: textMessage
-            }
-          }).done(function(data) {
-            document.getElementById('id_mensaje').value = "";
-            if (data == "Error") {
-
-            }
-          });
-        });
-
-
-        $("#formuFotoAjax").on("submit", function(e) {
-          e.preventDefault();
-          var formData = new FormData(document.getElementById("formuFotoAjax"));
-
-          $.ajax({
-            url: "<?php echo $this->url->get('Grupo/enviarImgAjax'); ?>",
-            type: "post",
-            dataType: "json",
-            data: formData,
-            cache: false,
-            contentType: false,
-            processData: false
-          }).done(function(data) {
-            if (!Array.isArray(data)) {
-              if (data.startsWith('Error')) {
-                alert(data);
-              } else {
-                document.getElementById('id_path_foto').value = "";
-                document.getElementById('id_error_img').textContent = "";
-                borrarFotoField();
-              }
-            } else {
-              var divErrorImg = document.getElementById('id_error_img');
-              divErrorImg.textContent = "";
-              for (var i = 0; i < data.length; i++) {
-                var auxSpan = document.createElement('span');
-                auxSpan.style.color = 'red';
-                auxSpan.textContent = data[i];
-                divErrorImg.appendChild(auxSpan);
-              }
-            }
-          });
-        });
-
-
-        $("#formuDocAjax").on("submit", function(e) {
-          e.preventDefault();
-          var formData = new FormData(document.getElementById("formuDocAjax"));
-
-          $.ajax({
-            url: "<?php echo $this->url->get('Grupo/enviarDocAjax'); ?>",
-            type: "post",
-            dataType: "json",
-            data: formData,
-            cache: false,
-            contentType: false,
-            processData: false
-          }).done(function(data) {
-            if (!Array.isArray(data)) {
-              if (data.startsWith('Error')) {
-                alert(data);
-              } else {
-                document.getElementById('id_path_doc').value = "";
-                document.getElementById('id_error_doc').textContent = "";
-                borrarDocField();
-              }
-            } else {
-              var divErrorDoc = document.getElementById('id_error_doc');
-              divErrorDoc.textContent = "";
-              for (var i = 0; i < data.length; i++) {
-                var auxSpan = document.createElement('span');
-                auxSpan.style.color = 'red';
-                auxSpan.textContent = data[i];
-                divErrorDoc.appendChild(auxSpan);
-              }
-            }
-          });
-        });
-
-        $("#id_boton_history").click(function(){
-
-            $.ajax({
-                url: "<?php echo $this->url->get('Grupo/getHistoryAjax'); ?>",
-                type: 'GET',
-                dataType: 'json',
-                data: {}
-              }).done(function(data) {
-                if(!((typeof data) == "string"))
-                { 
-                  var divHistory = document.getElementById("id_history_content");
-                      divHistory.textContent = "";
-                  for(var i=0;i<data.length; i++){
-                    var auxP = document.createElement('p');
-                    switch(data[i].Tipo_H){
-                      case '0':
-                          auxP.textContent = data[i].Fecha+" ("+data[i].Hora+") - "+data[i].Nombre+" se desconectó";
-                      break;
-                      case '1':
-                          auxP.textContent = data[i].Fecha+" ("+data[i].Hora+") - "+data[i].Nombre+" se conectó";
-                      break;
-                      case '2':
-                          auxP.textContent = data[i].Fecha+" ("+data[i].Hora+") - "+data[i].Nombre+" compartió una imagen al grupo";
-                      break;
-                      case '3':
-                          auxP.textContent = data[i].Fecha+" ("+data[i].Hora+") - "+data[i].Nombre+" compartió un documento al grupo";
-                      break;
-                      case '4':
-                          auxP.textContent = data[i].Fecha+" ("+data[i].Hora+") - "+data[i].Nombre+" cambió el nombre del grupo";
-                      break;
-                      case '5':
-                          auxP.textContent = data[i].Fecha+" ("+data[i].Hora+") - "+data[i].Nombre+" cambió la contraseña del grupo";
-                      break;
-                      case '6':
-                          auxP.textContent = data[i].Fecha+" ("+data[i].Hora+") - "+data[i].Nombre+" eliminó a alguien del grupo";
-                      break;
-                      case '7':
-                          auxP.textContent = data[i].Fecha+" ("+data[i].Hora+") - "+data[i].Nombre+" se ha unido al grupo";
-                      break;
-                      case '8':
-                          auxP.textContent = data[i].Fecha+" ("+data[i].Hora+") - "+data[i].Nombre+" ha salido del grupo";
-                      break;
-                      case '9':
-                          auxP.textContent = data[i].Fecha+" ("+data[i].Hora+") - "+data[i].Nombre+" creó el grupo";
-                      break;
-
-                      case '10':
-                          auxP.textContent = data[i].Fecha+" ("+data[i].Hora+") - "+data[i].Nombre+" compartió un enlace en el grupo";
-                      break;
-                      case '12':
-                          auxP.textContent = data[i].Fecha+" ("+data[i].Hora+") - "+data[i].Nombre+" navegó por la biblioteca: "+data[i].Biblioteca;
-                      break;
-
-                      default: auxP.textContent = "Mensaje Dafault";
-                    }
-                    divHistory.appendChild(auxP);
-                  }
-                }
-                else{
-                  alert(data);
-                }
-              });
-        });
-
-        //$("#id_iFrame").on("load", function(e) {
-            //var iFrame = document.getElementById('id_iFrame');
-            //iFrame.contentDocument.body.addEventListener('mouseup', function(evt){
-            //    alert("WORKS!!");
-            //});
-            //alert("Content: "+document.getElementById('id_iFrame').contentDocument);
-        //});
-
-      });
-    </script>
-
-    <script type="text/javascript">
-      function checarEnterMensaje(evt) {
-        if (evt.keyCode == 13 && !evt.shiftKey) {
-          var textMessage = document.getElementById('id_mensaje').value;
-          $.ajax({
-            url: "<?php echo $this->url->get('Grupo/enviarMenAjax'); ?>",
-            type: 'GET',
-            dataType: 'json',
-            data: {
-              mensaje_name: textMessage
-            }
-          }).done(function(data) {
-            document.getElementById('id_mensaje').value = "";
-            if (data == "Error") {
-
-            }
-          });
-        }
-
-        tecla_final = String.fromCharCode(evt.keyCode);
-        return tecla_final;
-      }
-
-      function recuperarChipInfo() {
-        var infoChips = document.getElementById('ChipsPadre').getElementsByClassName('chip');
-        var cadena = "[";
-
-        for (var i = 0; i < infoChips.length; i++) {
-          if (i == infoChips.length - 1) {
-            cadena += "{\"tag\":\"" + infoChips[i].getElementsByClassName('chipMatricula')[0].textContent + "\"}]";
-          } else {
-            cadena += "{\"tag\":\"" + infoChips[i].getElementsByClassName('chipMatricula')[0].textContent + "\"},";
           }
-        }
-        document.getElementById('arrayChipPostId').value = cadena;
+        });
+      });
 
-      }
 
-    </script>
-    <script type="text/javascript">
-      function cambiarBiblioteca(){
-        var bibliosImg = [ "acm.png",
-                                      "ieee.png",
-                                      "emerald.png",
-                                      "emis.png",
-                                      "nature.png",
-                                      "acs.png",
-                                      "springer.png",
-                                      "tylor.png",
-                                      "ams.png",
-                                      "wiley.png"];
-        //alert(bibliosImg[2]);
-        var iframe = document.getElementById('id_iFrame');
-        var optionSelected = document.getElementById('id_filtro_biblio').value;
-
-        
-        var url = "<?php echo $this->url->get('img/bibliotecas/');?>"+bibliosImg[optionSelected-1];
-        document.getElementById('id_biblio_icon').src = url;
-        document.getElementById('id_biblio_text').innerHTML = "Esta navegando por: "+document.getElementById('id_filtro_biblio')[optionSelected].text.bold();
-        document.getElementById('id_biblio_div').style.display = 'block';
-        switch(optionSelected){
-          case '1':
-              iframe.src = "https://www.proxydgb.buap.mx:2131/";
-          break;
-          case '2':
-              iframe.src = "https://ieeexplore.ieee.org/Xplore/guesthome.jsp";
-          break;
-          case '3':
-              iframe.src = "https://www.proxydgb.buap.mx:4420/insight/";
-          break;
-          case '4':
-              iframe.src = "https://www.proxydgb.buap.mx:2247/php/dashboard?pc=MX";
-          break;
-          case '5':
-              iframe.src = "http://www.proxydgb.buap.mx:2165/";
-          break;
-          case '6':
-              iframe.src = "https://www.proxydgb.buap.mx:2100/";
-          break;
-          case '7':
-              iframe.src = "https://www.proxydgb.buap.mx:2067/";
-          break;
-          case '8':
-              iframe.src = "https://www.proxydgb.buap.mx:2071/";
-          break;
-          case '9':
-              iframe.src = "https://www.proxydgb.buap.mx:2119/mathscinet/";
-          break;
-          case '10':
-              iframe.src = "https://www.proxydgb.buap.mx:2175/";
-          break;
-        }
-
-        //
+      $("#formuFotoAjax").on("submit", function(e) {
+        e.preventDefault();
+        var formData = new FormData(document.getElementById("formuFotoAjax"));
 
         $.ajax({
-                url: "<?php echo $this->url->get('Grupo/sendBiblioAjax'); ?>",
-                type: 'POST',
-                dataType: 'json',
-                data: {biblio: optionSelected}
-              }).done(function(data) {
-                //alert("Respuesta: "+data);
-              });
-        
+          url: "<?php echo $this->url->get('Grupo/enviarImgAjax'); ?>",
+          type: "post",
+          dataType: "json",
+          data: formData,
+          cache: false,
+          contentType: false,
+          processData: false
+        }).done(function(data) {
+          if (!Array.isArray(data)) {
+            if (data.startsWith('Error')) {
+              alert(data);
+            } else {
+              document.getElementById('id_path_foto').value = "";
+              document.getElementById('id_error_img').textContent = "";
+              borrarFotoField();
+            }
+          } else {
+            var divErrorImg = document.getElementById('id_error_img');
+            divErrorImg.textContent = "";
+            for (var i = 0; i < data.length; i++) {
+              var auxSpan = document.createElement('span');
+              auxSpan.style.color = 'red';
+              auxSpan.textContent = data[i];
+              divErrorImg.appendChild(auxSpan);
+            }
+          }
+        });
+      });
 
+
+      $("#formuDocAjax").on("submit", function(e) {
+        e.preventDefault();
+        var formData = new FormData(document.getElementById("formuDocAjax"));
+
+        $.ajax({
+          url: "<?php echo $this->url->get('Grupo/enviarDocAjax'); ?>",
+          type: "post",
+          dataType: "json",
+          data: formData,
+          cache: false,
+          contentType: false,
+          processData: false
+        }).done(function(data) {
+          if (!Array.isArray(data)) {
+            if (data.startsWith('Error')) {
+              alert(data);
+            } else {
+              document.getElementById('id_path_doc').value = "";
+              document.getElementById('id_error_doc').textContent = "";
+              borrarDocField();
+            }
+          } else {
+            var divErrorDoc = document.getElementById('id_error_doc');
+            divErrorDoc.textContent = "";
+            for (var i = 0; i < data.length; i++) {
+              var auxSpan = document.createElement('span');
+              auxSpan.style.color = 'red';
+              auxSpan.textContent = data[i];
+              divErrorDoc.appendChild(auxSpan);
+            }
+          }
+        });
+      });
+
+      $("#id_boton_history").click(function() {
+
+        $.ajax({
+          url: "<?php echo $this->url->get('Grupo/getHistoryAjax'); ?>",
+          type: 'GET',
+          dataType: 'json',
+          data: {}
+        }).done(function(data) {
+          if (!((typeof data) == "string")) {
+            var divHistory = document.getElementById("id_history_content");
+            divHistory.textContent = "";
+            for (var i = 0; i < data.length; i++) {
+              var auxP = document.createElement('p');
+              switch (data[i].Tipo_H) {
+                case '0':
+                  auxP.textContent = data[i].Fecha + " (" + data[i].Hora + ") - " + data[i].Nombre + " se desconectó";
+                  break;
+                case '1':
+                  auxP.textContent = data[i].Fecha + " (" + data[i].Hora + ") - " + data[i].Nombre + " se conectó";
+                  break;
+                case '2':
+                  auxP.textContent = data[i].Fecha + " (" + data[i].Hora + ") - " + data[i].Nombre + " compartió una imagen al grupo";
+                  break;
+                case '3':
+                  auxP.textContent = data[i].Fecha + " (" + data[i].Hora + ") - " + data[i].Nombre + " compartió un documento al grupo";
+                  break;
+                case '4':
+                  auxP.textContent = data[i].Fecha + " (" + data[i].Hora + ") - " + data[i].Nombre + " cambió el nombre del grupo";
+                  break;
+                case '5':
+                  auxP.textContent = data[i].Fecha + " (" + data[i].Hora + ") - " + data[i].Nombre + " cambió la contraseña del grupo";
+                  break;
+                case '6':
+                  auxP.textContent = data[i].Fecha + " (" + data[i].Hora + ") - " + data[i].Nombre + " eliminó a alguien del grupo";
+                  break;
+                case '7':
+                  auxP.textContent = data[i].Fecha + " (" + data[i].Hora + ") - " + data[i].Nombre + " se ha unido al grupo";
+                  break;
+                case '8':
+                  auxP.textContent = data[i].Fecha + " (" + data[i].Hora + ") - " + data[i].Nombre + " ha salido del grupo";
+                  break;
+                case '9':
+                  auxP.textContent = data[i].Fecha + " (" + data[i].Hora + ") - " + data[i].Nombre + " creó el grupo";
+                  break;
+
+                case '10':
+                  auxP.textContent = data[i].Fecha + " (" + data[i].Hora + ") - " + data[i].Nombre + " compartió un enlace en el grupo";
+                  break;
+                case '12':
+                  auxP.textContent = data[i].Fecha + " (" + data[i].Hora + ") - " + data[i].Nombre + " navegó por la biblioteca: " + data[i].Biblioteca;
+                  break;
+
+                default:
+                  auxP.textContent = "Mensaje Dafault";
+              }
+              divHistory.appendChild(auxP);
+            }
+          } else {
+            alert(data);
+          }
+        });
+      });
+
+      //$("#id_iFrame").on("load", function(e) {
+      //var iFrame = document.getElementById('id_iFrame');
+      //iFrame.contentDocument.body.addEventListener('mouseup', function(evt){
+      //    alert("WORKS!!");
+      //});
+      //alert("Content: "+document.getElementById('id_iFrame').contentDocument);
+      //});
+
+    });
+  </script>
+
+  <script type="text/javascript">
+    function checarEnterMensaje(evt) {
+      if (evt.keyCode == 13 && !evt.shiftKey) {
+        var textMessage = document.getElementById('id_mensaje').value;
+        $.ajax({
+          url: "<?php echo $this->url->get('Grupo/enviarMenAjax'); ?>",
+          type: 'GET',
+          dataType: 'json',
+          data: {
+            mensaje_name: textMessage
+          }
+        }).done(function(data) {
+          document.getElementById('id_mensaje').value = "";
+          if (data == "Error") {
+
+          }
+        });
       }
-    </script>
 
-    <script type="text/javascript">
-      var body = document.querySelector('body');
+      tecla_final = String.fromCharCode(evt.keyCode);
+      return tecla_final;
+    }
 
-      body.onLoad = ajaxFuncion();
-    </script>
+    function recuperarChipInfo() {
+      var infoChips = document.getElementById('ChipsPadre').getElementsByClassName('chip');
+      var cadena = "[";
+
+      for (var i = 0; i < infoChips.length; i++) {
+        if (i == infoChips.length - 1) {
+          cadena += "{\"tag\":\"" + infoChips[i].getElementsByClassName('chipMatricula')[0].textContent + "\"}]";
+        } else {
+          cadena += "{\"tag\":\"" + infoChips[i].getElementsByClassName('chipMatricula')[0].textContent + "\"},";
+        }
+      }
+      document.getElementById('arrayChipPostId').value = cadena;
+
+    }
+  </script>
+  <script type="text/javascript">
+    function cambiarBiblioteca() {
+      var bibliosImg = ["acm.png",
+        "ieee.png",
+        "emerald.png",
+        "emis.png",
+        "nature.png",
+        "acs.png",
+        "springer.png",
+        "tylor.png",
+        "ams.png",
+        "wiley.png"
+      ];
+      //alert(bibliosImg[2]);
+      var iframe = document.getElementById('id_iFrame');
+      var optionSelected = document.getElementById('id_filtro_biblio').value;
+
+
+      var url = "<?php echo $this->url->get('img/bibliotecas/'); ?>" + bibliosImg[optionSelected - 1];
+      document.getElementById('id_biblio_icon').src = url;
+      document.getElementById('id_biblio_text').innerHTML = "Esta navegando por: " + document.getElementById('id_filtro_biblio')[optionSelected].text.bold();
+      document.getElementById('id_biblio_div').style.display = 'block';
+      switch (optionSelected) {
+        case '1':
+          iframe.src = "https://www.proxydgb.buap.mx:2131/";
+          break;
+        case '2':
+          iframe.src = "https://ieeexplore.ieee.org/Xplore/guesthome.jsp";
+          break;
+        case '3':
+          iframe.src = "https://www.proxydgb.buap.mx:4420/insight/";
+          break;
+        case '4':
+          iframe.src = "https://www.proxydgb.buap.mx:2247/php/dashboard?pc=MX";
+          break;
+        case '5':
+          iframe.src = "http://www.proxydgb.buap.mx:2165/";
+          break;
+        case '6':
+          iframe.src = "https://www.proxydgb.buap.mx:2100/";
+          break;
+        case '7':
+          iframe.src = "https://www.proxydgb.buap.mx:2067/";
+          break;
+        case '8':
+          iframe.src = "https://www.proxydgb.buap.mx:2071/";
+          break;
+        case '9':
+          iframe.src = "https://www.proxydgb.buap.mx:2119/mathscinet/";
+          break;
+        case '10':
+          iframe.src = "https://www.proxydgb.buap.mx:2175/";
+          break;
+      }
+
+      //
+
+      $.ajax({
+        url: "<?php echo $this->url->get('Grupo/sendBiblioAjax'); ?>",
+        type: 'POST',
+        dataType: 'json',
+        data: {
+          biblio: optionSelected
+        }
+      }).done(function(data) {
+        //alert("Respuesta: "+data);
+      });
+
+
+    }
+  </script>
+
+  <script type="text/javascript">
+    var body = document.querySelector('body');
+
+    body.onLoad = ajaxFuncion();
+  </script>
