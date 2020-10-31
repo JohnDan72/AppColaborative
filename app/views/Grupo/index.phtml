@@ -255,6 +255,7 @@
             <div class="col s12 m12 l12 center">
               <p id="p_6">Integrantes: </p>
               <?php
+              $num_miembros = count($miembros);
               foreach ($miembros as $miembro) {
                 $get_position = random_int(0, 8);
               ?>
@@ -276,7 +277,7 @@
 
           </div>
           <script type="text/javascript">
-            var instance = M.Tabs.init(el);
+            //var instance = M.Tabs.init(el);
           </script>
 
           <div class="row container">
@@ -287,6 +288,7 @@
                 <li class="tab col s3"><a href="#test3">Actividad Individual</a></li>
               </ul>
             </div>
+            <!--Despliegue de iframe y chat del grupo-->
             <div id="test1" class="col s12">
               <div class="row">
                 <div class="col s12 m6 l6">
@@ -419,11 +421,11 @@
                 </div>
               </div>
             </div>
+            <!--Despliegue de actividad general del grupo-->
             <div id="test2" class="col s12">
               <div class="row">
                 <div id="cajaGrande2" class="col s12 m12 l8 offset-l2 center card">
                   <!--<button id="id_boton_history" class="waves-effect waves-light btn modal-trigger center" -href="#modal_ac">Actividad de grupo</button> -->
-
                   <!-- Modal Structure -->
                   <div id="modal_ac">
                     <div id="id_history_Caja_Grande">
@@ -437,39 +439,43 @@
                 </div>
               </div>
             </div>
-
+            <!--Agregar aquí la actividad Individual-->
             <div id="test3" class="col s12">
               <div class="row">
-                <div id="cajaGrande2" class="col s12 m12 l12  center">
+                <div id="cajaGrande3" class="col s12 m12 l12  center">
                   <!--<button id="id_boton_history" class="waves-effect waves-light btn modal-trigger center" -href="#modal_ac">Actividad de grupo</button> -->
 
                   <!-- Modal Structure -->
                   <div id="modal_ac">
-                    <div id="id_history_Caja_Grande">
+                    <div id="id_history_Caja_Grande2">
                       <h4>Actividad Individual</h4>
                       <div class="divider"></div>
 
-
-                      <?php for ($i = 0; $i < 13; $i++){?>
-
-                        <div class="col s12 m6 l4">
-                        <ul class="collapsible">
-                          <li class="active">
-                            <div class="collapsible-header "><i class="material-icons">filter_drama</i>Integrante <?php echo $i+1?></div>
-                            <div class="collapsible-body ">
-
-                              <ul>
-                                <li>Acción 1</li>
-                                <li>Acción 2</li>
-                                <li>Acción 3</li>
-                              </ul>
-                            </div>
-                          </li>
-
-                        </ul>
+                      <div id="id_history_content2" align="left">
+                        <!--Aqui van los historiales individuales-->
                       </div>
+                      <?php //for ($i = 0; $i < 13; $i++){?>
 
-                      <?php }?>
+                        <!--div class="col s12 m6 l4">
+                          <ul class="collapsible">
+                            <li class="active">
+                              <div class="collapsible-header ">
+                                <i class="material-icons">filter_drama</i>Integrante <?php echo $i+1?>
+                              </div>
+                              <div class="collapsible-body ">
+
+                                <ul>
+                                  <li>Acción 1</li>
+                                  <li>Acción 2</li>
+                                  <li>Acción 3</li>
+                                </ul>
+                              </div>
+                            </li>
+
+                          </ul>
+                        </div-->
+
+                      <?php //}?>
 
                       <!--Aqui va el historial de cada grupo-->
                     </div>
@@ -731,7 +737,7 @@
 
   <script type="text/javascript">
     var numHistory = 0;
-
+    //funcion para desplegar el historial de todo el grupo
     function ajaxFuncion2() {
       $.ajax({
         url: "<?php echo $this->url->get('Grupo/getHistoryAjax'); ?>",
@@ -1286,3 +1292,141 @@
 
     body.onLoad = ajaxFuncion();
   </script>
+<?php
+  if (isset($infoGrupo) && ($this->session->get('Tipo_Despli') == 1 || $this->session->get('Tipo_Despli') == '1')) {
+    ?>
+      <!--Historial Individual de cada participante-->
+      <script type="text/javascript">
+         
+        const historiales = <?= $num_miembros;?>;
+        var numHistory2 = [];
+        //declarar los tamaños de cada historial
+        for (var i = 0; i < historiales; i++) {
+            numHistory2[i] = 0;
+        }
+        
+        //funcion para desplegar el historial de todo el grupo
+        function ajaxFuncion3() {
+
+          $.ajax({
+            url: "<?php echo $this->url->get('Grupo/getHistoryIndividualAjax'); ?>",
+            type: 'GET',
+            dataType: 'json',
+            data: {}
+          }).done(function(data) {
+            //alert(data);
+            //console.log(data);
+            if (!((typeof data) == "string")) {
+              var band = false;
+              for (var i = 0; i < historiales; i++) {
+                if (data[i].length != numHistory2[i]) {
+                  band = true;
+                  break;
+                }
+              }
+              if(band){
+                var divHistory = document.getElementById("id_history_content2");
+                    divHistory.innerHTML = '';
+                for (var i = 0; i < historiales; i++) {
+                    var auxH1 = document.createElement('div');
+                        auxH1.className = 'col s12 m6';
+                    var auxH2 = document.createElement('ul');
+                        auxH2.className = 'collapsible';
+                    var auxH3 = document.createElement('li');
+                        auxH3.className = 'active';
+                    var auxH4 = document.createElement('div');
+                        auxH4.className = 'collapsible-header ';
+                        //auxH4.innerHTML = '<i class="material-icons">filter_drama</i>Integrante ';
+                    var auxH5 = document.createElement('div');
+                        auxH5.className = 'collapsible-body ';
+                    var auxH6 = document.createElement('ul');
+                        auxH6.className = '';
+
+                    
+                    for (var j = 0;j < data[i].length; j++) {
+                      var auxH7 = document.createElement('li');
+                      //console.log("for history: i = "+i);
+                      auxH4.innerHTML = '<i class="material-icons">history</i> '+(data[i][j].Nombre);
+                      switch (data[i][j].Tipo_H) {
+                        case '0':
+                          auxH7.textContent = data[i][j].Fecha + " (" + data[i][j].Hora + ") - " + data[i][j].Nombre + " se desconectó";
+                          break;
+                        case '1':
+                          auxH7.textContent = data[i][j].Fecha + " (" + data[i][j].Hora + ") - " + data[i][j].Nombre + " se conectó";
+                          break;
+                        case '2':
+                          auxH7.textContent = data[i][j].Fecha + " (" + data[i][j].Hora + ") - " + data[i][j].Nombre + " compartió una imagen al grupo";
+                          break;
+                        case '3':
+                          auxH7.textContent = data[i][j].Fecha + " (" + data[i][j].Hora + ") - " + data[i][j].Nombre + " compartió un documento al grupo";
+                          break;
+                        case '4':
+                          auxH7.textContent = data[i][j].Fecha + " (" + data[i][j].Hora + ") - " + data[i][j].Nombre + " cambió el nombre del grupo";
+                          break;
+                        case '5':
+                          auxH7.textContent = data[i][j].Fecha + " (" + data[i][j].Hora + ") - " + data[i][j].Nombre + " cambió la contraseña del grupo";
+                          break;
+                        case '6':
+                          auxH7.textContent = data[i][j].Fecha + " (" + data[i][j].Hora + ") - " + data[i][j].Nombre + " eliminó a alguien del grupo";
+                          break;
+                        case '7':
+                          auxH7.textContent = data[i][j].Fecha + " (" + data[i][j].Hora + ") - " + data[i][j].Nombre + " se ha unido al grupo";
+                          break;
+                        case '8':
+                          auxH7.textContent = data[i][j].Fecha + " (" + data[i][j].Hora + ") - " + data[i][j].Nombre + " ha salido del grupo";
+                          break;
+                        case '9':
+                          auxH7.textContent = data[i][j].Fecha + " (" + data[i][j].Hora + ") - " + data[i][j].Nombre + " creó el grupo";
+                          break;
+
+                        case '10':
+                          auxH7.textContent = data[i][j].Fecha + " (" + data[i][j].Hora + ") - " + data[i][j].Nombre + " compartió un enlace en el grupo";
+                          break;
+                        case '12':
+                          auxH7.textContent = data[i][j].Fecha + " (" + data[i][j].Hora + ") - " + data[i][j].Nombre + " navegó por la biblioteca: " + data[i][j].Biblioteca;
+                          break;
+
+                        default:
+                          auxH7.textContent = "Mensaje Dafault";
+                      }
+                      auxH6.appendChild(auxH7);
+                      auxH5.appendChild(auxH6);
+                      auxH3.appendChild(auxH4);
+                      auxH3.appendChild(auxH5);
+                      auxH2.appendChild(auxH3);
+                      auxH1.appendChild(auxH2);
+
+                      //divHistory.appendChild(auxP);
+                    }
+                    
+                    divHistory.appendChild(auxH1);
+                    numHistory2[i] = data[i].length;
+                }
+                $('.collapsible').collapsible();
+              }    
+            } else {
+              //alert(data);
+            }
+
+
+
+            //var cajaHistory = document.getElementById('id_history_content2');
+            //if (globalScrollTopHistory != cajaHistory.scrollHeight) {
+            //  document.getElementById('id_history_content').scrollTop = cajaHistory.scrollHeight;
+            //  globalScrollTopHistory = cajaHistory.scrollHeight;
+            //}
+
+            //console.log("Se esta ejecutando tarea de historial");
+          });
+        }
+
+        window.setInterval(function() {
+          ajaxFuncion3();
+        }, 2000);
+
+      </script>
+
+    <?php
+  }
+?>
+      

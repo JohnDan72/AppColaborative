@@ -1251,6 +1251,47 @@ class GrupoController extends ControllerBase
         else echo json_encode("Error 3");
     }
 
+    public function getHistoryIndividualAjaxAction(){
+        $this->view->disable();
+        //echo json_encode("Urraaa");
+        //echo json_encode("jejeje");
+        if($this->request->isGet()){
+            $id_grupo = $this->session->get('Id_Grupo_Actual');
+            if($id_grupo != null){
+               $historyModel = new Historialg();
+               $success = $historyModel->getHistoryIndividualUsers((int)$id_grupo);
+
+                if($success) {
+                    $data;
+                    $ind = 0; 
+
+                    foreach ($success as $historiales) {
+                        $ind2 = 0;
+                        foreach($historiales as $historial){
+                            $data[$ind][$ind2]['Tipo_H']       = $success[$ind][$ind2]['Tipo_H'];
+                            $data[$ind][$ind2]['Id_User']      = $success[$ind][$ind2]['Id_User'];
+                            $data[$ind][$ind2]['Id_Grupo']     = $success[$ind][$ind2]['Id_Grupo'];
+                            $data[$ind][$ind2]['Fecha_Hora']   = $success[$ind][$ind2]['Fecha_Hora'];
+                            $data[$ind][$ind2]['Biblioteca']   = $success[$ind][$ind2]['Biblioteca'];
+                            $data[$ind][$ind2]['Archivo_Biblio']   = $success[$ind][$ind2]['Archivo_Biblio'];
+                            $data[$ind][$ind2]['Nombre']       = $success[$ind][$ind2]['Nombre'];
+                            $data[$ind][$ind2]['Hora'] = $this->formatearFecha($success[$ind][$ind2]['Fecha_Hora']);
+                            $data[$ind][$ind2]['Fecha'] = date_format(date_create($success[$ind][$ind2]['Fecha_Hora']), 'd-m-Y');
+                            $ind2++;
+                        }
+                        $ind++;
+                    }
+                    //echo var_dump($data);
+                    echo json_encode($data);
+                }
+                else echo json_encode("Error 1"); 
+            }
+
+            else echo json_encode("Error 2");
+        }
+        else echo json_encode("Error 3");
+    }
+
     public function saveHistory($tipo_h, $id_user, $id_grupo, $biblio = null, $file_biblio = null){
             $modelGrupo = new Grupo();
             $historialModel = new Historialg();
